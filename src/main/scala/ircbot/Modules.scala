@@ -1,0 +1,6 @@
+package ircbot
+
+
+object Modules {
+
+}

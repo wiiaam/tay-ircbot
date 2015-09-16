@@ -3,7 +3,7 @@ package irc.server
 import java.io.PrintStream
 import java.net.Socket
 import java.util
-import java.util.{Scanner}
+import java.util.Scanner
 import irc.listeners.OnMessageListener
 import irc.message.Message
 
@@ -29,8 +29,8 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   }
 
   private def onMessageReceived(message: String) = {
-    for(listener: OnMessageListener <- listeners){
-      listener.onMessage(new Message(message, name))
+    for(i <- 0 until listeners.size()){
+      listeners.get(i).onMessage(new Message(message, name))
     }
   }
 

@@ -4,7 +4,4 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-
-libraryDependencies ++= Seq(
-  "org.json4s" %% "json4s-native" % "3.2.10"
-)
+unmanagedJars in Compile += file( "lib/org.json-20130603.jar")
