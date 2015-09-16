@@ -10,5 +10,6 @@
   "realname":"myrealname",
   "commandprefix":".",
   "admins":[],
-  "ignores":[]
+  "ignores":[],
+  "channels":[]
 }

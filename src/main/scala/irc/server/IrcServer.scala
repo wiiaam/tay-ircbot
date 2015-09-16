@@ -7,16 +7,8 @@ import java.util.Scanner
 import irc.listeners.OnMessageListener
 import irc.message.Message
 
-object IrcServer {
 
-  @throws(classOf[IllegalArgumentException])
-  def create(name: String, address: String, port: Int, useSSL: Boolean): IrcServer= {
-    if(port < 1 || port > 65535) throw new IllegalArgumentException("Port is not between 1 and 65535")
-    new IrcServer(name, address, port, useSSL)
-  }
-}
-
-class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
+class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   private var listeners = new util.ArrayList[OnMessageListener]
   private var socket: Option[Socket] = None
   private var in: Option[Scanner] = None
@@ -75,7 +67,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
   def send(message: String, priority: Priorities.Value){
     val msg = message.replaceAll("\r", "").replaceAll("\n", "")
-    if(message.startsWith("PRIVMSG") || message.startsWith("NOTICE ")){
+    if((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320){
       val split = msg.split(" ")
       var tosend = ""
       var hitLimit = false
@@ -84,15 +76,10 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         tosend += split(i) + " "
         if(tosend.length() > 300){
           priority match {
-            case Priorities.HIGH_PRIORITY => {
-              toSend.addFirst(tosend.substring(0, tosend.length() - 1))
-            }
-            case Priorities.LOW_PRIORITY => {
-              toSendLP.add(tosend.substring(0, tosend.length() - 1))
-            }
-            case Priorities.STANDARD_PRIORITY => {
-              toSend.add(tosend.substring(0, tosend.length() - 1))
-            }
+            case Priorities.HIGH_PRIORITY => toSend.addFirst(tosend.substring(0, tosend.length() - 1))
+            case Priorities.LOW_PRIORITY => toSendLP.add(tosend.substring(0, tosend.length() - 1))
+            case Priorities.STANDARD_PRIORITY => toSend.add(tosend.substring(0, tosend.length() - 1))
+
           }
           hitLimit = true
           var next = split(0) + " " + split(1) + " :"
@@ -104,31 +91,21 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         }
         i = i + 1
       }
+      /* TODO make sure this works
       if(!hitLimit){
         priority match {
-          case Priorities.HIGH_PRIORITY => {
-            toSend.addFirst(tosend.substring(0, tosend.length() - 1))
-          }
-          case Priorities.LOW_PRIORITY => {
-            toSendLP.add(tosend.substring(0, tosend.length() - 1))
-          }
-          case Priorities.STANDARD_PRIORITY => {
-            toSend.add(tosend.substring(0, tosend.length() - 1))
-          }
+          case Priorities.HIGH_PRIORITY => toSend.addFirst(tosend.substring(0, tosend.length() - 1))
+          case Priorities.LOW_PRIORITY => toSendLP.add(tosend.substring(0, tosend.length() - 1))
+          case Priorities.STANDARD_PRIORITY => toSend.add(tosend.substring(0, tosend.length() - 1))
         }
-      }
+      }*/
     }
     else {
       priority match {
-        case Priorities.HIGH_PRIORITY => {
-          toSend.addFirst(msg)
-        }
-        case Priorities.LOW_PRIORITY => {
-          toSendLP.add(msg)
-        }
-        case Priorities.STANDARD_PRIORITY => {
-          toSend.add(msg)
-        }
+        case Priorities.HIGH_PRIORITY => toSend.addFirst(msg)
+        case Priorities.LOW_PRIORITY => toSendLP.add(msg)
+        case Priorities.STANDARD_PRIORITY => toSend.add(msg)
+
       }
     }
   }

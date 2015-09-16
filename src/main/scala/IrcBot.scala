@@ -1,9 +1,10 @@
 import java.io.File
 
-import irc.config.Configs
 
 object IrcBot {
-  def main (args: Array[String]): Unit = {
 
+  def main (args: Array[String]): Unit = {
   }
+
+  val version = "1.0"
 }

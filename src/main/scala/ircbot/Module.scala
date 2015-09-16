@@ -1,4 +1,4 @@
-package ircbot.module
+package ircbot
 
 import irc.message.Message
 

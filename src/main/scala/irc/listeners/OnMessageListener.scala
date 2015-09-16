@@ -1,9 +1,9 @@
 package irc.listeners
 
 import irc.message.Message
-/**
- * Created by william on 9/15/15.
- */
+import irc.server.ServerResponder
+
+
 trait OnMessageListener {
-  def onMessage(message: Message)
+  def onMessage(m: Message, r: ServerResponder)
 }
