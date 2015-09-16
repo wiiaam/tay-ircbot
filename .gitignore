@@ -1,0 +1,29 @@
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen### Scala template
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# Configs
+src/main/scala/configs/*
+!src/main/scala/configs/example.json
+!src/main/scala/configs/user.json
+!src/main/scala/configs/user*.json

@@ -1,0 +1,13 @@
+{
+  "server":"irc.rizon.net",
+  "port":6667,
+  "ssl":true,
+  "nickserv":false,
+  "password":"",
+  "nickname":"myircbot",
+  "username":"myusername",
+  "realname":"myrealname",
+  "commandprefix":".",
+  "admins":[],
+  "ignores":[]
+}
