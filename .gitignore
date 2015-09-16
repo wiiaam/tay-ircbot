@@ -26,4 +26,3 @@ project/plugins/project/
 src/main/scala/configs/*
 !src/main/scala/configs/example.json
 !src/main/scala/configs/user.json
-!src/main/scala/configs/user*.json
