@@ -3,6 +3,7 @@ package irc.config
 import java.io.{FileWriter, BufferedReader, FileReader, File}
 import java.util
 import org.json.{JSONArray, JSONObject}
+import scala.collection.JavaConversions._
 
 
 class Config(jsonFile: File)  {
@@ -26,10 +27,10 @@ class Config(jsonFile: File)  {
     ignoreset.add(ignores.getString(i))
   }
 
-  private var roomsset = new util.HashSet[String]
-  private val rooms = json.getJSONArray("rooms")
-  for(i <- 0 until rooms.length()){
-    roomsset.add(rooms.getString(i))
+  private var channelset = new util.HashSet[String]
+  private val channels = json.getJSONArray("channels")
+  for(i <- 0 until channels.length()){
+    channelset.add(channels.getString(i))
   }
 
   def getServer: String = json.getString("server")
@@ -38,13 +39,15 @@ class Config(jsonFile: File)  {
 
   def useSSL: Boolean = json.getBoolean("ssl")
 
-  def getNickname: String = json.getString("server")
+  def getNickname: String = json.getString("nickname")
 
-  def getUsername: String = json.getString("server")
+  def getUsername: String = json.getString("username")
 
-  def getRealname: String = json.getString("server")
+  def getRealname: String = json.getString("realname")
 
-  def getCommandPrefix: String = json.getString("server")
+  def getCommandPrefix: String = json.getString("commandprefix")
+
+  def ghostExisting: Boolean = json.getBoolean("ghostexisting")
 
   def useNickServ: Boolean = json.getBoolean("nickserv")
 
@@ -58,7 +61,7 @@ class Config(jsonFile: File)  {
 
   def getIgnores: util.HashSet[String] = ignoreset
 
-  def getRooms: util.HashSet[String] = roomsset
+  def getChannels: util.HashSet[String] = channelset
 
   def addAdmin(admin: String): Unit = {
     adminset.add(admin)
@@ -72,30 +75,30 @@ class Config(jsonFile: File)  {
     write()
   }
 
-  def addRoom(admin: String): Unit = {
-    roomsset.add(admin)
-    onRoomsChange()
+  def addChannel(admin: String): Unit = {
+    channelset.add(admin)
+    onChannelsChange()
     write()
   }
 
 
   private def onAdminChange() {
     val admins = new JSONArray()
-    for(admin: String <- adminset.iterator()){
+    for(admin: String <- adminset){
       admins.put(admin)
     }
   }
 
   private def onIgnoreChange() {
     val ignores = new JSONArray()
-    for(ignore: String <- ignoreset.iterator()){
+    for(ignore: String <- ignoreset){
       ignores.put(ignore)
     }
   }
 
-  private def onRoomsChange() {
+  private def onChannelsChange() {
     val rooms = new JSONArray()
-    for(room: String <- roomsset.iterator()){
+    for(room: String <- channelset){
       rooms.put(room)
     }
   }
@@ -104,5 +107,6 @@ class Config(jsonFile: File)  {
     val writer = new FileWriter(jsonFile,false)
     writer.write(json.toString)
     writer.close()
+    Configs.set(jsonFile.getName.split(".")(0), this)
   }
 }

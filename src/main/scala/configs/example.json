@@ -4,6 +4,7 @@
   "port":6667,
   "ssl":true,
   "nickserv":false,
+  "ghostexisting":false,
   "password":"",
   "nickname":"myircbot",
   "username":"myusername",

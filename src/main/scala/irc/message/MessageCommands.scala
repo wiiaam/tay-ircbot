@@ -15,6 +15,8 @@ object MessageCommands extends Enumeration{
   val PONG = Value("PONG")
   val INVITE = Value("INVITE")
   val TOPIC = Value("TOPIC")
+  val CONNECTED = Value("001")
+  val NICKINUSE = Value("433")
 
   def valueOf(name: String): MessageCommands.Value = values.find(_.toString == name).getOrElse(MessageCommands.UNKNOWN)
 }
