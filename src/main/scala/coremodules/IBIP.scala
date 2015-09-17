@@ -1,7 +1,7 @@
 package coremodules
 
 import irc.message.Message
-import irc.server.ServerResponder
+import irc.server.{Priorities, ServerResponder}
 import ircbot.{BotCommand, Module}
 
 
@@ -11,7 +11,8 @@ class IBIP extends Module {
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.trailing.startsWith(".bots ") || m.trailing == ".bots"){
-      r.pm(m.params.first, "Reporting in! [Scala] wip")
+      val target = if(m.params.first.startsWith("#")) m.params.first else m.sender.nickname
+      r.pm(target, "Reporting in! [Scala] wip", Priorities.HIGH_PRIORITY)
     }
   }
 

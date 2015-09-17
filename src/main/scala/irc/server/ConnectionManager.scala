@@ -14,6 +14,10 @@ object ConnectionManager {
 
   private val servers = new util.HashMap[String, IrcServer]()
 
+  private val PING_TIMEOUT = 30
+
+  var pings: Map[String, Boolean] = Map()
+
   def start(): Unit ={
     Modules.loadAll()
     Configs.load()
@@ -21,12 +25,17 @@ object ConnectionManager {
     var servernames = ""
     for((k,v) <- Configs.configs){
       servernames += k + " "
-      servers.put(k,IrcServerCreator.create(k,v.getServer,v.getPort,v.useSSL))
+      servers.put(k,IrcServerCreator.create(k, v.getServer, v.getPort, v.useSSL))
     }
     Out.println(s"Found servers: $servernames")
 
     for((k,v) <- servers){
-      connectToServer(k)
+      new Thread(new Runnable {
+        override def run(): Unit = {
+          connectToServer(k)
+        }
+      }).start()
+
     }
   }
 
@@ -34,8 +43,8 @@ object ConnectionManager {
     val server: IrcServer = servers.get(name)
     server.connect()
     server.login()
-    Out.println("Logged in")
-    server.addListener(new OnMessageListener {
+    Out.println(s"Logged in to $name")
+    server.addListener("main", new OnMessageListener {
       override def onMessage(m: Message, b: BotCommand, r: ServerResponder): Unit =
       Modules.parseToAllModules(m,b,r)
     })
@@ -45,6 +54,7 @@ object ConnectionManager {
       }
     }).start()
     joinChannels(name)
+    checkPing(name)
   }
 
   def joinChannels(name: String): Unit ={
@@ -57,5 +67,20 @@ object ConnectionManager {
         }
       }
     }).start()
+  }
+
+  def checkPing(name: String): Unit ={
+    Thread.sleep(5000)
+    var connected = true
+    while(connected){
+      servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
+      pings += (name -> false)
+      Thread.sleep(PING_TIMEOUT*1000)
+      if(!pings(name)){
+        servers.get(name).disconnect()
+        connectToServer(name)
+        connected = false
+      }
+    }
   }
 }

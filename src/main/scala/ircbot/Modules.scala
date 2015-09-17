@@ -2,7 +2,7 @@ package ircbot
 
 import java.util
 
-import coremodules.{IBIP, CTCP, Ping}
+import coremodules.{Help, IBIP, CTCP, Ping}
 import irc.message.Message
 import irc.server.ServerResponder
 
@@ -41,5 +41,6 @@ object Modules {
     modules.add(new Ping)
     modules.add(new CTCP)
     modules.add(new IBIP)
+    modules.add(new Help)
   }
 }

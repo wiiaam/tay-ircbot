@@ -2,6 +2,9 @@ package irc.message
 
 import java.util
 
+import irc.message.MessageCommands.MessageCommand
+import out.Out
+
 class Message(ircFormattedString: String, serverName:String) {
   val server = serverName
   private var msgSender = new MessageSender("fakenick!fakeuser@fakehost")
@@ -10,45 +13,42 @@ class Message(ircFormattedString: String, serverName:String) {
   private var msgTrailing: String = ""
   if(ircFormattedString.startsWith(":")) {
     msgSender = new MessageSender(ircFormattedString.split("\\s+")(0).substring(1))
-    val split = ircFormattedString.split(":")
-    if(split.length > 2) {
-      for(i: Int <- 2 until split.length) {
-        msgTrailing += split(i) + ":"
-      }
-      msgTrailing = msgTrailing.substring(0, msgTrailing.length-1)
-    }
-    val prefixSplit = split(1).split("\\s+")
-    msgCommand = MessageCommands.valueOf(prefixSplit(1))
+    val split = ircFormattedString.split("\\s+")
+    var isTrailing = false
+    val paramsList = new util.ArrayList[String]()
+    msgCommand = MessageCommands.valueOf(split(1))
+    for(i <- 2 until split.length){
 
-
-    val paramarray: Array[String] = {
-      val list = new util.ArrayList[String]()
-      for(i <- 2 until prefixSplit.length){
-        list.add(prefixSplit(i))
+      val next = split(i)
+      if(isTrailing) {
+        msgTrailing += (" " + next)
       }
-      list.toArray(new Array[String](0))
+      else if (next.startsWith(":")) {
+        isTrailing = true
+        msgTrailing += next.substring(1)
+      }
+      else paramsList.add(next)
     }
-    msgParams = new MessageParams(paramarray)
+    msgParams = new MessageParams(paramsList.toArray(new Array[String](0)))
   }
   else{
-    val split = ircFormattedString.split(":")
-    val prefix = split(0)
-    val prefixSplit = prefix.split("\\s+")
-    msgCommand = MessageCommands.valueOf(prefixSplit(0))
-    val paramarray: Array[String] = {
-      val list = new util.ArrayList[String]()
-      for(i <- 1 until prefixSplit.length){
-        list.add(prefixSplit(i))
+    val split = ircFormattedString.split("\\s+")
+    var isTrailing = false
+    val paramsList = new util.ArrayList[String]()
+    msgCommand = MessageCommands.valueOf(split(0))
+    for(i <- 1 until split.length){
+
+      val next = split(i)
+      if(isTrailing) {
+        msgTrailing += (" " + next)
       }
-      list.toArray(new Array[String](0))
-    }
-    msgParams = new MessageParams(paramarray)
-    if(split.length > 1) {
-      for(i: Int <- 1 until split.length) {
-        msgTrailing += split(i) + ":"
+      else if (next.startsWith(":")) {
+        isTrailing = true
+        msgTrailing += next.substring(1)
       }
-      msgTrailing = msgTrailing.substring(0, msgTrailing.length-1)
+      else paramsList.add(next)
     }
+    msgParams = new MessageParams(paramsList.toArray(new Array[String](0)))
   }
 
   val sender = msgSender

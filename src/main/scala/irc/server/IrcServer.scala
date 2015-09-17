@@ -16,24 +16,25 @@ import java.security.cert.CertificateException
 
 
 class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
-  private var listeners = new util.ArrayList[OnMessageListener]
+  private var listeners: Map[String, OnMessageListener] = Map()
   private var socket: Option[Socket] = None
   private var in: Option[Scanner] = None
   private var out: Option[PrintStream] = None
   private var toSend = new util.ArrayDeque[String]
   private var toSendLP = new util.ArrayDeque[String]
+  private var connected = false
 
   sendQueueToSocket()
 
-  def addListener(onMessageListener: OnMessageListener): Unit ={
-    listeners.add(onMessageListener)
+  def addListener(name: String, onMessageListener: OnMessageListener): Unit ={
+    listeners += (name -> onMessageListener)
   }
 
   private def onMessageReceived(message: String) = {
-    for(i <- 0 until listeners.size()){
+    for((k,v) <- listeners){
       Out.println(s"$name --> $message")
       val m = new Message(message, name)
-      listeners.get(i).onMessage(m,new BotCommand(m), new ServerResponder(this))
+      v.onMessage(m,new BotCommand(m, Configs.get(name).get.getCommandPrefix), new ServerResponder(this))
     }
   }
 
@@ -55,6 +56,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     else socket = Some(new Socket(address, port))
     in = Some(new Scanner(socket.get.getInputStream))
     out = Some(new PrintStream(socket.get.getOutputStream))
+    connected = true
   }
 
   def login(): Unit = {
@@ -81,11 +83,12 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
             config.setNickname(nick + "_")
             if(config.useNickServ && config.ghostExisting){
               send("NICK " + nick + "_")
-             Thread.sleep(2000)
-             send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
-             Thread.sleep(2000)
-             send("NICK " + nick)
-             loggedIn = true
+              Thread.sleep(2000)
+              send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
+              Thread.sleep(2000)
+              send("NICK " + nick)
+              send("PRIVMSG NickServ :IDENTIFY " + config.getPassword)
+              loggedIn = true
             }
           case _ =>
         }
@@ -96,7 +99,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   def listenOnSocket(): Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        while(true){
+        while(connected){
           if(in.get.hasNextLine){
             onMessageReceived(in.get.nextLine())
           }
@@ -113,11 +116,12 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
           Thread.sleep(50)
           if(!toSend.isEmpty){
             val tosend = toSend.poll()
-            Out.println(s"$name <--  $tosend")
+            Out.println(s"$name <-- $tosend")
             out.get.print(tosend + "\r\n")
           }
           else if(!toSendLP.isEmpty){
             out.get.print(toSendLP.poll() + "\r\n")
+            out.get.flush()
           }
         }
       }
@@ -171,6 +175,16 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
 
       }
     }
+  }
+
+  def disconnect(): Unit ={
+    connected = false
+    out.get.print("QUIT :No response from server\r\n")
+    out.get.flush()
+    out = None
+    in = None
+    socket.get.close()
+    socket = None
   }
 
 }

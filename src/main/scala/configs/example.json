@@ -2,7 +2,7 @@
   "_info":"This is an example file for an IRC server configuration",
   "server":"irc.rizon.net",
   "port":6667,
-  "ssl":true,
+  "ssl":false,
   "nickserv":false,
   "ghostexisting":false,
   "password":"",
