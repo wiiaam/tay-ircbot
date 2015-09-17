@@ -5,6 +5,7 @@ import java.util
 import coremodules.{Help, IBIP, CTCP, Ping}
 import irc.message.Message
 import irc.server.ServerResponder
+import modules.TitleReporting
 
 
 object Modules {
@@ -42,5 +43,6 @@ object Modules {
     modules.add(new CTCP)
     modules.add(new IBIP)
     modules.add(new Help)
+    modules.add(new TitleReporting)
   }
 }

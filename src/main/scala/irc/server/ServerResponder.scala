@@ -15,6 +15,11 @@ class ServerResponder(ircServer: IrcServer) {
     ircServer.send(s"NOTICE $target :$message")
   }
 
+  def say(target: String, message: String): Unit = {
+    if(target.startsWith("#")) ircServer.send(s"PRIVMSG $target :$message")
+    else ircServer.send(s"NOTICE $target :$message")
+  }
+
   def send(message: String, priority: Priorities.Value): Unit = {
     ircServer.send(message, priority)
   }
@@ -25,6 +30,11 @@ class ServerResponder(ircServer: IrcServer) {
 
   def notice(target: String, message: String, priority: Priorities.Value): Unit ={
     ircServer.send(s"NOTICE $target :$message", priority)
+  }
+
+  def say(target: String, message: String, priority: Priorities.Value): Unit = {
+    if(target.startsWith("#")) ircServer.send(s"PRIVMSG $target :$message", priority)
+    else ircServer.send(s"NOTICE $target :$message", priority)
   }
 
   def join(room :String): Unit ={

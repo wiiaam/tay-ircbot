@@ -13,8 +13,5 @@ class Help extends Module{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val bAsDot = new BotCommand(m,".")
-
-    Out.println(m.command + "")
-    Out.println(m.trailing)
   }
 }
