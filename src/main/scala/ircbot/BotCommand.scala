@@ -3,11 +3,11 @@ package ircbot
 import java.util
 
 import irc.message.Message
+import out.Out
 
 
 class BotCommand(m: Message, prefix: String) {
   private var isBotCommandHolder = false
-  private var hasParamsHolder = false
   private var commandHolder = ""
   private var paramsArrayHolder: Array[String] = Array()
   private var paramsHolder = ""
@@ -19,7 +19,7 @@ class BotCommand(m: Message, prefix: String) {
     isBotCommandHolder = m.trailing.startsWith(prefix)
     if(isBotCommandHolder) {
       var split = m.trailing.substring(prefix.length).split("\\s+")
-      val commandHolder = split(0)
+      commandHolder = split(0)
       val list = new util.ArrayList[String]()
       for(i <- 1 until split.length){
         list.add(split(i))
@@ -29,7 +29,7 @@ class BotCommand(m: Message, prefix: String) {
   }
 
   val isBotCommand = isBotCommandHolder
-  val hasParams = hasParamsHolder
+  val hasParams = paramsArrayHolder.length > 0
   val command = commandHolder
   val paramsArray = paramsArrayHolder
   val paramsString = paramsHolder

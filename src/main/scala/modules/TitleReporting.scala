@@ -14,7 +14,6 @@ class TitleReporting extends Module{
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
 
     if(m.command == MessageCommands.PRIVMSG && !m.trailing.contains("Reporting in!")){
-      Out.println("isurl")
       if(m.trailing.contains("http://") || m.trailing.contains("https://")){
         val messageSplit: Array[String] = m.trailing.split("\\s+")
         for(i <- 0 until messageSplit.length){

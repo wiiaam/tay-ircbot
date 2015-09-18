@@ -2,5 +2,8 @@ package irc.message
 
 class MessageParams(params: Array[String]) {
   val array = params
-  def first = params(0)
+  val first = {
+    if(params.length > 0) params(0)
+    else ""
+  }
 }
