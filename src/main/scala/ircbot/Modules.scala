@@ -3,6 +3,8 @@ package ircbot
 import java.io.File
 import java.net.URISyntaxException
 import java.util
+import out.Out
+
 import scala.collection.JavaConversions._
 import coremodules.{Help, IBIP, CTCP, Ping}
 import irc.message.Message
@@ -12,7 +14,7 @@ object Modules {
   var coreModules = new util.ArrayList[Module]()
   var modules: util.ArrayList[Module] = new util.ArrayList[Module]()
 
-  def loadCore(): Unit ={
+  def loadCore(): Unit = {
     modules.add(new Ping)
     modules.add(new CTCP)
     modules.add(new IBIP)
@@ -20,14 +22,13 @@ object Modules {
   }
 
 
-
-  def parseToAllModules(m: Message, b: BotCommand, r: ServerResponder): Unit ={
+  def parseToAllModules(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        for(i <- 0 until modules.size()){
+        for (i <- 0 until modules.size()) {
           new Thread(new Runnable {
             override def run(): Unit = {
-              modules.get(i).parse(m,b,r)
+              modules.get(i).parse(m, b, r)
             }
           }).start()
         }
@@ -35,10 +36,10 @@ object Modules {
     }).start()
     new Thread(new Runnable {
       override def run(): Unit = {
-        for(i <- 0 until coreModules.size()){
+        for (i <- 0 until coreModules.size()) {
           new Thread(new Runnable {
             override def run(): Unit = {
-              coreModules.get(i).parse(m,b,r)
+              coreModules.get(i).parse(m, b, r)
             }
           }).start()
         }
@@ -52,8 +53,8 @@ object Modules {
       val directory = new File(Modules.getClass.getResource("../modules/").toURI())
       if (directory.exists()) {
         val files = directory.list()
-        for (i <- 0 until files.length){
-          if(files(i).endsWith(".class") && !files(i).endsWith("$1.class")) {
+        for (i <- 0 until files.length) {
+          if (files(i).endsWith(".class") && !files(i).endsWith("$1.class")) {
             val className: String = files(i).substring(0, files(i).length - 6)
             new Thread(new Runnable() {
               def run() {
@@ -90,7 +91,11 @@ object Modules {
     cl = Class.forName("modules." + module)
     val interfaces = cl.getInterfaces
     var isModule = false
-    for (i <- 0 until interfaces.length if interfaces(i) == classOf[Module]) isModule = true
+    for (j <- 0 until interfaces.length) {
+      if(!isModule) {
+        if (interfaces(j) == classOf[Module]) isModule = true
+      }
+    }
     if (!isModule) {
       throw new IllegalArgumentException("Class " + cl.getName + " does not implement module")
     }
@@ -105,7 +110,9 @@ object Modules {
 
   private def add(m: Module) {
     val modulesloaded = new util.ArrayList[Module](modules)
-    for (module <- modulesloaded if m.getClass.getSimpleName == module.getClass.getSimpleName) return
+    for (module <- modulesloaded){
+      if(m.getClass.getSimpleName == module.getClass.getSimpleName) return
+    }
     modules.add(m)
   }
 
@@ -122,29 +129,39 @@ object Modules {
     val directory = new File(Modules.getClass.getResource("../modules/").toURI)
     if (directory.exists()) {
       val files = directory.list()
-      for (i <- 0 until files.length if files(i).endsWith(".class") && !files(i).endsWith("$1.class")) {
-        val className = files(i).substring(0, files(i).length - 6)
-        var cl: Class[_] = null
-        var isModule = false
-        try {
-          cl = Class.forName("modules." + className)
-          val interfaces = cl.getInterfaces
-          for (j <- 0 until interfaces.length if interfaces(j) == classOf[Module]) isModule = true
-        } catch {
-          case e: ClassNotFoundException => e.printStackTrace()
-        }
-        var found = false
-        if(isModule) {
-          for (j <- 0 until modules.size){
-            if(!found && modules.get(j).getClass.getSimpleName == className){
-              map.put(className, "loaded")
-              found = true
+      for (i <- 0 until files.length){
+        if (files(i).endsWith(".class") && !files(i).endsWith("$1.class")) {
+          val className = files(i).substring(0, files(i).length - 6)
+          var cl: Class[_] = null
+          var isModule = false
+          try {
+            cl = Class.forName("modules." + className)
+            val interfaces = cl.getInterfaces
+            for (j <- 0 until interfaces.length) {
+              if(!isModule) {
+                if (interfaces(j) == classOf[Module]) isModule = true
+              }
+            }
+          } catch {
+            case e: ClassNotFoundException => e.printStackTrace()
+          }
+          var found = false
+          if (isModule) {
+            for (j <- 0 until modules.size) {
+              Out.println(modules.get(j).getClass.getSimpleName)
+              if (!found && modules.get(j).getClass.getSimpleName == className) {
+                map.put(className, "loaded")
+                found = true
+              }
             }
           }
+          if (!found && isModule) map.put(className, "unloaded")
+          Out.println(s"$found $isModule")
         }
-        if (!found && isModule) map.put(className, "unloaded")
       }
     }
     map
   }
+
+
 }
