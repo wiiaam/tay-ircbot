@@ -6,7 +6,7 @@ import java.util
 import out.Out
 
 import scala.collection.JavaConversions._
-import coremodules.{Help, IBIP, CTCP, Ping}
+import coremodules._
 import irc.message.Message
 import irc.server.ServerResponder
 
@@ -19,6 +19,8 @@ object Modules {
     modules.add(new CTCP)
     modules.add(new IBIP)
     modules.add(new Help)
+    modules.add(new InfoParser)
+    modules.add(new Admin)
   }
 
 
@@ -54,7 +56,7 @@ object Modules {
       if (directory.exists()) {
         val files = directory.list()
         for (i <- 0 until files.length) {
-          if (files(i).endsWith(".class") && !files(i).endsWith("$1.class")) {
+          if (files(i).endsWith(".class") && !files(i).contains("$")) {
             val className: String = files(i).substring(0, files(i).length - 6)
             new Thread(new Runnable() {
               def run() {

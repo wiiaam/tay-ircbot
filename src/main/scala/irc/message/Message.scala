@@ -2,17 +2,18 @@ package irc.message
 
 import java.util
 
+import irc.config.Configs
 import irc.message.MessageCommands.MessageCommand
 import out.Out
 
 class Message(ircFormattedString: String, serverName:String) {
   val server = serverName
-  private var msgSender = new MessageSender("fakenick!fakeuser@fakehost")
+  private var msgSender = new MessageSender("fakenick!fakeuser@fakehost", "fakeserver")
   private var msgCommand = MessageCommands.UNKNOWN
   private var msgParams: MessageParams = _
   private var msgTrailing: String = ""
   if(ircFormattedString.startsWith(":")) {
-    msgSender = new MessageSender(ircFormattedString.split("\\s+")(0).substring(1))
+    msgSender = new MessageSender(ircFormattedString.split("\\s+")(0).substring(1), server)
     val split = ircFormattedString.split("\\s+")
     var isTrailing = false
     val paramsList = new util.ArrayList[String]()

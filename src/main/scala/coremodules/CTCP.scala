@@ -8,7 +8,7 @@ import out.Out
 
 class CTCP extends Module{
 
-  override val commands: Map[String, String] = Map()
+  override val commands: Map[String, Array[String]] = Map()
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
 

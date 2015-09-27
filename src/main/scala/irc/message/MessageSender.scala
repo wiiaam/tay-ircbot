@@ -1,6 +1,11 @@
 package irc.message
 
-class MessageSender(sender: String) {
+import irc.config.Configs
+import irc.info.Info
+import out.Out
+import scala.collection.JavaConversions._
+
+class MessageSender(sender: String, serverName: String) {
   val isServer = !sender.contains("@")
 
 
@@ -25,5 +30,34 @@ class MessageSender(sender: String) {
   }
   else {
     split(1)
+  }
+
+  def isAdmin: Boolean = {
+    val config = Configs.get(serverName).get
+    val admins = config.getAdmins
+    val isRegistered = if(Info.get(serverName).isDefined){
+      if(Info.get(serverName).get.findUser(nickname).isEmpty) false
+      else{
+        Info.get(serverName).get.findUser(nickname).get.isRegistered
+      }
+
+    }
+    else false
+
+    for(admin: String <- admins){
+      if(admin.startsWith("@") && admin == "@" + address) true
+      if(isRegistered && nickname == admin) true
+    }
+    false
+  }
+
+  def isRegistered: Boolean = {
+    if(Info.get(serverName).isDefined) {
+      if (Info.get(serverName).get.findUser(nickname).isEmpty) false
+      else {
+        Info.get(serverName).get.findUser(nickname).get.isRegistered
+      }
+    }
+    else false
   }
 }

@@ -1,5 +1,6 @@
 package coremodules
 
+import irc.config.Configs
 import irc.message.Message
 import irc.server.ServerResponder
 import ircbot.{Modules, Module, BotCommand}
@@ -10,14 +11,15 @@ import scala.collection.JavaConversions._
 
 class Help extends Module{
 
-  override val commands: Map[String, String] = Map("help" -> "Displays help information. Use .help <command> for more info" )
+  override val commands: Map[String, Array[String]] = Map("help" -> Array("Displays help information. Use .help <command> for more info") )
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val bAsDot = new BotCommand(m,".")
     Out.println(s"bot command: ${bAsDot.isBotCommand}, command: ${bAsDot.command}")
+    Out.println(s"sender is registered: ${m.sender.isRegistered}")
     if(bAsDot.command == "help"){
       if(bAsDot.hasParams){
-        var allCommands: Map[String,String] = Map()
+        var allCommands: Map[String,Array[String]] = Map()
         for(module <- Modules.modules){
           allCommands = allCommands ++ module.commands
         }
@@ -26,10 +28,10 @@ class Help extends Module{
         }
         val command = bAsDot.paramsArray(0)
         for((k,v) <- allCommands){
-          Out.println(s"command $k, val $v")
         }
         if(allCommands.contains(command)){
-          r.notice(m.sender.nickname, s"[$command] ${allCommands(command)}")
+          for(message <- allCommands(command))
+          r.notice(m.sender.nickname, s"[$command] ${message.replace("%p",Configs.get(m.server).get.getCommandPrefix)}")
         }
         else{
           r.notice(m.sender.nickname, s"$command is not a valid command")

@@ -2,6 +2,7 @@ package ircbot
 
 import java.util
 
+import irc.config.Configs
 import irc.message.Message
 import out.Out
 
@@ -12,7 +13,7 @@ class BotCommand(m: Message, prefix: String) {
   private var paramsArrayHolder: Array[String] = Array()
   private var paramsHolder = ""
 
-  if(prefix == "self"){
+  if(prefix == Configs.get(m.server).get.getNickname + ": "){
 
   }
   else{
