@@ -3,6 +3,7 @@ package irc.config
 import java.io.{FileWriter, BufferedReader, FileReader, File}
 import java.util
 import org.json.{JSONArray, JSONObject}
+import out.Out
 import scala.collection.JavaConversions._
 
 
@@ -69,14 +70,32 @@ class Config(jsonFile: File)  {
     write()
   }
 
-  def addIgnore(admin: String): Unit = {
-    ignoreset.add(admin)
+  def addIgnore(ignore: String): Unit = {
+    ignoreset.add(ignore)
     onIgnoreChange()
     write()
   }
 
-  def addChannel(admin: String): Unit = {
-    channelset.add(admin)
+  def addChannel(channel: String): Unit = {
+    channelset.add(channel)
+    onChannelsChange()
+    write()
+  }
+
+  def removeAdmin(admin: String): Unit = {
+    adminset.remove(admin)
+    onAdminChange()
+    write()
+  }
+
+  def removeIgnore(ignore: String): Unit = {
+    ignoreset.remove(ignore)
+    onIgnoreChange()
+    write()
+  }
+
+  def removeChannel(channel: String): Unit = {
+    channelset.remove(channel)
     onChannelsChange()
     write()
   }
@@ -87,6 +106,7 @@ class Config(jsonFile: File)  {
     for(admin: String <- adminset){
       admins.put(admin)
     }
+    json.put("admins", admins)
   }
 
   private def onIgnoreChange() {
@@ -94,19 +114,21 @@ class Config(jsonFile: File)  {
     for(ignore: String <- ignoreset){
       ignores.put(ignore)
     }
+    json.put("ignores", ignores)
   }
 
   private def onChannelsChange() {
-    val rooms = new JSONArray()
-    for(room: String <- channelset){
-      rooms.put(room)
+    val channels = new JSONArray()
+    for(channel: String <- channelset){
+      channels.put(channel)
     }
+    json.put("channels", channels)
   }
 
   private def write() {
     val writer = new FileWriter(jsonFile,false)
     writer.write(json.toString)
     writer.close()
-    Configs.set(jsonFile.getName.split(".")(0), this)
+    Configs.set(jsonFile.getName.split("\\.")(0), this)
   }
 }

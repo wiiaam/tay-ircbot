@@ -10,7 +10,13 @@ class Admin extends Module{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PRIVMSG){
-
+      if(m.sender.isAdmin){
+        if(b.command == "join"){
+          for(room <- b.paramsArray){
+            r.join(room)
+          }
+        }
+      }
     }
   }
 }

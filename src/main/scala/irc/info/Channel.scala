@@ -34,14 +34,14 @@ class Channel {
    * -1 = user does not exist
    */
   def getRank(nick: String): Int ={
-    if(!users.contains(nick)) -1
+    if(!users.contains(nick)) return -1
     val user = users(nick)
     val modes = user.modes
-    if(modes.contains("~")) 5
-    if(modes.contains("&")) 4
-    if(modes.contains("@")) 3
-    if(modes.contains("%")) 2
-    if(modes.contains("+")) 1
+    if(modes.contains("~")) return 5
+    if(modes.contains("&")) return 4
+    if(modes.contains("@")) return 3
+    if(modes.contains("%")) return 2
+    if(modes.contains("+")) return 1
     0
   }
 }

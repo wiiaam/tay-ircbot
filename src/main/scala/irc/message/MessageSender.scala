@@ -25,7 +25,7 @@ class MessageSender(sender: String, serverName: String) {
     split = split(1).split("@")
     split(0)
   }
-  val address = if(isServer){
+  val host = if(isServer){
     sender
   }
   else {
@@ -36,7 +36,7 @@ class MessageSender(sender: String, serverName: String) {
     val config = Configs.get(serverName).get
     val admins = config.getAdmins
     val isRegistered = if(Info.get(serverName).isDefined){
-      if(Info.get(serverName).get.findUser(nickname).isEmpty) false
+      if(Info.get(serverName).get.findUser(nickname).isEmpty) return false
       else{
         Info.get(serverName).get.findUser(nickname).get.isRegistered
       }
@@ -45,8 +45,8 @@ class MessageSender(sender: String, serverName: String) {
     else false
 
     for(admin: String <- admins){
-      if(admin.startsWith("@") && admin == "@" + address) true
-      if(isRegistered && nickname == admin) true
+      if(admin.startsWith("@") && admin == "@" + host) return true
+      if(isRegistered && nickname == admin) return true
     }
     false
   }

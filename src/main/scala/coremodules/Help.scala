@@ -15,8 +15,6 @@ class Help extends Module{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val bAsDot = new BotCommand(m,".")
-    Out.println(s"bot command: ${bAsDot.isBotCommand}, command: ${bAsDot.command}")
-    Out.println(s"sender is registered: ${m.sender.isRegistered}")
     if(bAsDot.command == "help"){
       if(bAsDot.hasParams){
         var allCommands: Map[String,Array[String]] = Map()

@@ -21,6 +21,7 @@ object Modules {
     modules.add(new Help)
     modules.add(new InfoParser)
     modules.add(new Admin)
+    modules.add(new ConfigUpdater)
   }
 
 

@@ -37,12 +37,20 @@ class ServerResponder(ircServer: IrcServer) {
     else ircServer.send(s"NOTICE $target :$message", priority)
   }
 
-  def join(room :String): Unit ={
-    ircServer.send(s"JOIN $room")
+  def join(channel :String): Unit ={
+    ircServer.send(s"JOIN $channel")
   }
 
-  def part(room: String): Unit ={
-    ircServer.send(s"PART $room")
+  def part(channel: String): Unit ={
+    ircServer.send(s"PART $channel")
+  }
+
+  def topic(channel: String, topic: String): Unit ={
+    ircServer.send(s"TOPIC $channel :$topic")
+  }
+
+  def CTCP(target: String, message: String): Unit ={
+    pm(target, "\u0001" + message + "\u0001")
   }
 
 }

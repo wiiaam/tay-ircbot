@@ -34,6 +34,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     for((k,v) <- listeners){
       Out.println(s"$name --> $message")
       val m = new Message(message, name)
+      Out.println(s"sender is registered: ${m.sender.isRegistered}, sender is admin: ${m.sender.isAdmin}")
       v.onMessage(m,new BotCommand(m, Configs.get(name).get.getCommandPrefix), new ServerResponder(this))
     }
   }
@@ -69,7 +70,11 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
         val next = in.get.nextLine()
 
         val message = new Message(next, name)
+
+
         Out.println(String.format("%s --> %s %s", name, message.command.toString, message.trailing))
+
+
         message.command match {
           case MessageCommands.CONNECTED =>
             Out.println(s"Connected to $name")
