@@ -9,11 +9,25 @@ class Admin extends Module{
   override val commands: Map[String, Array[String]] = Map()
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
-    if(m.command == MessageCommands.PRIVMSG){
+    if(m.command == MessageCommands.PRIVMSG || m.command == MessageCommands.NOTICE){
       if(m.sender.isAdmin){
         if(b.command == "join"){
-          for(room <- b.paramsArray){
-            r.join(room)
+          for(channel <- b.paramsArray){
+            r.join(channel)
+          }
+        }
+
+        if(b.command == "nick"){
+          if(b.hasParams) r.nick(b.paramsArray(0))
+        }
+
+        if(b.command == "leave"){
+          if(m.params.first.startsWith("#")) r.part(m.params.first)
+        }
+
+        if(b.command == "part"){
+          for(channel <- b.paramsArray){
+            r.part(channel)
           }
         }
       }

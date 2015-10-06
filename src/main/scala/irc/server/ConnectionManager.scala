@@ -40,6 +40,9 @@ object ConnectionManager {
   }
 
   def connectToServer(name: String){
+    if(!servers.containsKey(name)){
+      Out.println(s"Cannot connect to server $name (server not loaded)")
+    }
     val server: IrcServer = servers.get(name)
     server.connect()
     server.login()
@@ -53,6 +56,7 @@ object ConnectionManager {
         server.listenOnSocket()
       }
     }).start()
+    if(Configs.get(name).get.useNickServ) Thread.sleep(1000)
     joinChannels(name)
     checkPing(name)
   }

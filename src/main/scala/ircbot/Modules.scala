@@ -10,28 +10,31 @@ import coremodules._
 import irc.message.Message
 import irc.server.ServerResponder
 
+import scala.collection.mutable.ArrayBuffer
+
 object Modules {
   var coreModules = new util.ArrayList[Module]()
-  var modules: util.ArrayList[Module] = new util.ArrayList[Module]()
+  var modules: ArrayBuffer[Module] = ArrayBuffer()
 
   def loadCore(): Unit = {
-    modules.add(new Ping)
-    modules.add(new CTCP)
-    modules.add(new IBIP)
-    modules.add(new Help)
-    modules.add(new InfoParser)
-    modules.add(new Admin)
-    modules.add(new ConfigUpdater)
+    modules :+= new Ping
+    modules :+= new CTCP
+    modules :+= new IBIP
+    modules :+= new Help
+    modules :+= new InfoParser
+    modules :+= new Admin
+    modules :+= new ConfigUpdater
+    modules :+= new NickServ
   }
 
 
   def parseToAllModules(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        for (i <- 0 until modules.size()) {
+        for (module <- modules) {
           new Thread(new Runnable {
             override def run(): Unit = {
-              modules.get(i).parse(m, b, r)
+              module.parse(m, b, r)
             }
           }).start()
         }
@@ -53,7 +56,7 @@ object Modules {
   def loadAll() {
     loadCore()
     try {
-      val directory = new File(Modules.getClass.getResource("../modules/").toURI())
+      val directory = new File(Modules.getClass.getResource("../modules/").toURI)
       if (directory.exists()) {
         val files = directory.list()
         for (i <- 0 until files.length) {
@@ -87,8 +90,10 @@ object Modules {
   }
 
   def load(module: String) {
-    for (i <- 0 until modules.size if modules.get(i).getClass.getSimpleName == module) {
-      throw new IllegalArgumentException("Module already loaded")
+    for (i <- modules.indices){
+      if(modules(i).getClass.getSimpleName == module){
+        throw new IllegalArgumentException("Module already loaded")
+      }
     }
     var cl: Class[_] = null
     cl = Class.forName("modules." + module)
@@ -112,17 +117,19 @@ object Modules {
   }
 
   private def add(m: Module) {
-    val modulesloaded = new util.ArrayList[Module](modules)
+    val modulesloaded = Array() ++ modules
     for (module <- modulesloaded){
       if(m.getClass.getSimpleName == module.getClass.getSimpleName) return
     }
-    modules.add(m)
+    modules :+= m
   }
 
   def unload(module: String): Boolean = {
-    for (i <- 0 until modules.size if modules.get(i).getClass.getSimpleName == module) {
-      modules.remove(i)
-      return true
+    for (i <- modules.indices) {
+      if (modules.get(i).getClass.getSimpleName == module) {
+        modules.remove(i)
+        return true
+      }
     }
     false
   }
@@ -150,7 +157,7 @@ object Modules {
           }
           var found = false
           if (isModule) {
-            for (j <- 0 until modules.size) {
+            for (j <- modules.indices) {
               Out.println(modules.get(j).getClass.getSimpleName)
               if (!found && modules.get(j).getClass.getSimpleName == className) {
                 map.put(className, "loaded")

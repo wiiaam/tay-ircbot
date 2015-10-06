@@ -54,9 +54,15 @@ class Config(jsonFile: File)  {
 
   def getPassword: String = json.getString("password")
 
-  def setNickname(nick: String) = json.put("nickname", nick)
+  def setNickname(nick: String) = {
+    json.put("nickname", nick)
+    write()
+  }
 
-  def setCommandPrefix(prefix: String) = json.put("commandprefix", prefix)
+  def setCommandPrefix(prefix: String) = {
+    json.put("commandprefix", prefix)
+    write()
+  }
 
   def getAdmins: util.HashSet[String] = adminset
 

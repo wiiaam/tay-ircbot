@@ -14,6 +14,7 @@ class Help extends Module{
   override val commands: Map[String, Array[String]] = Map("help" -> Array("Displays help information. Use .help <command> for more info") )
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
+
     val bAsDot = new BotCommand(m,".")
     if(bAsDot.command == "help"){
       if(bAsDot.hasParams){

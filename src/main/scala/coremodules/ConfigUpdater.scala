@@ -20,5 +20,10 @@ class ConfigUpdater extends Module{
         config.removeChannel(m.trailing)
       }
     }
+
+    if(m.command == MessageCommands.NICK && m.sender.nickname == m.config.getNickname){
+      val config = m.config
+      config.setNickname(m.trailing)
+    }
   }
 }

@@ -56,4 +56,5 @@ class Message(ircFormattedString: String, serverName:String) {
   val command = msgCommand
   val params = msgParams
   val trailing = msgTrailing
+  def config = Configs.get(server).get
 }

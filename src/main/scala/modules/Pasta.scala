@@ -43,7 +43,7 @@ class Pasta extends Module{
         }
       }
 
-      if (m.command == MessageCommands.TOPIC && m.params.first == "#pasta") {
+      if (m.command == MessageCommands.TOPIC && m.params.first == "#pasta" && false) { // TODO enable later
         if(!m.trailing.startsWith(pastatopic + " ||")){
           r.topic(m.params.first, pastatopic + " || " + m.trailing)
         }
@@ -59,7 +59,7 @@ class Pasta extends Module{
               changeTopic(b.paramsString)
               r.say(target, s"${m.sender.nickname}: Topic prefix successfully set. The new prefix will be applied next time the topic changes")
             }
-            else r.say(target, s"Usage: ${Configs.get(m.server).get.getCommandPrefix}pastatopic <topic prefix>")
+            else r.say(target, s"Usage: ${m.config.getCommandPrefix}pastatopic <topic prefix>")
           }
           else{
             r.say(target, "You need to be at least SOP (+a) in #pasta to use this command")

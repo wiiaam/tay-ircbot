@@ -49,6 +49,10 @@ class ServerResponder(ircServer: IrcServer) {
     ircServer.send(s"TOPIC $channel :$topic")
   }
 
+  def nick(nick: String): Unit ={
+    ircServer.send("NICK " + nick)
+  }
+
   def CTCP(target: String, message: String): Unit ={
     pm(target, "\u0001" + message + "\u0001")
   }

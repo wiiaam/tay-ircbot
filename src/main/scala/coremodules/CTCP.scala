@@ -16,7 +16,7 @@ class CTCP extends Module{
       r.notice(m.sender.nickname, "\u0001VERSION go away\u0001")
     }
 
-    if(m.trailing.equals("\u0001PING\u0001")){
+    if(m.trailing.startsWith("\u0001PING")){
       r.notice(m.sender.nickname, m.trailing)
     }
   }

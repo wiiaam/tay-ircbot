@@ -78,9 +78,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
         message.command match {
           case MessageCommands.CONNECTED =>
             Out.println(s"Connected to $name")
-            if(config.useNickServ){
-              send("PRIVMSG NickServ :IDENTIFY " + config.getPassword)
-            }
             loggedIn = true
           case MessageCommands.NICKINUSE =>
             val nick = config.getNickname
@@ -92,7 +89,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
               send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
               Thread.sleep(2000)
               send("NICK " + nick)
-              send("PRIVMSG NickServ :IDENTIFY " + config.getPassword)
               loggedIn = true
             }
           case _ =>
