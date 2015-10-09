@@ -12,5 +12,4 @@ object IrcBot {
 
   }
 
-  var version = "1.0"
 }

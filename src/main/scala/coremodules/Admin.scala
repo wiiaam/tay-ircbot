@@ -30,6 +30,10 @@ class Admin extends Module{
             r.part(channel)
           }
         }
+
+        if(b.command == "pm"){
+          if(b.paramsArray.length > 1)r.pm(b.paramsArray(0), b.paramsString.substring(b.paramsArray(0).length + 1))
+        }
       }
     }
   }

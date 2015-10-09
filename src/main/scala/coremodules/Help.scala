@@ -3,10 +3,9 @@ package coremodules
 import irc.config.Configs
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{Modules, Module, BotCommand}
+import ircbot.{Constants, Modules, Module, BotCommand}
 import out.Out
 import scala.collection.JavaConversions._
-
 
 
 class Help extends Module{
@@ -48,6 +47,11 @@ class Help extends Module{
             commands += k + " "
           }
         }
+        r.notice(m.sender.nickname, "Current commands available:")
+        r.notice(m.sender.nickname, commands)
+        r.notice(m.sender.nickname, s"The current command prefix is: ${m.config.getCommandPrefix}")
+        r.notice(m.sender.nickname, s"To use a command: ${m.config.getCommandPrefix}<command>")
+        r.notice(m.sender.nickname, s"Licensed under the terms of the AGPL. Full source code can be found at ${Constants.REPO}")
       }
     }
   }

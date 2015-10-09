@@ -31,11 +31,15 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   }
 
   private def onMessageReceived(message: String) = {
+
+    val m = new Message(message, name)
+
+    val b = new BotCommand(m, Configs.get(name).get.getCommandPrefix)
+    val r = new ServerResponder(this)
+    Out.println(s"sender is registered: ${m.sender.isRegistered}, sender is admin: ${m.sender.isAdmin}")
     for((k,v) <- listeners){
       Out.println(s"$name --> $message")
-      val m = new Message(message, name)
-      Out.println(s"sender is registered: ${m.sender.isRegistered}, sender is admin: ${m.sender.isAdmin}")
-      v.onMessage(m,new BotCommand(m, Configs.get(name).get.getCommandPrefix), new ServerResponder(this))
+      v.onMessage(m,b,r)
     }
   }
 
@@ -111,19 +115,26 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   }
 
   private def sendQueueToSocket(): Unit = {
+    var spammed = 0
     new Thread(new Runnable {
       override def run(): Unit = {
         while(true){
-          Thread.sleep(50)
+          Thread.sleep(20)
           if(!toSend.isEmpty){
             val tosend = toSend.poll()
             Out.println(s"$name <-- $tosend")
             out.get.print(tosend + "\r\n")
+            out.get.flush()
+            if(spammed > 4)Thread.sleep(500)
+            else spammed += 1
           }
           else if(!toSendLP.isEmpty){
             out.get.print(toSendLP.poll() + "\r\n")
             out.get.flush()
+            if(spammed > 4)Thread.sleep(500)
+            else spammed += 1
           }
+          else if(spammed != 0) spammed = 0
         }
       }
     }).start()

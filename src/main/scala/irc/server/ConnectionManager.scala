@@ -81,6 +81,7 @@ object ConnectionManager {
       pings += (name -> false)
       Thread.sleep(PING_TIMEOUT*1000)
       if(!pings(name)){
+        Out.println(servers.get(name).name + " !!! Ping timeout")
         servers.get(name).disconnect()
         connectToServer(name)
         connected = false

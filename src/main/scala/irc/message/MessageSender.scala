@@ -36,7 +36,7 @@ class MessageSender(sender: String, serverName: String) {
     val config = Configs.get(serverName).get
     val admins = config.getAdmins
     val isRegistered = if(Info.get(serverName).isDefined){
-      if(Info.get(serverName).get.findUser(nickname).isEmpty) return false
+      if(Info.get(serverName).get.findUser(nickname).isEmpty) false
       else{
         Info.get(serverName).get.findUser(nickname).get.isRegistered
       }

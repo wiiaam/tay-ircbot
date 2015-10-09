@@ -14,8 +14,8 @@ class User(nick: String, user: String, hostAddress: String, real: String, usermo
   def parse(info: Map[String, String]): Unit ={
     username = Info.getMappedInfo("user", info).getOrElse(username)
     modes = Info.getMappedInfo("modes", info).getOrElse(modes)
-    realname = Info.getMappedInfo("user", info).getOrElse(realname)
-    host = Info.getMappedInfo("user", info).getOrElse(host)
+    realname = Info.getMappedInfo("realname", info).getOrElse(realname)
+    host = Info.getMappedInfo("host", info).getOrElse(host)
   }
 
   // Currently only working on rizon

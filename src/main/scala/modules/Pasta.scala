@@ -27,7 +27,7 @@ class Pasta extends Module{
   var currentTopic = ""
   sc.close()
 
-  override val commands: Map[String, Array[String]] = Map("rules" -> Array("RIZON ONLY | Only works in #pasta. Displays the current rules"),
+  override val commands: Map[String, Array[String]] = Map("rules" -> Array("(RIZON ONLY) Only works in #pasta. Displays the current rules"),
   "pastatopic" -> Array("RIZON ONLY | Sets the main topic in #pasta. Requires at least SOP (+a)"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {

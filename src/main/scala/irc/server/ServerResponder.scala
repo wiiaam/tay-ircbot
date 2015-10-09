@@ -57,4 +57,20 @@ class ServerResponder(ircServer: IrcServer) {
     pm(target, "\u0001" + message + "\u0001")
   }
 
+  def kick(channel: String, user: String): Unit ={
+    ircServer.send(s"KICK $channel $user :$user")
+  }
+
+  def kick(channel: String, user: String, message: String): Unit ={
+    ircServer.send(s"KICK $channel $user :$message")
+  }
+
+  def ban(channel: String, ban: String): Unit ={
+    ircServer.send(s"MODE $channel +b $ban")
+  }
+
+  def unban(channel: String, ban: String): Unit ={
+    ircServer.send(s"MODE $channel -b $ban")
+  }
+
 }
