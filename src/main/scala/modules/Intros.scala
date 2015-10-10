@@ -79,12 +79,6 @@ class Intros extends Module {
                   intro += b.paramsArray(i) + " "
                 }
                 intro = intro.trim().replaceAll("\n", "").replaceAll("\r", "")
-                  .replace("{", "\\{")
-                  .replace("}", "\\}")
-                  .replace("[", "\\[")
-                  .replace("]", "\\]")
-                  .replace(";", "\\;")
-                  .replace(":", "\\:")
                 if (userintros.length() == 10) {
                   r.say(target, s"${m.sender.nickname}: Sorry, you have already set the max number of intros. Use " +
                     s"${b.commandPrefix}intros del <intro> to remove some.")
