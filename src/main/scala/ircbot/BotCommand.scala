@@ -13,7 +13,8 @@ class BotCommand(m: Message, prefix: String) {
   private var paramsArrayHolder: Array[String] = Array()
   private var paramsHolder = ""
 
-  if(prefix == Configs.get(m.server).get.getNickname + ": "){
+
+  if(prefix == "self"){
 
   }
   else{
@@ -36,5 +37,8 @@ class BotCommand(m: Message, prefix: String) {
   val command = commandHolder
   val paramsArray = paramsArrayHolder
   val paramsString = paramsHolder
-  val commandPrefix = prefix
+  val commandPrefix = if(prefix == "self"){
+    m.config.getNickname + ": "
+  }
+  else prefix
 }

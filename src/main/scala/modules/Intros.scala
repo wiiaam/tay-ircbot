@@ -87,7 +87,7 @@ class Intros extends Module {
                   .replace(":", "\\:")
                 if (userintros.length() == 10) {
                   r.say(target, s"${m.sender.nickname}: Sorry, you have already set the max number of intros. Use " +
-                    s"${Configs.get(m.server).get.getCommandPrefix}intros del <intro> to remove some.")
+                    s"${b.commandPrefix}intros del <intro> to remove some.")
                 } else {
                   userintros.put(intro)
                   r.say(target, m.sender.nickname + ": Intro added. You now have " + userintros.length() +
@@ -95,7 +95,7 @@ class Intros extends Module {
                   save()
                 }
               } else {
-                r.say(target, m.sender.nickname + ": Usage: " + Configs.get(m.server).get.getCommandPrefix + "intros add <intro>")
+                r.say(target, m.sender.nickname + ": Usage: " + b.commandPrefix + "intros add <intro>")
               }
             } else if (b.paramsArray(0) == "del") { // Delete an intro
               if (b.paramsArray.length > 1) {
@@ -129,11 +129,11 @@ class Intros extends Module {
                   r.say(target, m.sender.nickname + ": Intro " + num + " does not exist")
                 }
               } else {
-                r.say(target, m.sender.nickname + ": Usage: " + Configs.get(m.server).get.getCommandPrefix + "intros del <num>")
+                r.say(target, m.sender.nickname + ": Usage: " + b.commandPrefix + "intros del <num>")
               }
             }
           } else {
-            r.say(target, "Usage : " + Configs.get(m.server).get.getCommandPrefix + "intros <add | list | del>")
+            r.say(target, "Usage : " + b.commandPrefix + "intros <add | list | del>")
           }
         } else {
           r.say(target, m.sender.nickname +

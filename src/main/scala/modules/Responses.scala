@@ -15,7 +15,8 @@ class Responses extends Module{
 
     if(m.command == MessageCommands.PRIVMSG){
       for(trigger <- Set("hi", "hey")){
-        if(m.trailing.contains(trigger) && m.trailing.contains(m.config.getNickname)){
+        if((m.trailing.toLowerCase.contains(" " + trigger + " ") || m.trailing.toLowerCase.startsWith(trigger + " "))
+          && m.trailing.contains(m.config.getNickname)){
           val responses = Array("hi", "hey")
           Thread.sleep(1200)
           if(Random.nextDouble() > 0.3)r.say(target, responses(Random.nextInt(responses.length)) + " " + m.sender.nickname)

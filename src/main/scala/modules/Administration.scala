@@ -63,11 +63,6 @@ class Administration extends Module{
           if(Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.sender.nickname) > 2){
             isop = true
           }
-        }
-      }
-
-      if(Info.get(m.server).isDefined){
-        if(Info.get(m.server).get.findChannel(m.params.first).isDefined ){
           if(Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.sender.nickname) > 1){
             ishop = true
           }
@@ -251,7 +246,7 @@ class Administration extends Module{
     // ADMIN TOGGLE
 
     if(b.command == "administration" && m.sender.isAdmin){
-      val usage = s"Usage: ${Configs.get(m.server).get.getCommandPrefix}administration <on/off> <channel>"
+      val usage = s"Usage: ${b.commandPrefix}administration <on/off> <channel>"
       if(b.hasParams){
         val channel = {
           if(b.paramsArray.length > 1) b.paramsArray(1)
@@ -298,7 +293,7 @@ class Administration extends Module{
     }
   }
 
-  def removeAntispam(channel: String, user: String, timeoutMillis: Long): Unit ={
+  private def removeAntispam(channel: String, user: String, timeoutMillis: Long): Unit ={
     new Thread(new Runnable {
       override def run(): Unit = {
         Thread.sleep(timeoutMillis)
@@ -315,7 +310,7 @@ class Administration extends Module{
     }).start()
   }
 
-  def removeBan(responder: ServerResponder, channel: String, ban: String, timeoutSeconds: Long): Unit ={
+  private def removeBan(responder: ServerResponder, channel: String, ban: String, timeoutSeconds: Long): Unit ={
     new Thread(new Runnable {
       override def run(): Unit = {
         Thread.sleep(timeoutSeconds*1000)

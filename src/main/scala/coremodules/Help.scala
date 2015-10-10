@@ -29,7 +29,7 @@ class Help extends Module{
         }
         if(allCommands.contains(command)){
           for(message <- allCommands(command))
-          r.notice(m.sender.nickname, s"[$command] ${message.replace("%p",Configs.get(m.server).get.getCommandPrefix)}")
+          r.notice(m.sender.nickname, s"[$command] ${message.replace("%p",b.commandPrefix)}")
         }
         else{
           r.notice(m.sender.nickname, s"$command is not a valid command")
@@ -49,8 +49,8 @@ class Help extends Module{
         }
         r.notice(m.sender.nickname, "Current commands available:")
         r.notice(m.sender.nickname, commands)
-        r.notice(m.sender.nickname, s"The current command prefix is: ${m.config.getCommandPrefix}")
-        r.notice(m.sender.nickname, s"To use a command: ${m.config.getCommandPrefix}<command>")
+        r.notice(m.sender.nickname, s"The current command prefix is: ${b.commandPrefix}")
+        r.notice(m.sender.nickname, s"To use a command: ${b.commandPrefix}<command>")
         r.notice(m.sender.nickname, s"Licensed under the terms of the AGPL. Full source code can be found at ${Constants.REPO}")
       }
     }

@@ -73,4 +73,8 @@ class ServerResponder(ircServer: IrcServer) {
     ircServer.send(s"MODE $channel -b $ban")
   }
 
+  def action(target: String, action: String): Unit ={
+    ircServer.send(s"PRIVMSG $target :\u0001ACTION ${action}\u0001")
+  }
+
 }

@@ -50,7 +50,7 @@ class TitleReporting extends Module{
 
 
     if(b.command == "urltitles" && m.sender.isAdmin){
-      val usage = s"Usage: ${Configs.get(m.server).get.getCommandPrefix}urltitles <on/off> <channel>"
+      val usage = s"Usage: ${b.commandPrefix}urltitles <on/off> <channel>"
       if(b.hasParams){
         if(b.paramsArray.length > 1){
           b.paramsArray(0) match  {
