@@ -4,4 +4,4 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-unmanagedJars in Compile ++= Seq(file( "lib/org.json-20130603.jar"), file("org.json-20130603.jar"))
+unmanagedJars in Compile ++= Seq(file( "lib/org.json-20130603.jar"), file("lib/chatter-bot-api-1.3.3.jar"))

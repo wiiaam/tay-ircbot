@@ -14,7 +14,7 @@ class BotCommand(m: Message, prefix: String) {
   private var paramsHolder = ""
 
 
-  if(prefix == "self"){
+  if(false){ // Holder for self prefix
 
   }
   else{
@@ -37,7 +37,7 @@ class BotCommand(m: Message, prefix: String) {
   val command = commandHolder
   val paramsArray = paramsArrayHolder
   val paramsString = paramsHolder
-  val commandPrefix = if(prefix == "self"){
+  val commandPrefix = if(false){ // Holder for self prefix
     m.config.getNickname + ": "
   }
   else prefix
