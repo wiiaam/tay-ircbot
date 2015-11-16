@@ -31,9 +31,10 @@ class nurupo extends Module{
         m.trailing.contains("\u0003") ||
         m.trailing.contains("mr bones wild ride") ||
         m.trailing.contains(".webm") ||
+        m.trailing.contains(":^)") ||
         m.trailing.contains(".gif") ) {
-        if (Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.config.getNickname) > 1) {
-          r.send(s"KICK ${m.params.first} ${m.sender.nickname} :No fun allowed")
+        if (Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.config.getNickname) > 1 ) {
+          r.kick(m.params.first,m.sender.nickname,"No fun allowed")
         }
         else{
           r.pm(target, m.sender.nickname + ": No fun allowed")

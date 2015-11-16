@@ -13,6 +13,7 @@ class NoCLI extends Module{
 
   var checks: Set[String] = Set()
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
+
     if(on) {
       if (m.command == MessageCommands.JOIN && m.trailing == "#pasta") {
         checks = checks + m.sender.nickname

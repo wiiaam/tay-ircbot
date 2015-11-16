@@ -10,9 +10,13 @@ import scala.collection.JavaConversions._
 
 class Help extends Module{
 
-  override val commands: Map[String, Array[String]] = Map("help" -> Array("Displays help information. Use .help <command> for more info") )
+  val sourceLocation = "https://github.com/wiiam/IrcBot"
+
+  override val commands: Map[String, Array[String]] = Map("help" -> Array("Displays help information. Use .help <command> for more info"),
+    "source" -> Array("Displays source code information"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
+    val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
 
     val bAsDot = new BotCommand(m,".")
     if(bAsDot.command == "help"){
@@ -53,6 +57,10 @@ class Help extends Module{
         r.notice(m.sender.nickname, s"To use a command: ${b.commandPrefix}<command>")
         r.notice(m.sender.nickname, s"Licensed under the terms of the AGPL. Full source code can be found at ${Constants.REPO}")
       }
+    }
+
+    if(bAsDot.command == "source" || b.command == "source"){
+      r.say(target, s"Source code can be found here: ${sourceLocation}")
     }
   }
 }

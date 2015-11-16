@@ -34,6 +34,10 @@ class Admin extends Module{
         if(b.command == "pm"){
           if(b.paramsArray.length > 1)r.pm(b.paramsArray(0), b.paramsString.substring(b.paramsArray(0).length + 1))
         }
+
+        if(b.command == "raw"){
+          r.send(b.paramsString)
+        }
       }
     }
   }

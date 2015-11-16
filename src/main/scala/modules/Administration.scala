@@ -17,9 +17,9 @@ class Administration extends Module{
   override val commands: Map[String, Array[String]] = Map("kme" -> Array("Kick yourself from the channel. Only work when administration is turned on in that channel",
   "Command is always .kme"),
     "banme" -> Array("Ban yourself from the channel. Only work when administration is turned on in that channel",
-      "Command is always .kme"),
+      "Command is always .banme"),
     "tkbme" -> Array("Time ban yourself from the channel. Only work when administration is turned on in that channel",
-      "Command is always .kme Usage: .tkbme <seconds>"))
+      "Command is always .tkbme Usage: .tkbme <seconds>"))
 
 
   var channels: Set[String] = Set()
@@ -70,6 +70,24 @@ class Administration extends Module{
       }
 
       if(!isop) {
+
+        var highlights = 0
+        var massHighlight = false
+        for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
+          if(!massHighlight){
+            if(m.trailing.contains(username)){
+              highlights += 1
+
+              if(highlights > 10) massHighlight = true
+            }
+          }
+        }
+
+        if(massHighlight){
+          r.ban(m.params.first,"@" + m.sender.host)
+          r.kick(m.params.first, m.sender.nickname, "Mass highlighting is not allowed")
+        }
+
         val spams = {
           if (antispams.contains(m.server + ":" + m.params.first)) {
             if (antispams(m.server + ":" + m.params.first).contains(m.sender.nickname)) {
@@ -144,7 +162,10 @@ class Administration extends Module{
               else if(currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if(currentChannel.getRank(m.sender.nickname) > currentChannel.getRank(b.paramsArray(0))){
+              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+                r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
+              }
+              else if(currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){
                 val host = "@" + Info.get(m.server).get.findUser(bAsDot.paramsArray(0)).get.host
 
                 r.ban(m.params.first, host)
@@ -155,7 +176,7 @@ class Administration extends Module{
             }
             catch{
               case e: Exception =>
-                r.say(target, s"${m.sender.nickname}: Could not find user, ${m.params.first}")
+                r.say(target, s"${m.sender.nickname}: Could not find user, ${b.paramsArray(0)}")
             }
           }
         }
@@ -184,7 +205,10 @@ class Administration extends Module{
               else if(currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if(currentChannel.getRank(m.sender.nickname) > currentChannel.getRank(b.paramsArray(0))){
+              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+                r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
+              }
+              else if(currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){
 
                 val host = "@" + Info.get(m.server).get.findUser(bAsDot.paramsArray(0)).get.host
 
@@ -200,7 +224,7 @@ class Administration extends Module{
             }
             catch{
               case e: Exception =>
-                r.say(target, s"${m.sender.nickname}: Could not find user, ${m.params.first}")
+                r.say(target, s"${m.sender.nickname}: Could not find user, ${b.paramsArray(0)}")
             }
           }
         }
@@ -216,7 +240,10 @@ class Administration extends Module{
               else if (currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2) {
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if (currentChannel.getRank(m.sender.nickname) > currentChannel.getRank(b.paramsArray(0))) {
+              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+                r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
+              }
+              else if (currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){
                 if (bAsDot.paramsArray.length > 1) r.kick(m.params.first, bAsDot.paramsArray(0), bAsDot.paramsString.substring(bAsDot.paramsArray(0).length + 1))
                 else r.kick(m.params.first, bAsDot.paramsArray(0))
               }
@@ -224,7 +251,7 @@ class Administration extends Module{
             }
             catch {
               case e: Exception =>
-                r.say(target, s"${m.sender.nickname}: Could not find user, ${m.params.first}")
+                r.say(target, s"${m.sender.nickname}: Could not find user, ${b.paramsArray(0)}")
             }
           }
         }
@@ -236,7 +263,7 @@ class Administration extends Module{
             }
             catch{
               case e: Exception =>
-                r.say(target, s"${m.sender.nickname}: Could not find user, ${m.params.first}")
+                r.say(target, s"${m.sender.nickname}: Could not find user, ${b.paramsArray(0)}")
             }
           }
         }

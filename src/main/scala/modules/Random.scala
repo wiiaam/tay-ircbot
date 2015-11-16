@@ -1,5 +1,6 @@
 package modules
 
+import irc.info.Info
 import irc.message.Message
 import irc.server.ServerResponder
 import ircbot.{BotCommand, Module}
@@ -20,8 +21,21 @@ class Random extends Module{
       r.action(target, "also" + action)
     }
 
-    if(b.command == "bang"){
-      r.kick("#pasta","wiiaam","bang")
+    if(b.command == "triggergen2" && m.sender.isAdmin){
+      for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
+        if(user.modes.contains("~")){
+          r.send(s"MODE ${m.params.first} +aohv $username $username $username $username")
+        }
+        else if(user.modes.contains("&")){
+          r.send(s"MODE ${m.params.first} +ohv $username $username $username")
+        }
+        else if(user.modes.contains("@")){
+          r.send(s"MODE ${m.params.first} +hv $username $username")
+        }
+        else if(user.modes.contains("%")){
+          r.send(s"MODE ${m.params.first} +v $username")
+        }
+      }
     }
   }
 }
