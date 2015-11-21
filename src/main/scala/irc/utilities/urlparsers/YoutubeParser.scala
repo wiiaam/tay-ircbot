@@ -99,7 +99,7 @@ object YoutubeParser {
       case e: IOException =>
         e.printStackTrace()
         "Error reading YouTube API"
-      case e: IndexOutOfBoundsException => "" + s + " is not a valid videoid"
+      case e: IndexOutOfBoundsException => throw new ParserException
     }
   }
 }

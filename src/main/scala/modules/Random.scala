@@ -18,7 +18,16 @@ class Random extends Module{
 
     if(m.trailing.startsWith("\u0001ACTION")){
       val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","")
-      r.action(target, "also" + action)
+
+      var highlight = false
+      for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
+        if(!highlight){
+          if(action.equals(username) || action.startsWith(username + " ") || action.endsWith(" " + username) || action.contains(" " + username + " ")){
+            highlight = true
+          }
+        }
+      }
+      if(!highlight)r.action(target, "also" + action)
     }
 
     if(b.command == "triggergen2" && m.sender.isAdmin){

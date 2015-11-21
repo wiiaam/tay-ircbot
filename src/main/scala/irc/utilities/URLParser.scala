@@ -24,20 +24,50 @@ object URLParser {
       host = urlc.getURL.getHost
       println(urlc.getContentType)
       if (!urlc.getContentType.startsWith("text/html")) {
-        return FileParser.find(urlc)
+        try {
+          val title = FileParser.find(urlc)
+          return title
+        }
+        catch {
+          case e: Exception =>
+        }
       }
       if (s.contains("youtube.com/watch?") || s.contains("youtu.be/")) {
-        return YoutubeParser.find(s)
+        try {
+          val title = YoutubeParser.find(s)
+          return title
+        }
+        catch {
+          case e: Exception =>
+        }
       }
       if ((s.contains("boards.4chan.org/") || s.contains("//8ch.net")) &&
         (s.contains("/thread/") || s.contains("/res/"))) {
-        return ChanParser.find(s)
+        try {
+          val title = ChanParser.find(s)
+          return title
+        }
+        catch {
+          case e: Exception =>
+        }
       }
       if (s.contains("steamcommunity.com") && (s.contains("/id/") || s.contains("/profiles/"))) {
-        return SteamParser.find(s)
+        try {
+          val title = SteamParser.find(s)
+          return title
+        }
+        catch {
+          case e: Exception =>
+        }
       }
       if (s.contains("/comments/") && s.contains("reddit.com/r/")) {
-        return RedditParser.find(s)
+        try {
+          val title = RedditParser.find(s)
+          return title
+        }
+        catch {
+          case e: Exception =>
+        }
       }
       val doc = Jsoup.connect(s).followRedirects(true).get
       val ps = doc.select("title")
@@ -65,7 +95,7 @@ object URLParser {
     var reading = true
     while (reading) {
       val read = reader.read(chars)
-      if(read != -1) buffer.append(chars, 0, read)
+      if (read != -1) buffer.append(chars, 0, read)
       else reading = false
     }
 

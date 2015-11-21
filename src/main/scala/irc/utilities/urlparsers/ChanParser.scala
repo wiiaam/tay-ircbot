@@ -34,8 +34,7 @@ object ChanParser {
       title = s"/$board/ - $subject | Thread no $no | Created $created | $replies replies"
     } catch {
       case e: Exception => {
-        e.printStackTrace()
-        title = "Error, no info could be found"
+        throw new ParserException
       }
     }
     title

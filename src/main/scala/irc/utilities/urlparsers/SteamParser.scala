@@ -27,7 +27,7 @@ object SteamParser {
         if (response.getInt("success") == 1) {
           id = response.getString("steamid")
         } else {
-          return "Steam vanity ID not found"
+          throw new ParserException
         }
       } catch {
         case e @ (_: ArrayIndexOutOfBoundsException | _: IOException) => return "Invalid steam vanity ID"
@@ -46,7 +46,7 @@ object SteamParser {
       val response = json.getJSONObject("response")
       val players = response.getJSONArray("players")
       if (players.length < 1) {
-        return "No steam info could be found"
+        throw new ParserException
       }
       val player = players.getJSONObject(0)
       if (player.getInt("profilestate") != 1) {
@@ -84,13 +84,14 @@ object SteamParser {
         "&steamid=" +
         id +
         "&relationship=friend"
-      jsonstring = URLParser.readUrl(jsonstring)
+      jsonstring = URLParser.readUrl(url)
       json = new JSONObject(jsonstring)
       val friendslist = json.getJSONObject("friendslist").getJSONArray("friends")
       friends = s"${friendslist.length()} friends"
       title += "| " + friends
     } catch {
-      case e: IOException => return "No steam info could be found"
+      case e: IOException =>
+        throw new ParserException
     }
     title
   }

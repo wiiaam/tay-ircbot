@@ -32,11 +32,7 @@ object RedditParser {
       title = s"/r/$subreddit | 2$postTitle | ${link}Comments: $numComments | Created $created "
       return title
     } catch {
-      case e: MalformedURLException => e.printStackTrace()
-      case e: IOException =>
-        title = "Could not find info"
-        e.printStackTrace()
-      case e: Exception => e.printStackTrace()
+      case e: Exception => throw new ParserException
     }
     title
   }

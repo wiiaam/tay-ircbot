@@ -26,7 +26,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
 
   sendQueueToSocket()
 
-  def addListener(name: String, onMessageListener: OnMessageListener): Unit ={
+  def addListener(name: String, onMessageListener: OnMessageListener): Unit = {
     listeners += (name -> onMessageListener)
   }
 
@@ -36,15 +36,14 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
 
     val b = new BotCommand(m, Configs.get(name).get.getCommandPrefix)
     val r = new ServerResponder(this)
-    Out.println(s"sender is registered: ${m.sender.isRegistered}, sender is admin: ${m.sender.isAdmin}")
-    for((k,v) <- listeners){
+    for ((k, v) <- listeners) {
       Out.println(s"$name --> $message")
-      v.onMessage(m,b,r)
+      v.onMessage(m, b, r)
     }
   }
 
-  def connect(): Unit ={
-    if(Configs.get(name).get.useSSL) {
+  def connect(): Unit = {
+    if (Configs.get(name).get.useSSL) {
       val tm = new X509TrustManager {
         override def getAcceptedIssuers: Array[X509Certificate] = null
 
@@ -53,10 +52,10 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
         override def checkServerTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
       }
       val tmarray: Array[TrustManager] = Array(tm)
-      val context = SSLContext.getInstance ("SSL")
-      context.init( new Array[KeyManager](0), tmarray, new SecureRandom( ) )
+      val context = SSLContext.getInstance("SSL")
+      context.init(new Array[KeyManager](0), tmarray, new SecureRandom())
       val sslfact: SSLSocketFactory = context.getSocketFactory
-      socket = Some(sslfact.createSocket(address,port).asInstanceOf[SSLSocket])
+      socket = Some(sslfact.createSocket(address, port).asInstanceOf[SSLSocket])
     }
     else socket = Some(new Socket(address, port))
     in = Some(new Scanner(socket.get.getInputStream))
@@ -69,8 +68,8 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
     var loggedIn = false
-    while(!loggedIn){
-      if(in.getOrElse(throw new RuntimeException("Not connected")).hasNextLine){
+    while (!loggedIn) {
+      if (in.getOrElse(throw new RuntimeException("Not connected")).hasNextLine) {
         val next = in.get.nextLine()
 
         val message = new Message(next, name)
@@ -87,7 +86,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
             val nick = config.getNickname
             send("NICK " + nick + "_")
             config.setNickname(nick + "_")
-            if(config.useNickServ && config.ghostExisting){
+            if (config.useNickServ && config.ghostExisting) {
               send("NICK " + nick + "_")
               Thread.sleep(2000)
               send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
@@ -104,8 +103,8 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   def listenOnSocket(): Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        while(connected){
-          if(in.get.hasNextLine){
+        while (connected) {
+          if (in.get.hasNextLine) {
             onMessageReceived(in.get.nextLine())
           }
           Thread.sleep(10)
@@ -118,42 +117,42 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     var spammed = 0
     new Thread(new Runnable {
       override def run(): Unit = {
-        while(true){
+        while (true) {
           Thread.sleep(20)
-          if(!toSend.isEmpty){
+          if (!toSend.isEmpty) {
             val tosend = toSend.poll()
             Out.println(s"$name <-- $tosend")
             out.get.print(tosend + "\r\n")
             out.get.flush()
-            if(spammed > 4)Thread.sleep(500)
+            if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
-          else if(!toSendLP.isEmpty){
+          else if (!toSendLP.isEmpty) {
             out.get.print(toSendLP.poll() + "\r\n")
             out.get.flush()
-            if(spammed > 4)Thread.sleep(500)
+            if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
-          else if(spammed != 0) spammed = 0
+          else if (spammed != 0) spammed = 0
         }
       }
     }).start()
   }
 
-  def send(message: String){
+  def send(message: String) {
     send(message, Priorities.STANDARD_PRIORITY)
   }
 
-  def send(message: String, priority: Priorities.Value){
+  def send(message: String, priority: Priorities.Value) {
     val msg = message.replaceAll("\r", "").replaceAll("\n", "")
-    if((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320){
+    if ((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320) {
       val split = msg.split(" ")
       var tosend = ""
       var hitLimit = false
       var i = 0
-      while(i < split.length){
+      while (i < split.length) {
         tosend += split(i) + " "
-        if(tosend.length() > 300){
+        if (tosend.length() > 300) {
           priority match {
             case Priorities.HIGH_PRIORITY => toSend.addFirst(tosend.substring(0, tosend.length() - 1))
             case Priorities.LOW_PRIORITY => toSendLP.add(tosend.substring(0, tosend.length() - 1))
@@ -162,10 +161,10 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
           }
           hitLimit = true
           var next = split(0) + " " + split(1) + " :"
-          for( j <- i+1 until split.length){
+          for (j <- i + 1 until split.length) {
             next += split(j) + " "
           }
-          send(next.substring(0, next.length()-1), priority)
+          send(next.substring(0, next.length() - 1), priority)
           i = split.length
         }
         i = i + 1
@@ -189,7 +188,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     }
   }
 
-  def disconnect(): Unit ={
+  def disconnect(): Unit = {
     connected = false
     out.get.print("QUIT :No response from server\r\n")
     out.get.flush()
