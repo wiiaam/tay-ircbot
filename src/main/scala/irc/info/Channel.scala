@@ -1,5 +1,6 @@
 package irc.info
 
+import irc.info.Rank.Rank
 
 class Channel {
 
@@ -21,27 +22,15 @@ class Channel {
     Some(users(nick))
   }
 
-  /**
-   *
-   * Returns the user's rank
-   *
-   * 5 = owner
-   * 4 = protectop
-   * 3 = op
-   * 2 = halfop
-   * 1 = voice
-   * 0 = normal
-   * -1 = user does not exist
-   */
-  def getRank(nick: String): Int ={
-    if(!users.contains(nick)) return -1
+  def getRank(nick: String): Rank ={
+    if(!users.contains(nick)) return Rank.UNKNOWN
     val user = users(nick)
     val modes = user.modes
-    if(modes.contains("~")) return 5
-    if(modes.contains("&")) return 4
-    if(modes.contains("@")) return 3
-    if(modes.contains("%")) return 2
-    if(modes.contains("+")) return 1
-    0
+    if(modes.contains("~")) return Rank.OWNER
+    if(modes.contains("&")) return Rank.SOP
+    if(modes.contains("@")) return Rank.AOP
+    if(modes.contains("%")) return Rank.HOP
+    if(modes.contains("+")) return Rank.VOICE
+    Rank.USER
   }
 }

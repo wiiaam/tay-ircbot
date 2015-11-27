@@ -4,7 +4,7 @@ import java.io.{PrintWriter, File}
 import java.util.Scanner
 
 import irc.config.{Configs, UserConfig}
-import irc.info.{Channel, Info}
+import irc.info.{Rank, Channel, Info}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, Module}
@@ -38,7 +38,7 @@ class Pasta extends Module{
     val bAsTilde = new BotCommand(m,"~")
     if(m.server == "rizon") {
 
-      if(m.command == MessageCommands.PRIVMSG) checkHighlights(m, r)
+      if(m.command == MessageCommands.PRIVMSG && m.params.first != "#pasta") checkHighlights(m, r)
 
 
       if (m.params.first == "#pasta" && (bAsDot.command == "rules" || bAsTilde.command == "rules")) {
@@ -59,7 +59,7 @@ class Pasta extends Module{
         val pasta: Option[Channel] = Info.get(m.server).get.findChannel("#pasta")
         if (pasta.isDefined) {
           Out.println(s"User rank: ${pasta.get.getRank(m.sender.nickname)}")
-          if (pasta.get.getRank(m.sender.nickname) >= 4) {
+          if (pasta.get.getRank(m.sender.nickname) >= Rank.SOP) {
             if (b.hasParams) {
               Out.println("params ." + b.paramsString + ".")
               changeTopic(b.paramsString)
@@ -112,14 +112,19 @@ class Pasta extends Module{
       override def run(): Unit = {
         var highlights = 0
         var massHighlight = false
-        for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
-          if(!massHighlight){
-            if(m.trailing.contains(username)){
-              highlights += 1
-              if(highlights > 10) {
-                massHighlight = true
-                r.pm("#pasta", s"Banning mass highlighter: ${m.sender.nickname} ")
-                r.ban("#pasta", "@" + m.sender.host)
+        for{
+          info <- Info.get(m.server)
+          channel <- info.findChannel(m.params.first)
+        } yield {
+          for((username,user) <- channel.users) {
+            if (!massHighlight) {
+              if (m.trailing.contains(username)) {
+                highlights += 1
+                if (highlights > 10) {
+                  massHighlight = true
+                  r.pm("#pasta", s"Banning mass highlighter: ${m.sender.nickname} ")
+                  r.ban("#pasta", "@" + m.sender.host)
+                }
               }
             }
           }

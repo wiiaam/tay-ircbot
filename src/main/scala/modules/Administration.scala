@@ -5,12 +5,13 @@ import java.net.URISyntaxException
 import java.util.Scanner
 
 import irc.config.Configs
-import irc.info.Info
+import irc.info.{Rank, Info}
 import irc.message.{MessageCommands, Message}
 
 import irc.server.ServerResponder
 import ircbot.{BotCommand, Module}
 import org.json.{JSONArray}
+import out.Out
 import scala.collection.JavaConversions._
 
 class Administration extends Module{
@@ -54,31 +55,27 @@ class Administration extends Module{
 
     if((m.command == MessageCommands.PRIVMSG || m.command == MessageCommands.NOTICE) && channels.contains(m.server + ":" + m.params.first)){
 
-      // ANTISPAM
-      var isop = false
-      var ishop = false
+      val rank = (for{
+        info <- Info.get(m.server)
+        channel <- info.findChannel(m.params.first)
+      } yield {
+        channel.getRank(m.sender.nickname)
+      }).getOrElse(Rank.UNKNOWN)
 
-      if(Info.get(m.server).isDefined){
-        if(Info.get(m.server).get.findChannel(m.params.first).isDefined ){
-          if(Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.sender.nickname) > 2){
-            isop = true
-          }
-          if(Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.sender.nickname) > 1){
-            ishop = true
-          }
-        }
-      }
-
-      if(!isop) {
-
+      // Antispam
+      if(rank < Rank.AOP) {
         var highlights = 0
         var massHighlight = false
-        for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
-          if(!massHighlight){
-            if(m.trailing.contains(username)){
-              highlights += 1
-
-              if(highlights > 10) massHighlight = true
+        for{
+          info <- Info.get(m.server)
+          channel <- info.findChannel(m.params.first)
+        } yield {
+          for((username,user) <- channel.users) {
+            if (!massHighlight) {
+              if (m.trailing.contains(username)) {
+                highlights += 1
+                if (highlights > 10) massHighlight = true
+              }
             }
           }
         }
@@ -112,6 +109,8 @@ class Administration extends Module{
           return
         }
       }
+
+
 
       val bAsDot = new BotCommand(m, ".")
 
@@ -149,7 +148,7 @@ class Administration extends Module{
       // ADMINISTRATION COMMANDS
       // HALFOP ONLY
 
-      if(ishop){
+      if(rank >= Rank.HOP){
 
         // KICKBAN
         if(bAsDot.command == "kb"){
@@ -159,10 +158,10 @@ class Administration extends Module{
               if(m.sender.nickname == bAsDot.paramsArray(0)) {
                 r.say(target, s"${m.sender.nickname}: To kickban yourself, use the .banme command")
               }
-              else if(currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2){
+              else if(currentChannel.getRank(m.sender.nickname) == Rank.HOP && currentChannel.getRank(b.paramsArray(0)) == Rank.HOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+              else if(currentChannel.getRank(m.sender.nickname) == Rank.SOP && currentChannel.getRank(b.paramsArray(0)) == Rank.SOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
               }
               else if(currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){
@@ -202,10 +201,10 @@ class Administration extends Module{
               if(m.sender.nickname == bAsDot.paramsArray(0)) {
                 r.say(target, s"${m.sender.nickname}: To time ban yourself, use the .tkbme command")
               }
-              else if(currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2){
+              else if(currentChannel.getRank(m.sender.nickname) == Rank.HOP && currentChannel.getRank(b.paramsArray(0)) == Rank.HOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+              else if(currentChannel.getRank(m.sender.nickname) == Rank.SOP && currentChannel.getRank(b.paramsArray(0)) == Rank.SOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
               }
               else if(currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){
@@ -237,10 +236,10 @@ class Administration extends Module{
               if(m.sender.nickname == bAsDot.paramsArray(0)) {
                 r.say(target, s"${m.sender.nickname}: To kick yourself, use the .kme command")
               }
-              else if (currentChannel.getRank(m.sender.nickname) == 2 && currentChannel.getRank(b.paramsArray(0)) == 2) {
+              else if (currentChannel.getRank(m.sender.nickname) == Rank.HOP && currentChannel.getRank(b.paramsArray(0)) == Rank.HOP) {
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
-              else if(currentChannel.getRank(m.sender.nickname) == 4 && currentChannel.getRank(b.paramsArray(0)) == 4){
+              else if(currentChannel.getRank(m.sender.nickname) == Rank.SOP && currentChannel.getRank(b.paramsArray(0)) == Rank.SOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another sop")
               }
               else if (currentChannel.getRank(m.sender.nickname) >= currentChannel.getRank(b.paramsArray(0))){

@@ -1,6 +1,6 @@
 package modules
 
-import irc.info.Info
+import irc.info.{Rank, Info}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, Module}
@@ -33,7 +33,7 @@ class nurupo extends Module{
         m.trailing.contains(".webm") ||
         m.trailing.contains(":^)") ||
         m.trailing.contains(".gif") ) {
-        if (Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.config.getNickname) > 1 ) {
+        if (Info.get(m.server).get.findChannel(m.params.first).get.getRank(m.config.getNickname) >= Rank.HOP ) {
           r.kick(m.params.first,m.sender.nickname,"No fun allowed")
         }
         else{

@@ -2,5 +2,5 @@ package ircbot
 
 
 object Constants {
-  val REPO = "https://github.com/wiiam/IrcBot"
+  val REPO = "https://github.com/wiiam/taylorswift"
 }
