@@ -14,17 +14,17 @@ import scala.collection.mutable.ArrayBuffer
 
 object Modules {
   var coreModules = new util.ArrayList[Module]()
-  var modules: ArrayBuffer[Module] = ArrayBuffer()
+  var modules: Set[Module] = Set()
 
   def loadCore(): Unit = {
-    modules :+= new Ping
-    modules :+= new CTCP
-    modules :+= new IBIP
-    modules :+= new Help
-    modules :+= new InfoParser
-    modules :+= new Admin
-    modules :+= new ConfigUpdater
-    modules :+= new NickServ
+    modules += new Ping
+    modules += new CTCP
+    modules += new IBIP
+    modules += new Help
+    modules += new InfoParser
+    modules += new Admin
+    modules += new ConfigUpdater
+    modules += new NickServ
   }
 
 
@@ -90,8 +90,8 @@ object Modules {
   }
 
   def load(module: String) {
-    for (i <- modules.indices){
-      if(modules(i).getClass.getSimpleName == module){
+    for (m <- modules){
+      if(m.getClass.getSimpleName == module){
         throw new IllegalArgumentException("Module already loaded")
       }
     }
@@ -117,17 +117,13 @@ object Modules {
   }
 
   private def add(m: Module) {
-    val modulesloaded = Array() ++ modules
-    for (module <- modulesloaded){
-      if(m.getClass.getSimpleName == module.getClass.getSimpleName) return
-    }
-    modules :+= m
+    modules += m
   }
 
   def unload(module: String): Boolean = {
-    for (i <- modules.indices) {
-      if (modules.get(i).getClass.getSimpleName == module) {
-        modules.remove(i)
+    for (m <- modules) {
+      if (m.getClass.getSimpleName == module) {
+        modules.remove(m)
         return true
       }
     }
@@ -157,9 +153,9 @@ object Modules {
           }
           var found = false
           if (isModule) {
-            for (j <- modules.indices) {
-              Out.println(modules.get(j).getClass.getSimpleName)
-              if (!found && modules.get(j).getClass.getSimpleName == className) {
+            for (m <- modules) {
+              Out.println(m.getClass.getSimpleName)
+              if (!found && m.getClass.getSimpleName == className) {
                 map.put(className, "loaded")
                 found = true
               }
