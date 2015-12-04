@@ -37,7 +37,8 @@ class Money extends Module {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
   }
 
-  def parse(m: Message, b: BotCommand, r: ServerResponder) {
+
+  override def parse(m: Message, b: BotCommand, r: ServerResponder) {
     var target = m.params.first
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
     if (b.command == "jailstatus") {

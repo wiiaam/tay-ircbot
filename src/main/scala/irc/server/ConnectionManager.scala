@@ -44,7 +44,14 @@ object ConnectionManager {
       Out.println(s"Cannot connect to server $name (server not loaded)")
     }
     val server: IrcServer = servers.get(name)
-    server.connect()
+    var connected = false
+    while(!connected){
+      connected = server.connect()
+      if(!connected){
+        Out.println(s"$name !!! Could not connect, retrying in 10 seconds")
+        Thread.sleep(10000)
+      }
+    }
     server.login()
     Out.println(s"Logged in to $name")
     server.addListener("main", new OnMessageListener {

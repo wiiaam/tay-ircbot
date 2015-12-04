@@ -13,7 +13,7 @@ import out.Out
 
 class Pasta extends Module{
 
-  val topicfile = new File(this.getClass.getResource("files/pastatopic").toURI)
+  val topicfile = new File(this.getClass.getResource("files/pastatopic.txt").toURI)
 
   val sc = new Scanner(topicfile)
   var pastatopic = ""
@@ -48,8 +48,7 @@ class Pasta extends Module{
         }
       }
 
-      if (m.command == MessageCommands.TOPIC && m.params.first == "#pasta" && false) {
-        // TODO enable later
+      if (m.command == MessageCommands.TOPIC && m.params.first == "#pasta") {
         if (!m.trailing.startsWith(pastatopic + " ||")) {
           r.topic(m.params.first, pastatopic + " || " + m.trailing)
         }
@@ -65,7 +64,7 @@ class Pasta extends Module{
               changeTopic(b.paramsString)
               r.say(target, s"${m.sender.nickname}: Topic prefix successfully set. The new prefix will be applied next time the topic changes")
             }
-            else r.say(target, s"Usage: ${b.commandPrefix}pastatopic <topic prefix>")
+            else r.say(target, s"Usage: ${b.commandPrefix}pastatopic.txt <topic prefix>")
           }
           else {
             r.say(target, "You need to be at least SOP (+a) in #pasta to use this command")

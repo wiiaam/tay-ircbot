@@ -111,6 +111,7 @@ object Modules {
       val con = cl.getConstructor()
       val toadd = con.newInstance().asInstanceOf[Module]
       add(toadd)
+      Out.println(s"Added module: $module")
     } catch {
       case e: Exception => e.printStackTrace()
     }

@@ -42,25 +42,31 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     }
   }
 
-  def connect(): Unit = {
-    if (Configs.get(name).get.useSSL) {
-      val tm = new X509TrustManager {
-        override def getAcceptedIssuers: Array[X509Certificate] = null
+  def connect(): Boolean = {
+    try {
+      if (Configs.get(name).get.useSSL) {
+        val tm = new X509TrustManager {
+          override def getAcceptedIssuers: Array[X509Certificate] = null
 
-        override def checkClientTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
+          override def checkClientTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
 
-        override def checkServerTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
+          override def checkServerTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
+        }
+        val tmarray: Array[TrustManager] = Array(tm)
+        val context = SSLContext.getInstance("SSL")
+        context.init(new Array[KeyManager](0), tmarray, new SecureRandom())
+        val sslfact: SSLSocketFactory = context.getSocketFactory
+        socket = Some(sslfact.createSocket(address, port).asInstanceOf[SSLSocket])
       }
-      val tmarray: Array[TrustManager] = Array(tm)
-      val context = SSLContext.getInstance("SSL")
-      context.init(new Array[KeyManager](0), tmarray, new SecureRandom())
-      val sslfact: SSLSocketFactory = context.getSocketFactory
-      socket = Some(sslfact.createSocket(address, port).asInstanceOf[SSLSocket])
+      else socket = Some(new Socket(address, port))
+      in = Some(new Scanner(socket.get.getInputStream))
+      out = Some(new PrintStream(socket.get.getOutputStream))
+      connected = true
+      true
+    } catch {
+      case e: Exception =>
+        false
     }
-    else socket = Some(new Socket(address, port))
-    in = Some(new Scanner(socket.get.getInputStream))
-    out = Some(new PrintStream(socket.get.getOutputStream))
-    connected = true
   }
 
   def login(): Unit = {
@@ -104,9 +110,12 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     new Thread(new Runnable {
       override def run(): Unit = {
         while (connected) {
-          if (in.get.hasNextLine) {
-            onMessageReceived(in.get.nextLine())
-          }
+          in.foreach(stream => {
+            if (stream.hasNextLine) {
+              onMessageReceived(stream.nextLine())
+            }
+
+          })
           Thread.sleep(10)
         }
       }
@@ -122,14 +131,14 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
           if (!toSend.isEmpty) {
             val tosend = toSend.poll()
             Out.println(s"$name <-- $tosend")
-            out.get.print(tosend + "\r\n")
-            out.get.flush()
+            out.foreach(_.print(tosend + "\r\n"))
+            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
           else if (!toSendLP.isEmpty) {
-            out.get.print(toSendLP.poll() + "\r\n")
-            out.get.flush()
+            out.foreach(_.print(toSendLP.poll() + "\r\n"))
+            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
@@ -148,7 +157,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
     if ((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320) {
       val split = msg.split(" ")
       var tosend = ""
-      var hitLimit = false
       var i = 0
       while (i < split.length) {
         tosend += split(i) + " "
@@ -159,7 +167,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
             case Priorities.STANDARD_PRIORITY => toSend.add(tosend.substring(0, tosend.length() - 1))
 
           }
-          hitLimit = true
           var next = split(0) + " " + split(1) + " :"
           for (j <- i + 1 until split.length) {
             next += split(j) + " "
@@ -169,14 +176,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
         }
         i = i + 1
       }
-      /* TODO make sure this works
-      if(!hitLimit){
-        priority match {
-          case Priorities.HIGH_PRIORITY => toSend.addFirst(tosend.substring(0, tosend.length() - 1))
-          case Priorities.LOW_PRIORITY => toSendLP.add(tosend.substring(0, tosend.length() - 1))
-          case Priorities.STANDARD_PRIORITY => toSend.add(tosend.substring(0, tosend.length() - 1))
-        }
-      }*/
     }
     else {
       priority match {
@@ -190,8 +189,8 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
 
   def disconnect(): Unit = {
     connected = false
-    out.get.print("QUIT :No response from server\r\n")
-    out.get.flush()
+    out.foreach(_.print("QUIT :No response from server\r\n"))
+    out.foreach(_.flush())
     out = None
     in = None
     socket.get.close()

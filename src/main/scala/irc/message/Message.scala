@@ -56,5 +56,6 @@ class Message(ircFormattedString: String, serverName:String) {
   val command = msgCommand
   val params = msgParams
   val trailing = msgTrailing
+  val target = if(!params.first.startsWith("#")) sender.nickname else params.first
   def config = Configs.get(server).get
 }
