@@ -13,8 +13,8 @@ import irc.server.ServerResponder
 import scala.collection.mutable.ArrayBuffer
 
 object Modules {
-  var coreModules = new util.ArrayList[Module]()
-  var modules: Set[Module] = Set()
+  var coreModules = new util.ArrayList[BotModule]()
+  var modules: Set[BotModule] = Set()
 
   def loadCore(): Unit = {
     modules += new Ping
@@ -99,9 +99,13 @@ object Modules {
     cl = Class.forName("modules." + module)
     val interfaces = cl.getInterfaces
     var isModule = false
+
+    val superClass = cl.getSuperclass
+    if(superClass == classOf[AbstractBotModule]) isModule = true
+    
     for (j <- 0 until interfaces.length) {
       if(!isModule) {
-        if (interfaces(j) == classOf[Module]) isModule = true
+        if (interfaces(j) == classOf[BotModule]) isModule = true
       }
     }
     if (!isModule) {
@@ -109,7 +113,7 @@ object Modules {
     }
     try {
       val con = cl.getConstructor()
-      val toadd = con.newInstance().asInstanceOf[Module]
+      val toadd = con.newInstance().asInstanceOf[BotModule]
       add(toadd)
       Out.println(s"Added module: $module")
     } catch {
@@ -117,7 +121,7 @@ object Modules {
     }
   }
 
-  private def add(m: Module) {
+  private def add(m: BotModule) {
     modules += m
   }
 
@@ -144,9 +148,11 @@ object Modules {
           try {
             cl = Class.forName("modules." + className)
             val interfaces = cl.getInterfaces
+            val superClass = cl.getSuperclass
+            if(superClass == classOf[AbstractBotModule]) isModule = true
             for (j <- 0 until interfaces.length) {
-              if(!isModule) {
-                if (interfaces(j) == classOf[Module]) isModule = true
+              if (!isModule) {
+                if (interfaces(j) == classOf[BotModule]) isModule = true
               }
             }
           } catch {

@@ -7,11 +7,11 @@ import irc.config.{Configs, UserConfig}
 import irc.info.{Rank, Channel, Info}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 import out.Out
 
 
-class Pasta extends Module{
+class Pasta extends AbstractBotModule{
 
   val topicfile = new File(this.getClass.getResource("files/pastatopic.txt").toURI)
 

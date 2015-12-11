@@ -5,12 +5,12 @@ import java.net.URISyntaxException
 import java.util.Scanner
 import irc.config.Configs
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 import org.json.{JSONArray, JSONObject}
 import irc.message.{MessageCommands, Message}
 import scala.collection.JavaConversions._
 
-class Intros extends Module {
+class Intros extends AbstractBotModule {
 
 
   private var jsonfile: File = _

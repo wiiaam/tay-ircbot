@@ -4,17 +4,14 @@ import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
 
-import irc.config.Configs
 import irc.info.{Rank, Info}
 import irc.message.{MessageCommands, Message}
 
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
-import org.json.{JSONArray}
-import out.Out
-import scala.collection.JavaConversions._
+import ircbot.{BotModule, AbstractBotModule, BotCommand}
+import org.json.JSONArray
 
-class Administration extends Module{
+class Administration extends BotModule{
   override val commands: Map[String, Array[String]] = Map("kme" -> Array("Kick yourself from the channel. Only work when administration is turned on in that channel",
   "Command is always .kme"),
     "banme" -> Array("Ban yourself from the channel. Only work when administration is turned on in that channel",
@@ -22,6 +19,8 @@ class Administration extends Module{
     "tkbme" -> Array("Time ban yourself from the channel. Only work when administration is turned on in that channel",
       "Command is always .tkbme Usage: .tkbme <seconds>"))
 
+  override val adminCommands: Map[String, Array[String]] = Map("administration" -> Array("Toggle adminstration on or off for a channel.",
+  "To use, do %padministration <on/off> <channel>"))
 
   var channels: Set[String] = Set()
 

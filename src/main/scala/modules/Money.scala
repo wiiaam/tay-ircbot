@@ -9,13 +9,12 @@ import java.util
 import java.util.Properties
 import irc.config.Configs
 import irc.server.ServerResponder
-import ircbot.Module
+import ircbot.{AbstractBotModule, BotModule, BotCommand}
 import irc.message.Message
-import ircbot.BotCommand
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class Money extends Module {
+class Money extends AbstractBotModule {
 
   private val bank: Properties = new Properties()
 

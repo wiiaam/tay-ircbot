@@ -2,13 +2,12 @@ package modules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 import scala.util.Random
 
 
-class Responses extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class Responses extends AbstractBotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first

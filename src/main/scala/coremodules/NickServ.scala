@@ -2,11 +2,13 @@ package coremodules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 
-class NickServ extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class NickServ extends AbstractBotModule{
+
+  override val adminCommands: Map[String, Array[String]] = Map("auth" -> Array("Auth with NickServ",
+    "Only works if nickserv is on in config"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(b.command == "auth" && m.sender.isAdmin){

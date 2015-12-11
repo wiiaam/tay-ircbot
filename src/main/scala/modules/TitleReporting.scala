@@ -8,13 +8,14 @@ import irc.config.Configs
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
 import irc.utilities.URLParser
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 import org.json.{JSONArray, JSONObject}
 import scala.collection.JavaConversions._
 
 
-class TitleReporting extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class TitleReporting extends AbstractBotModule{
+  override val adminCommands: Map[String, Array[String]] = Map("urltitles" -> Array("Turn URL title reporting on or off in a channel",
+    "To use: %purltitles <on/off> <channel>"))
 
   var json: JSONObject = new JSONObject()
   val jsonfile = new File(this.getClass.getResource("files/titles.json").toURI)

@@ -2,13 +2,11 @@ package coremodules
 
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
-import out.Out
+import ircbot.{AbstractBotModule, BotCommand}
 
 
-class CTCP extends Module{
+class CTCP extends AbstractBotModule{
 
-  override val commands: Map[String, Array[String]] = Map()
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
 

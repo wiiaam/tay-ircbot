@@ -5,11 +5,11 @@ import java.util.Scanner
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 import scala.util.Random
 
-class Tayrivia extends Module{
+class Tayrivia extends AbstractBotModule{
 
   class TriviaGame(questions: Map[String, String], r: ServerResponder, channel: String){
     var countdown: Thread = new Thread()

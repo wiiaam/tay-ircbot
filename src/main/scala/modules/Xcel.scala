@@ -1,15 +1,11 @@
 package modules
 
-import irc.config.Configs
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand}
 
-/**
-  * Created by William on 27/11/2015.
-  */
-class Xcel extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+
+class Xcel extends AbstractBotModule{
 
   var timeout = System.currentTimeMillis()
 

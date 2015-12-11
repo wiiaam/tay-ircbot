@@ -3,11 +3,14 @@ package modules
 import irc.info.Info
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 
-class Highlight extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class Highlight extends AbstractBotModule{
+
+  override val adminCommands: Map[String, Array[String]] = Map("highlight" -> Array("Highlight certain users in the current channel.",
+    "Note that use of this command can get you banned from the channel, and ",
+    "use %phighlight <ops/all> to highlight operators or all users respectively"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first

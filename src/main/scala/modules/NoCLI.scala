@@ -1,18 +1,23 @@
 package modules
 
-import irc.info.Info
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand}
 
 
-class NoCLI extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class NoCLI extends AbstractBotModule{
+  override val adminCommands: Map[String, Array[String]] = Map("nocli" -> Array("Turn on nocli in #pasta.",
+    "nocli bans all users that try to enter with a command line IRC client"))
 
-  val on = false
+  var on = false
 
   var checks: Set[String] = Set()
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
+
+    if(b.command == "nocli" && m.sender.isAdmin){
+      on = !on
+      r.say(m.target, s"nocli is now ${if(on)"on" else "off"}")
+    }
 
     if(on) {
       if (m.command == MessageCommands.JOIN && m.trailing == "#pasta") {

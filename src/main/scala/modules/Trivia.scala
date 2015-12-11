@@ -6,11 +6,14 @@ import java.util.Properties
 import irc.message.Message
 import irc.server.ServerResponder
 import irc.utilities.GoogleSearch
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 
-class Trivia extends Module{
+class Trivia extends AbstractBotModule{
   override val commands: Map[String, Array[String]] = Map()
+
+  override val adminCommands: Map[String, Array[String]] = Map("triviadelay" -> Array("Set the delay between answering a trivia question",
+    "To use: %ptriviadelay <seconds>. Default is 10"))
 
   var scootaloo: Properties = new Properties()
   var scootalooQuestion: Map[String, String] = Map()

@@ -2,10 +2,11 @@ package modules
 
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand}
 
 
-class CTCPRequests extends Module{
+class CTCPRequests extends AbstractBotModule{
+
   override val commands: Map[String, Array[String]] = Map("ver" -> Array("Sends a CTCP version to a user and shows the response"))
 
   var versionRequests: Set[(String,String)] = Set()

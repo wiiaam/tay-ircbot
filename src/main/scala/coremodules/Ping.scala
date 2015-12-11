@@ -2,11 +2,10 @@ package coremodules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.{ConnectionManager, Priorities, ServerResponder}
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 
-class Ping extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class Ping extends AbstractBotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PING){

@@ -2,11 +2,17 @@ package coremodules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, Module}
+import ircbot.{AbstractBotModule, BotCommand, BotModule}
 
 
-class Admin extends Module{
-  override val commands: Map[String, Array[String]] = Map()
+class Admin extends AbstractBotModule{
+
+  override val adminCommands: Map[String, Array[String]] = Map("join" -> Array("Tell the bot to join a channel", "To use: %pjoin <channels>"),
+    "nick" -> Array("Change the bots nickname", "To use: %pnick <nickname>"),
+    "leave" -> Array("Tell the bot to leave the current channel"),
+    "part" -> Array("Tell the bot to part a specific channel", "To use: %ppart <channels>"),
+    "pm" -> Array("Tell the bot to PRIVMSG a channel", "To use: %ppm <channel> <message>"),
+    "raw" -> Array("Tell the bot to send a raw IRC message", "To use: %praw <message>"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PRIVMSG || m.command == MessageCommands.NOTICE){
