@@ -22,6 +22,9 @@ project/plugins/project/
 .worksheet
 
 # Configs
+src/main/resources/configs/*
+!src/main/resources/configs/example.json
+
 src/main/scala/configs/*
 !src/main/scala/configs/example.json
 
