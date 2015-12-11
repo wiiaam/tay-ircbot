@@ -74,7 +74,7 @@ class Administration extends Module{
             if (!massHighlight) {
               if (m.trailing.contains(username)) {
                 highlights += 1
-                if (highlights > 10) massHighlight = true
+                if (highlights > 5) massHighlight = true
               }
             }
           }

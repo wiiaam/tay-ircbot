@@ -18,8 +18,8 @@ class Random extends Module{
 
     if(m.command == MessageCommands.PRIVMSG && m.params.first == "#pasta" && m.trailing.trim == "^") r.say("#pasta","can confirm")
 
-    if(m.trailing.startsWith("\u0001ACTION")){
-      val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","")
+    if(m.trailing.startsWith("\u0001ACTION") && m.params.first == "#pasta"){
+      val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","").trim
 
       var highlight = false
       for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
@@ -29,7 +29,14 @@ class Random extends Module{
           }
         }
       }
-      if(!highlight)r.action(target, "also" + action)
+      if(!highlight){
+        if(action.startsWith("is ")){
+          r.action(target, "is also" + action.substring(2))
+        }
+        else {
+          r.action(target, "also " + action)
+        }
+      }
     }
 
     if(b.command == "triggergen2" && m.sender.isAdmin){
@@ -39,7 +46,7 @@ class Random extends Module{
       } yield {
         val users = channel.users
         users.foreach(user => {
-          val username = user._2.username
+          val username = user._1
           if (user._2.modes.contains("~")) {
             r.send(s"MODE ${m.params.first} +aohv $username $username $username $username")
           }
@@ -65,6 +72,12 @@ class Random extends Module{
         users.foreach(user => {
           r.send(s"MODE ${m.params.first} +bb ${user._2.nickname}!*@* @${user._2.host}")
         })
+      }
+    }
+
+    if(m.params.first.startsWith("#")){
+      if(m.trailing.toLowerCase.trim == s"ayy ${m.config.getNickname.toLowerCase}"){
+        r.pm(m.target, m.trailing.toLowerCase.replace(m.config.getNickname.toLowerCase, m.sender.nickname))
       }
     }
   }

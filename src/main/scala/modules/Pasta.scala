@@ -119,7 +119,7 @@ class Pasta extends Module{
             if (!massHighlight) {
               if (m.trailing.contains(username)) {
                 highlights += 1
-                if (highlights > 10) {
+                if (highlights > 5) {
                   massHighlight = true
                   r.pm("#pasta", s"Banning mass highlighter: ${m.sender.nickname} ")
                   r.ban("#pasta", "@" + m.sender.host)
