@@ -8,7 +8,7 @@ import irc.info.{Rank, Info}
 import irc.message.{MessageCommands, Message}
 
 import irc.server.ServerResponder
-import ircbot.{BotModule, AbstractBotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 import org.json.JSONArray
 
 class Administration extends BotModule{
@@ -157,6 +157,9 @@ class Administration extends BotModule{
               if(m.sender.nickname == bAsDot.paramsArray(0)) {
                 r.say(target, s"${m.sender.nickname}: To kickban yourself, use the .banme command")
               }
+              else if(m.config.getNickname == bAsDot.paramsArray(0)){
+                r.say(target, "no fuck you")
+              }
               else if(currentChannel.getRank(m.sender.nickname) == Rank.HOP && currentChannel.getRank(b.paramsArray(0)) == Rank.HOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
@@ -200,6 +203,9 @@ class Administration extends BotModule{
               if(m.sender.nickname == bAsDot.paramsArray(0)) {
                 r.say(target, s"${m.sender.nickname}: To time ban yourself, use the .tkbme command")
               }
+              else if(m.config.getNickname == bAsDot.paramsArray(0)){
+                r.say(target, "no fuck you")
+              }
               else if(currentChannel.getRank(m.sender.nickname) == Rank.HOP && currentChannel.getRank(b.paramsArray(0)) == Rank.HOP){
                 r.say(target, s"${m.sender.nickname}: You cannot kick another hop")
               }
@@ -212,6 +218,7 @@ class Administration extends BotModule{
 
                 r.ban(m.params.first, host)
                 if(bAsDot.paramsArray.length > 2) {
+                  r.notice(bAsDot.paramsArray(0), s"You will be unbanned from ${m.params.first} in $time seconds")
                   val reason = bAsDot.paramsString.substring(bAsDot.paramsArray(0).length + bAsDot.paramsArray(1).length + 2)
                   r.kick(m.params.first, bAsDot.paramsArray(0), reason)
                 }

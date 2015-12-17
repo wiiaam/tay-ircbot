@@ -6,9 +6,7 @@ import ircbot._
 import scala.collection.JavaConversions._
 
 
-class Help extends AbstractBotModule{
-
-  val sourceLocation = "https://github.com/wiiam/IrcBot"
+class Help extends BotModule{
 
   override val commands: Map[String, Array[String]] = Map("help" -> Array("Displays help information. Use .help <command> for more info"),
     "source" -> Array("Displays source code information"))
@@ -40,11 +38,11 @@ class Help extends AbstractBotModule{
         }
       }
       else{
-        var commands = ""
+        var userCommands = ""
         var adminCommands = ""
         for(module <- Modules.modules){
           for((k,v) <- module.commands){
-            commands += k + " "
+            userCommands += k + " "
           }
 
           for((k,v) <- module.adminCommands){
@@ -52,24 +50,27 @@ class Help extends AbstractBotModule{
           }
         }
         for(module <- Modules.coreModules){
+          for((k,v) <- module.commands){
+            userCommands += k + " "
+          }
           for((k,v) <- module.adminCommands){
             adminCommands += k + " "
           }
         }
-        r.notice(m.sender.nickname, "Current commands available:")
-        r.notice(m.sender.nickname, commands)
+        r.notice(m.sender.nickname, "\u0002Current commands available:")
+        r.notice(m.sender.nickname, userCommands)
         if(m.sender.isAdmin){
-          r.notice(m.sender.nickname, "Admin commands available to you:")
+          r.notice(m.sender.nickname, "\u0002Admin commands available to you:")
           r.notice(m.sender.nickname, adminCommands)
         }
         r.notice(m.sender.nickname, s"The current command prefix is: ${b.commandPrefix}")
-        r.notice(m.sender.nickname, s"To use a command: ${b.commandPrefix}<command>")
-        r.notice(m.sender.nickname, s"Licensed under the terms of the AGPL. Full source code can be found at ${Constants.REPO}")
+        r.notice(m.sender.nickname, s"To use a command: \u0002${b.commandPrefix}<command>")
+        r.notice(m.sender.nickname, s"Licensed under the terms of the \u0002AGPL\u0002. Full source code can be found at \u0002${Constants.REPO}")
       }
     }
 
     if(bAsDot.command == "source" || b.command == "source"){
-      r.say(target, s"Source code can be found here: ${sourceLocation}")
+      r.say(target, s"Source code can be found here: ${Constants.REPO}")
     }
   }
 }

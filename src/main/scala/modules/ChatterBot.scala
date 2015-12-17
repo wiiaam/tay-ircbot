@@ -3,9 +3,9 @@ package modules
 import com.google.code.chatterbotapi.{ChatterBotType, ChatterBotFactory}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
-class ChatterBot extends AbstractBotModule{
+class ChatterBot extends BotModule{
 
   val factory = new ChatterBotFactory
   val bot = factory.create(ChatterBotType.CLEVERBOT).createSession()

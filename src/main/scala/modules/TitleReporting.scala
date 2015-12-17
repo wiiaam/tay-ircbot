@@ -8,12 +8,12 @@ import irc.config.Configs
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
 import irc.utilities.URLParser
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 import org.json.{JSONArray, JSONObject}
 import scala.collection.JavaConversions._
 
 
-class TitleReporting extends AbstractBotModule{
+class TitleReporting extends BotModule{
   override val adminCommands: Map[String, Array[String]] = Map("urltitles" -> Array("Turn URL title reporting on or off in a channel",
     "To use: %purltitles <on/off> <channel>"))
 
@@ -95,13 +95,17 @@ class TitleReporting extends AbstractBotModule{
       if(checkChannel(m.params.first, m.server)) {
         if (m.trailing.contains("http://") || m.trailing.contains("https://")) {
           val messageSplit: Array[String] = m.trailing.split("\\s+")
-          for (i <- 0 until messageSplit.length) {
+          for (i <- messageSplit.indices) {
             if (messageSplit(i).startsWith("http://") || messageSplit(i).startsWith("https://")) {
-              var title = URLParser.find(messageSplit(i))
-              if (title != null) {
-                title = title.replace("http://", "").replace("https://", "")
-                r.say(target, title)
-              }
+              new Thread(new Runnable {
+                override def run(): Unit = {
+                  var title = URLParser.find(messageSplit(i))
+                  if (title != null) {
+                    title = title.replace("http://", "").replace("https://", "")
+                    r.say(target, title)
+                  }
+                }
+              }).start()
             }
           }
         }

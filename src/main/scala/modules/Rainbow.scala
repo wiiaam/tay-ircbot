@@ -2,10 +2,10 @@ package modules
 
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class Rainbow extends AbstractBotModule{
+class Rainbow extends BotModule{
   override val commands: Map[String, Array[String]] = Map("rb" -> Array("Convert text to rainbow"))
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {

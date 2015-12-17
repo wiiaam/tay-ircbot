@@ -3,10 +3,10 @@ package modules
 import irc.info.Info
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class Highlight extends AbstractBotModule{
+class Highlight extends BotModule{
 
   override val adminCommands: Map[String, Array[String]] = Map("highlight" -> Array("Highlight certain users in the current channel.",
     "Note that use of this command can get you banned from the channel, and ",
@@ -36,9 +36,9 @@ class Highlight extends AbstractBotModule{
         }
 
         else{
-          var spam = b.paramsArray(0)
+          var spam = b.paramsString
           for(i <- 0 until 1000){
-            spam += s" ${b.paramsArray(0)}"
+            spam += s" ${b.paramsString}"
           }
           spam = spam.substring(0,2000)
           r.say(target,spam)

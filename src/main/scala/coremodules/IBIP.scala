@@ -2,10 +2,10 @@ package coremodules
 
 import irc.message.Message
 import irc.server.{Priorities, ServerResponder}
-import ircbot.{AbstractBotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 
 
-class IBIP extends AbstractBotModule {
+class IBIP extends BotModule {
 
   override val commands: Map[String, Array[String]] = Map("bots" -> Array("Respond to IBIP. See github.com/Teknikode/IBIP for more info"))
 

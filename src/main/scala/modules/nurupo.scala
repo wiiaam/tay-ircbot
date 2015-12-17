@@ -3,10 +3,10 @@ package modules
 import irc.info.{Rank, Info}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class nurupo extends AbstractBotModule{
+class nurupo extends BotModule{
   override val adminCommands: Map[String, Array[String]] = Map("nurupo" -> Array("Toggles nurupo® moderation in the channel"))
 
   var channels: Set[String] = Set()

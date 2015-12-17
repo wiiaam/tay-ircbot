@@ -2,10 +2,10 @@ package modules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 
 
-class Xcel extends AbstractBotModule{
+class Xcel extends BotModule{
 
   var timeout = System.currentTimeMillis()
 

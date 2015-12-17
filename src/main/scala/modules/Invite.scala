@@ -2,10 +2,10 @@ package modules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 import out.Out
 
-class Invite extends AbstractBotModule{
+class Invite extends BotModule{
 
   private var cooldown: Long = System.currentTimeMillis()/1000
 

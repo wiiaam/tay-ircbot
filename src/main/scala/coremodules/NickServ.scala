@@ -2,10 +2,10 @@ package coremodules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class NickServ extends AbstractBotModule{
+class NickServ extends BotModule{
 
   override val adminCommands: Map[String, Array[String]] = Map("auth" -> Array("Auth with NickServ",
     "Only works if nickserv is on in config"))

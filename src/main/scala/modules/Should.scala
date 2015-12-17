@@ -2,10 +2,10 @@ package modules
 
 import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class Should extends AbstractBotModule{
+class Should extends BotModule{
   override val commands: Map[String, Array[String]] = Map("should" -> Array("Use %pshould <question> to ask the bot a question",
   "Example: %pshould I grow a beard?"))
 

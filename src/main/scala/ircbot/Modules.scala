@@ -100,9 +100,6 @@ object Modules {
     val interfaces = cl.getInterfaces
     var isModule = false
 
-    val superClass = cl.getSuperclass
-    if(superClass == classOf[AbstractBotModule]) isModule = true
-    
     for (j <- 0 until interfaces.length) {
       if(!isModule) {
         if (interfaces(j) == classOf[BotModule]) isModule = true
@@ -148,8 +145,7 @@ object Modules {
           try {
             cl = Class.forName("modules." + className)
             val interfaces = cl.getInterfaces
-            val superClass = cl.getSuperclass
-            if(superClass == classOf[AbstractBotModule]) isModule = true
+
             for (j <- 0 until interfaces.length) {
               if (!isModule) {
                 if (interfaces(j) == classOf[BotModule]) isModule = true

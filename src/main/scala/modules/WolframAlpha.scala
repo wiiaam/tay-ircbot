@@ -5,12 +5,12 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import irc.config.UserConfig
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
 import irc.message.Message
 
-class WolframAlpha extends AbstractBotModule {
+class WolframAlpha extends BotModule {
 
   override val commands: Map[String, Array[String]] = Map("wa" -> Array("Perform a Wolfram Alpha query"))
 

@@ -7,16 +7,17 @@ import irc.config.{Configs, UserConfig}
 import irc.info.{Rank, Channel, Info}
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 import out.Out
 
 
-class Pasta extends AbstractBotModule{
+class Pasta extends BotModule{
 
   val topicfile = new File(this.getClass.getResource("files/pastatopic.txt").toURI)
 
   val sc = new Scanner(topicfile)
   var pastatopic = ""
+  var banned: Map[String, String] = Map()
   try {
     pastatopic = sc.nextLine()
   }
@@ -37,6 +38,16 @@ class Pasta extends AbstractBotModule{
     val bAsDot = new BotCommand(m, ".")
     val bAsTilde = new BotCommand(m,"~")
     if(m.server == "rizon") {
+
+      if(m.command == MessageCommands.MODE && m.params.first == "#pasta" && m.sender.nickname == m.config.getNickname){
+
+        if(m.params.array(1) == "+b"){
+          if(banned.contains(m.params.array(2))){
+            r.pm("#pasta", s"Banning mass highlighter: ${banned(m.params.array(2))} ")
+            banned.filterKeys(_ == m.params.array(2))
+          }
+        }
+      }
 
       if(m.command == MessageCommands.PRIVMSG && m.params.first != "#pasta") checkHighlights(m, r)
 
@@ -106,6 +117,17 @@ class Pasta extends AbstractBotModule{
     Out.println("Changed topic prefix to " + pastatopic)
   }
 
+  def removeHighlighter(host: String){
+    val thread = new Thread(new Runnable {
+      override def run(): Unit = {
+        Thread.sleep(5000)
+        banned.filterKeys(_ == host)
+      }
+    })
+    thread.setName(s"Remove $host from highlighter set")
+    thread.start()
+  }
+
   private def checkHighlights(m: Message, r: ServerResponder): Unit ={
     val checkThread = new Thread(new Runnable {
       override def run(): Unit = {
@@ -121,8 +143,9 @@ class Pasta extends AbstractBotModule{
                 highlights += 1
                 if (highlights > 5) {
                   massHighlight = true
-                  r.pm("#pasta", s"Banning mass highlighter: ${m.sender.nickname} ")
-                  r.ban("#pasta", "@" + m.sender.host)
+                  banned += "*!*@" + m.sender.host -> m.sender.nickname
+                  r.ban("#pasta", "*!*@" + m.sender.host)
+                  removeHighlighter("*!*@" + m.sender.host)
                 }
               }
             }

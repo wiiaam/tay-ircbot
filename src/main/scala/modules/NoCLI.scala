@@ -2,10 +2,10 @@ package modules
 
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 
 
-class NoCLI extends AbstractBotModule{
+class NoCLI extends BotModule{
   override val adminCommands: Map[String, Array[String]] = Map("nocli" -> Array("Turn on nocli in #pasta.",
     "nocli bans all users that try to enter with a command line IRC client"))
 

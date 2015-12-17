@@ -3,10 +3,10 @@ package coremodules
 import irc.info.Info
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand}
+import ircbot.{BotModule, BotCommand}
 
 
-class InfoParser extends AbstractBotModule{
+class InfoParser extends BotModule{
 
   // :irc.x2x.cc 352 wiiaam #taylorswift ~t oh.my.what.a.marvellous.tune * taylorswift Hr@ :0 taylorswift
   //                  0 yourname  1 channel 2 username 3 host      4  5 nickname 6 modes

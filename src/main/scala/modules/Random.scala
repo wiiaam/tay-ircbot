@@ -3,10 +3,10 @@ package modules
 import irc.info.Info
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
-import ircbot.{AbstractBotModule, BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule}
 
 
-class Random extends AbstractBotModule{
+class Random extends BotModule{
   override val commands: Map[String, Array[String]] = Map("slap" -> Array("Slap some sense into a user"))
 
   override val adminCommands: Map[String, Array[String]] = Map("triggergen2" -> Array("Trigger installgen2"),
@@ -37,7 +37,7 @@ class Random extends AbstractBotModule{
         if(action.startsWith("is ")){
           r.action(target, "is also" + action.substring(2))
         }
-        else {
+        else if(action.split("\\s+")(0).toLowerCase.endsWith("s")){
           r.action(target, "also " + action)
         }
       }
@@ -102,6 +102,13 @@ class Random extends AbstractBotModule{
       r.say(target, "   GG:::::::::::::::G  A:::::A               A:::::A  R::::::R     R:::::R    YYYY:::::YYYY    ")
       r.say(target, "     GGG::::::GGG:::G A:::::A                 A:::::A R::::::R     R:::::R    Y:::::::::::Y    ")
       r.say(target, "        GGGGGG   GGGGAAAAAAA                   AAAAAAARRRRRRRR     RRRRRRR    YYYYYYYYYYYYY   ")
+    }
+
+    if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kick")){
+      var name = m.trailing.split("\\s+")(0)
+      name = name.substring(1,name.length-1).trim
+
+      r.pm("ChanServ",s"KICK ${m.params.first} $name" )
     }
   }
 }
