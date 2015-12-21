@@ -5,6 +5,7 @@ import java.net.URISyntaxException
 import java.util.Scanner
 
 import irc.config.Configs
+import irc.info.Info
 import irc.message.{MessageCommands, Message}
 import irc.server.ServerResponder
 import irc.utilities.URLParser
@@ -115,7 +116,11 @@ class TitleReporting extends BotModule{
 
   private def checkChannel(channel: String, server: String): Boolean = {
     if(channels.contains(server)){
-      channels(server).contains(channel)
+      channels(server).contains(channel) /*&&
+        (if(channel == "#pasta" && server == "rizon"){
+        !Info.get(server).get.findChannel(channel).get.users.contains("topkek_2000")
+        }
+        else true) */
     }
     else false
   }

@@ -33,6 +33,14 @@ object Info {
   def getMappedInfo(key: String, info: Map[String, String]): Option[String] = {
     if(info.contains(key)) Some(info(key)) else None
   }
+
+  def changeNick(server: String, oldNick: String, newNick: String): Unit ={
+    if(infos.contains(server)) {
+      val newInfo = infos(server)
+      newInfo.changeNick(oldNick, newNick)
+      infos = infos ++ Map(server -> newInfo)
+    }
+  }
 }
 
 class Info {
@@ -98,5 +106,30 @@ class Info {
     if(!channels.contains(channel)) None
     if(!channels(channel).users.contains(nick)) None
     else Some(channels(channel).users(nick))
+  }
+
+  def changeNick(oldNick: String, newNick: String): Unit ={
+    var newUser = users(oldNick)
+    newUser.nickname = newNick
+    users += newNick -> newUser
+    users = users.filterKeys(_ == oldNick)
+
+    var newChannels = channels
+    channels.foreach{
+      case (name: String, channel: Channel) =>
+        if(channel.users.contains(oldNick)){
+          Out.println("Changing nick: " + oldNick + " to " + newNick + " in " + name)
+          var newChannel = channel
+          var channelUsers = newChannel.users
+          channelUsers += newNick -> newUser
+          channelUsers = channelUsers.filterKeys(_ == oldNick)
+          newChannel.users = channelUsers
+          newChannels += name -> newChannel
+        }
+    }
+    channels = newChannels
+
+    Out.println(s"User found: $oldNick ${users.contains(oldNick)} ${channels("#pasta").users.contains(oldNick)}")
+
   }
 }

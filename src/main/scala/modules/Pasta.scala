@@ -39,31 +39,97 @@ class Pasta extends BotModule{
     val bAsTilde = new BotCommand(m,"~")
     if(m.server == "rizon") {
 
-      if(m.command == MessageCommands.MODE && m.params.first == "#pasta" && m.sender.nickname == m.config.getNickname){
+      if(m.params.first == "#pasta"){
+        if(m.command == MessageCommands.MODE && m.sender.nickname == m.config.getNickname){
 
-        if(m.params.array(1) == "+b"){
-          if(banned.contains(m.params.array(2))){
-            r.pm("#pasta", s"Banning mass highlighter: ${banned(m.params.array(2))} ")
-            banned.filterKeys(_ == m.params.array(2))
+          if(m.params.array(1) == "+b"){
+            if(banned.contains(m.params.array(2))){
+              r.pm("#pasta", s"Banning mass highlighter: ${banned(m.params.array(2))} ")
+              banned.filterKeys(_ == m.params.array(2))
+            }
           }
         }
+
+        if (bAsDot.command == "rules" || bAsTilde.command == "rules") {
+          val rules = UserConfig.getJson.getJSONArray("pastarules")
+          for (i <- 0 until rules.length()) {
+            r.notice(m.sender.nickname, s"Rule $i: ${rules.getString(i)}")
+          }
+        }
+
+        if (m.command == MessageCommands.TOPIC ) {
+          if (!m.trailing.startsWith(pastatopic + " ||")) {
+            r.topic(m.params.first, pastatopic + " || " + m.trailing)
+          }
+        }
+
+        if (m.command == MessageCommands.MODE && m.sender.nickname != m.config.getNickname) {
+          if (m.params.array(1).startsWith("+e")) {
+            r.send("MODE " + m.params.all.replace("+e", "-e"))
+          }
+          if (m.params.array(1).startsWith("-e")) {
+            r.send("MODE " + m.params.all.replace("-e", "+e"))
+          }
+        }
+
+        if (m.command == MessageCommands.KICK) {
+          if(m.params.array(1) == m.config.getNickname) {
+            Thread.sleep(3000)
+            r.join("#pasta")
+          }
+        }
+
+        // fun stuff
+        if(m.command == MessageCommands.PRIVMSG && m.trailing.trim == "^") r.say("#pasta","can confirm")
+
+        if(m.trailing.startsWith("\u0001ACTION")){
+          val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","").trim
+
+          var highlight = false
+          for((username, user) <- Info.get(m.server).get.findChannel(m.params.first).get.users){
+            if(!highlight){
+              if(action.equals(username) || action.startsWith(username + " ") || action.endsWith(" " + username) || action.contains(" " + username + " ")){
+                highlight = true
+              }
+            }
+          }
+          if(!highlight){
+            if(action.startsWith("is ")){
+              r.action(target, "is also" + action.substring(2))
+            }
+            else if(action.split("\\s+")(0).toLowerCase.endsWith("s")){
+              r.action(target, "also " + action)
+            }
+          }
+        }
+
+        if(m.trailing.toLowerCase.contains("kill me")){
+          r.action(target, s"kills ${m.sender.nickname}")
+        }
+
+        if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kick")){
+          var name = m.trailing.split("\\s+")(0)
+          name = name.substring(1,name.length-1).trim
+
+          r.pm("ChanServ",s"KICK ${m.params.first} $name" )
+        }
+
+        if(m.trailing.toLowerCase.trim.equals("no u") && m.sender.nickname != "topkek_2000"){
+          r.say(target, m.trailing.trim)
+        }
+
+        var manFound = false
+        m.trailing.split("\\s+").foreach(word => {
+          if(word.toLowerCase.equals("man") && !manFound){
+            r.say(target, word)
+            manFound = true
+          }
+        })
       }
+
+
 
       if(m.command == MessageCommands.PRIVMSG && m.params.first != "#pasta") checkHighlights(m, r)
-
-
-      if (m.params.first == "#pasta" && (bAsDot.command == "rules" || bAsTilde.command == "rules")) {
-        val rules = UserConfig.getJson.getJSONArray("pastarules")
-        for (i <- 0 until rules.length()) {
-          r.notice(m.sender.nickname, s"Rule $i: ${rules.getString(i)}")
-        }
-      }
-
-      if (m.command == MessageCommands.TOPIC && m.params.first == "#pasta") {
-        if (!m.trailing.startsWith(pastatopic + " ||")) {
-          r.topic(m.params.first, pastatopic + " || " + m.trailing)
-        }
-      }
 
       if (b.command == "pastatopic") {
         val pasta: Option[Channel] = Info.get(m.server).get.findChannel("#pasta")
@@ -84,20 +150,6 @@ class Pasta extends BotModule{
         else r.say(target, "I am not currently in #pasta")
       }
 
-      if (m.command == MessageCommands.MODE && m.params.first == "#pasta" && m.sender.nickname != m.config.getNickname) {
-        if (m.params.array(1).startsWith("+e")) {
-          r.send("MODE " + m.params.all.replace("+e", "-e"))
-        }
-        if (m.params.array(1).startsWith("-e")) {
-          r.send("MODE " + m.params.all.replace("-e", "+e"))
-        }
-      }
-      if (m.command == MessageCommands.KICK && m.params.first == "#pasta") {
-        if(m.params.array(1) == m.config.getNickname) {
-          Thread.sleep(3000)
-          r.join("#pasta")
-        }
-      }
       if (m.trailing == "Cannot join channel (+b)") {
         if (m.params.array(1) == "#pasta") {
           r.pm("ChanServ", "UNBAN #pasta")

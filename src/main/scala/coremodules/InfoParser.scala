@@ -21,6 +21,9 @@ class InfoParser extends BotModule{
       r.send("WHO " + m.params.first)
     }
 
+    /*if(m.command == MessageCommands.NICK){
+      Info.changeNick(m.server, m.sender.nickname, m.trailing)
+    }*/
 
     if(m.command == MessageCommands.WHO_OUTPUT){
       val pa = m.params.array
