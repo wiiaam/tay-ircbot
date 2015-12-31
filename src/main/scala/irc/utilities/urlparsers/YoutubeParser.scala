@@ -15,7 +15,7 @@ object YoutubeParser {
 
   def find(s: String): String = {
     var videoid = "none"
-    videoid = if (s.contains("youtu.be")) s.split("youtu.be/")(1).split("\\?")(0) else s.split(".*/.*/.*v=")(1).split("\\&")(0)
+    videoid = if (s.contains("youtu.be")) s.split("youtu.be/")(1).split("\\?")(0) else s.split(".*v=")(1).split("\\&")(0)
     findById(videoid)
   }
 
@@ -26,7 +26,7 @@ object YoutubeParser {
         UserConfig.getJson.getString("googleapikey") +
         "&part=snippet,statistics,contentDetails&id=" +
         videoid
-      var jsonstring = URLParser.readUrl(url)
+      val jsonstring = URLParser.readUrl(url)
       val json = new JSONObject(jsonstring)
       val items = json.getJSONArray("items").getJSONObject(0)
       val snippet = items.getJSONObject("snippet")
@@ -94,12 +94,14 @@ object YoutubeParser {
         likebar += ratingchar
       }
       likebar += ""
-      s"1,0You0,4Tube ${title} | Uploaded by ${uploader} on ${uploaded} | Duration: ${duration} | Views: ${views}3 $likes↑4 $dislikes↓ "
+      s"1,0You0,4Tube ${title} | Uploaded by ${uploader} on ${uploaded} | Duration: ${duration} | ${views} views 3 $likes↑4 $dislikes↓ "
     } catch {
       case e: IOException =>
         e.printStackTrace()
         "Error reading YouTube API"
-      case e: IndexOutOfBoundsException => throw new ParserException
+      case e: IndexOutOfBoundsException =>
+        e.printStackTrace()
+        throw new ParserException
     }
   }
 }

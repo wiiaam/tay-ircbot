@@ -21,6 +21,9 @@ class Random extends BotModule{
     }
 
 
+    if(m.command == MessageCommands.MODE && m.params.first == "#xmas"){
+      if(m.params.array(1) == "+v") r.say(target,s"${m.params.array(2)}, Don't forget to /cycle to get your new vhost!")
+    }
 
 
 

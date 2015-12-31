@@ -91,7 +91,6 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
           case MessageCommands.NICKINUSE =>
             val nick = config.getNickname
             send("NICK " + nick + "_")
-            config.setNickname(nick + "_")
             if (config.useNickServ && config.ghostExisting) {
               send("NICK " + nick + "_")
               Thread.sleep(2000)

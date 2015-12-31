@@ -127,7 +127,7 @@ class Intros extends BotModule {
               }
             }
           } else {
-            r.say(target, "Usage : " + b.commandPrefix + "intros <add | list | del>")
+            r.say(target,  m.sender.nickname + ": Usage: " + b.commandPrefix + "intros <add | list | del>")
           }
         } else {
           r.say(target, m.sender.nickname +

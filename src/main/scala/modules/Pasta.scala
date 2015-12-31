@@ -17,7 +17,7 @@ class Pasta extends BotModule{
 
   val sc = new Scanner(topicfile)
   var pastatopic = ""
-  var banned: Map[String, String] = Map()
+  var banned: Map[String, (String,String)] = Map()
   try {
     pastatopic = sc.nextLine()
   }
@@ -44,7 +44,7 @@ class Pasta extends BotModule{
 
           if(m.params.array(1) == "+b"){
             if(banned.contains(m.params.array(2))){
-              r.pm("#pasta", s"Banning mass highlighter: ${banned(m.params.array(2))} ")
+              r.pm("#pasta", s"Banning mass highlighter: ${banned(m.params.array(2))._1} (found in ${banned(m.params.array(2))._2})")
               banned.filterKeys(_ == m.params.array(2))
             }
           }
@@ -57,11 +57,11 @@ class Pasta extends BotModule{
           }
         }
 
-        if (m.command == MessageCommands.TOPIC ) {
+        /*if (m.command == MessageCommands.TOPIC ) {
           if (!m.trailing.startsWith(pastatopic + " ||")) {
             r.topic(m.params.first, pastatopic + " || " + m.trailing)
           }
-        }
+        }*/
 
         if (m.command == MessageCommands.MODE && m.sender.nickname != m.config.getNickname) {
           if (m.params.array(1).startsWith("+e")) {
@@ -195,7 +195,7 @@ class Pasta extends BotModule{
                 highlights += 1
                 if (highlights > 5) {
                   massHighlight = true
-                  banned += "*!*@" + m.sender.host -> m.sender.nickname
+                  banned += "*!*@" + m.sender.host -> (m.sender.nickname,m.params.first)
                   r.ban("#pasta", "*!*@" + m.sender.host)
                   removeHighlighter("*!*@" + m.sender.host)
                 }

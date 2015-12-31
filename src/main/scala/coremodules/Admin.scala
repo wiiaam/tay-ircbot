@@ -25,8 +25,16 @@ class Admin extends BotModule{
           }
         }
 
+        if(b.command == "cycle"){
+          if(m.params.first.startsWith("#")) {
+            r.part(m.params.first)
+            r.join(m.params.first)
+          }
+        }
+
         if(b.command == "nick"){
           if(b.hasParams) r.nick(b.paramsArray(0))
+          m.config.setNickname(b.paramsArray(0))
         }
 
         if(b.command == "leave"){

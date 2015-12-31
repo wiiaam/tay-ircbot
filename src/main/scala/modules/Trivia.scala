@@ -28,7 +28,7 @@ class Trivia extends BotModule{
       if(b.hasParams)delay = b.paramsArray(0).toInt
     }
 
-    if(m.sender.nickname == "Scootaloo" && m.trailing.startsWith("\u0002\u000304")) {
+    if((m.sender.nickname == "Scootaloo" || m.sender.nickname == "Kylie")&& m.trailing.startsWith("\u0002\u000304")) {
       val question = m.trailing.split("\u0002\u0003\u00034 \u0002")(1)
       scootalooQuestion += m.server + "/" + m.params.first -> question
       Thread.sleep(delay * 1000)

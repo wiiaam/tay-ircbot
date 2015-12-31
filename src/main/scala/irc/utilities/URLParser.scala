@@ -4,8 +4,10 @@ package irc.utilities
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.net.MalformedURLException
-import java.net.URL
+import java.net.{HttpURLConnection, URLConnection, MalformedURLException, URL}
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl._
 import irc.utilities.urlparsers._
 import org.jsoup.Jsoup
 
@@ -17,7 +19,13 @@ object URLParser {
     var host = ""
     try {
       url = new URL(s)
-      val urlc = url.openConnection()
+      val urlc = {
+        if(s.startsWith("https")){
+          setAllowAllCerts()
+          url.openConnection().asInstanceOf[HttpsURLConnection]
+        }
+        else url.openConnection()
+      }
       urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
       urlc.addRequestProperty("User-Agent", "Mozilla")
       urlc.connect()
@@ -39,6 +47,7 @@ object URLParser {
         }
         catch {
           case e: Exception =>
+            e.printStackTrace()
         }
       }
       if ((s.contains("boards.4chan.org/") || s.contains("//8ch.net")) &&
@@ -73,37 +82,72 @@ object URLParser {
       val ps = doc.select("title")
       title = ps.text().replaceAll("\r", "").replaceAll("\n", "")
     } catch {
-      case e: MalformedURLException => e.printStackTrace()
-      case e: IOException => {
-        e.printStackTrace()
-        title = "Title not found"
-      }
+      case e: SSLHandshakeException =>
+        title = "Title not found (SSL handshake error)"
+      case e: Exception =>
     }
-    title = String.format("[URL] %s (%s)", title.trim(), host)
+    title = s"[URL] ${title.trim()} ($host)"
     title
   }
 
   def readUrl(urlString: String): String = {
     val url = new URL(urlString)
-    val urlc = url.openConnection()
-    urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
-    urlc.addRequestProperty("User-Agent", "Mozilla")
-    urlc.connect()
-    val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
-    val buffer = new StringBuffer()
-    val chars = new Array[Char](1024)
-    var reading = true
-    while (reading) {
-      val read = reader.read(chars)
-      if (read != -1) buffer.append(chars, 0, read)
-      else reading = false
-    }
+    if (urlString.startsWith("https")) {
+      setAllowAllCerts()
+      val urlc = url.openConnection().asInstanceOf[HttpsURLConnection]
+      urlc.setInstanceFollowRedirects(true)
+      urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
+      urlc.addRequestProperty("User-Agent", "Mozilla")
+      urlc.connect()
+      val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
+      val buffer = new StringBuffer()
+      val chars = new Array[Char](1024)
+      var reading = true
+      while (reading) {
+        val read = reader.read(chars)
+        if (read != -1) buffer.append(chars, 0, read)
+        else reading = false
+      }
 
-    buffer.toString
+      buffer.toString
+    }
+    else {
+      val urlc = url.openConnection().asInstanceOf[HttpURLConnection]
+      urlc.setInstanceFollowRedirects(true)
+      urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
+      urlc.addRequestProperty("User-Agent", "Mozilla")
+      urlc.connect()
+      val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
+      val buffer = new StringBuffer()
+      val chars = new Array[Char](1024)
+      var reading = true
+      while (reading) {
+        val read = reader.read(chars)
+        if (read != -1) buffer.append(chars, 0, read)
+        else reading = false
+      }
+
+      buffer.toString
+    }
   }
 
   def makeClean(htmlString: String): String = {
     Jsoup.parse(htmlString).text().replaceAll("\r", "")
       .replaceAll("\n", "")
+  }
+
+  def setAllowAllCerts(): Unit ={
+    val tm = new X509TrustManager {
+      override def getAcceptedIssuers: Array[X509Certificate] = null
+
+      override def checkClientTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
+
+      override def checkServerTrusted(x509Certificates: Array[X509Certificate], s: String): Unit = {}
+    }
+    val tmarray: Array[TrustManager] = Array(tm)
+    val context = SSLContext.getInstance("SSL")
+    context.init(new Array[KeyManager](0), tmarray, new SecureRandom())
+    val sslfact: SSLSocketFactory = context.getSocketFactory
+    HttpsURLConnection.setDefaultSSLSocketFactory(sslfact)
   }
 }
