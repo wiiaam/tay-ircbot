@@ -7,19 +7,19 @@ import ircbot.{BotCommand, BotModule}
 
 
 class wiiam extends BotModule{
-  override val adminCommands: Map[String, Array[String]] = Map("nurupo" -> Array("Toggles nurupo® moderation in the channel"))
+  override val adminCommands: Map[String, Array[String]] = Map("wiiam" -> Array("Toggles wiiam® moderation in the channel"))
 
   var channels: Set[String] = Set()
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
 
-    if(b.command == "nurupo" && m.sender.isAdmin){
+    if(b.command == "wiiam" && m.sender.isAdmin){
       if(channels.contains(m.server + ":" + m.params.first)){
-        r.say(target, "nurupo is no longer moderating this channel")
+        r.say(target, "wiiam is no longer moderating this channel")
         channels -= m.server + ":" + m.params.first
       }
       else{
-        r.say(target, "nurupo is now moderating this channel")
+        r.say(target, "wiiam is now moderating this channel")
         channels += m.server + ":" + m.params.first
       }
     }
