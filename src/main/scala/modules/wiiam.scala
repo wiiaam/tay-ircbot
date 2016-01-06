@@ -6,7 +6,7 @@ import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
 
 
-class nurupo extends BotModule{
+class wiiam extends BotModule{
   override val adminCommands: Map[String, Array[String]] = Map("nurupo" -> Array("Toggles nurupo® moderation in the channel"))
 
   var channels: Set[String] = Set()
