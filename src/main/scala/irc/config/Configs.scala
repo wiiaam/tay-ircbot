@@ -25,7 +25,9 @@ object Configs {
           }
           else{
             Out.println(file.getName.split("\\.")(0))
-            configs.put(file.getName.split("\\.")(0), new Config(file))
+            val config = new Config(file)
+            config.networkName = file.getName.split("\\.")(0)
+            configs.put(file.getName.split("\\.")(0), config )
           }
         }
       }

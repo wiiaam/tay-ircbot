@@ -15,7 +15,7 @@ import java.security.cert.X509Certificate
 import java.security.cert.CertificateException
 
 
-class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
+class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   private var listeners: Map[String, OnMessageListener] = Map()
   private var socket: Option[Socket] = None
   private var in: Option[Scanner] = None
@@ -23,6 +23,8 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   private var toSend = new util.ArrayDeque[String]
   private var toSendLP = new util.ArrayDeque[String]
   private var connected = false
+  var serverName = name
+  val fileName = name
 
   sendQueueToSocket()
 
@@ -32,19 +34,19 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
 
   private def onMessageReceived(message: String) = {
 
-    val m = new Message(message, name)
+    val m = new Message(message, fileName)
 
-    val b = new BotCommand(m, Configs.get(name).get.getCommandPrefix)
+    val b = new BotCommand(m, Configs.get(fileName).get.getCommandPrefix)
     val r = new ServerResponder(this)
     for ((k, v) <- listeners) {
-      Out.println(s"$name --> $message")
+      Out.println(s"$fileName/$serverName --> $message")
       v.onMessage(m, b, r)
     }
   }
 
   def connect(): Boolean = {
     try {
-      if (Configs.get(name).get.useSSL) {
+      if (Configs.get(serverName).get.useSSL) {
         val tm = new X509TrustManager {
           override def getAcceptedIssuers: Array[X509Certificate] = null
 
@@ -70,23 +72,26 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
   }
 
   def login(): Unit = {
-    val config = Configs.get(name).getOrElse(throw new RuntimeException("No config"))
+    val config = Configs.get(fileName).getOrElse(throw new RuntimeException("No config"))
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
+    if(config.getServerPassword != ""){
+      send("PASS " + config.getServerPassword)
+    }
     var loggedIn = false
     while (!loggedIn) {
       if (in.getOrElse(throw new RuntimeException("Not connected")).hasNextLine) {
         val next = in.get.nextLine()
 
-        val message = new Message(next, name)
+        val message = new Message(next, fileName)
 
 
-        Out.println(String.format("%s --> %s %s", name, message.command.toString, message.trailing))
+        Out.println(s"$fileName/$serverName --> $message")
 
 
         message.command match {
           case MessageCommands.CONNECTED =>
-            Out.println(s"Connected to $name")
+            Out.println(s"Connected to $fileName")
             loggedIn = true
           case MessageCommands.NICKINUSE =>
             val nick = config.getNickname
@@ -129,7 +134,7 @@ class IrcServer(val name: String, address: String, port: Int, useSSL: Boolean) {
           Thread.sleep(20)
           if (!toSend.isEmpty) {
             val tosend = toSend.poll()
-            Out.println(s"$name <-- $tosend")
+            Out.println(s"$fileName/$serverName <-- $tosend")
             out.foreach(_.print(tosend + "\r\n"))
             out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)

@@ -14,6 +14,8 @@ class Config(jsonFile: File)  {
     jsonString += reader.readLine() + "\n"
   }
 
+
+
   private var json = new JSONObject(jsonString)
 
   private var adminset = new util.HashSet[String]
@@ -33,6 +35,10 @@ class Config(jsonFile: File)  {
   for(i <- 0 until channels.length()){
     channelset.add(channels.getString(i))
   }
+
+  var networkName = ""
+
+  def getServerPassword = json.getString("serverPassword")
 
   def getServer: String = json.getString("server")
 

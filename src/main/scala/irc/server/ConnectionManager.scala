@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 
 object ConnectionManager {
 
-  private val servers = new util.HashMap[String, IrcServer]()
+  val servers = new util.HashMap[String, IrcServer]()
 
   private val PING_TIMEOUT = 30
 
@@ -63,9 +63,9 @@ object ConnectionManager {
         server.listenOnSocket()
       }
     }).start()
-    if(Configs.get(name).get.useNickServ) Thread.sleep(1000)
-    joinChannels(name)
-    checkPing(name)
+    if(Configs.get(server.fileName).get.useNickServ) Thread.sleep(1000)
+    joinChannels(server.fileName)
+    checkPing(server.fileName)
   }
 
   def joinChannels(name: String): Unit ={
@@ -88,7 +88,7 @@ object ConnectionManager {
       pings += (name -> false)
       Thread.sleep(PING_TIMEOUT*1000)
       if(!pings(name)){
-        Out.println(servers.get(name).name + " !!! Ping timeout")
+        Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
         servers.get(name).disconnect()
         connectToServer(name)
         connected = false
