@@ -22,9 +22,8 @@ class Random extends BotModule{
 
 
     if(m.command == MessageCommands.MODE && m.params.first == "#xmas"){
-      if(m.params.array(1) == "+v") r.say(target,s"${m.params.array(2)}, Don't forget to /cycle to get your new vhost!")
+      if(m.params.array(1) == "+v") r.notice(m.params.array(2),"Don't forget to /cycle to get your new vhost!")
     }
-
 
 
     if(b.command == "triggergen2" && m.sender.isAdmin){
@@ -87,6 +86,26 @@ class Random extends BotModule{
       r.say(target, "     GGG::::::GGG:::G A:::::A                 A:::::A R::::::R     R:::::R    Y:::::::::::Y    ")
       r.say(target, "        GGGGGG   GGGGAAAAAAA                   AAAAAAARRRRRRRR     RRRRRRR    YYYYYYYYYYYYY   ")
     }
+
+    if(b.command == "summongen2" && m.sender.isAdmin){
+      r.say(target, "        GGGGGGGGGGGGGEEEEEEEEEEEEEEEEEEEEEENNNNNNNN        NNNNNNNN 222222222222222    ")
+      r.say(target, "     GGG::::::::::::GE::::::::::::::::::::EN:::::::N       N::::::N2:::::::::::::::22  ")
+      r.say(target, "   GG:::::::::::::::GE::::::::::::::::::::EN::::::::N      N::::::N2::::::222222:::::2 ")
+      r.say(target, "  G:::::GGGGGGGG::::GEE::::::EEEEEEEEE::::EN:::::::::N     N::::::N2222222     2:::::2 ")
+      r.say(target, " G:::::G       GGGGGG  E:::::E       EEEEEEN::::::::::N    N::::::N            2:::::2 ")
+      r.say(target, "G:::::G                E:::::E             N:::::::::::N   N::::::N            2:::::2 ")
+      r.say(target, "G:::::G                E::::::EEEEEEEEEE   N:::::::N::::N  N::::::N         2222::::2  ")
+      r.say(target, "G:::::G    GGGGGGGGGG  E:::::::::::::::E   N::::::N N::::N N::::::N    22222::::::22   ")
+      r.say(target, "G:::::G    G::::::::G  E:::::::::::::::E   N::::::N  N::::N:::::::N  22::::::::222     ")
+      r.say(target, "G:::::G    GGGGG::::G  E::::::EEEEEEEEEE   N::::::N   N:::::::::::N 2:::::22222        ")
+      r.say(target, "G:::::G        G::::G  E:::::E             N::::::N    N::::::::::N2:::::2             ")
+      r.say(target, " G:::::G       G::::G  E:::::E       EEEEEEN::::::N     N:::::::::N2:::::2             ")
+      r.say(target, "  G:::::GGGGGGGG::::GEE::::::EEEEEEEE:::::EN::::::N      N::::::::N2:::::2       222222")
+      r.say(target, "   GG:::::::::::::::GE::::::::::::::::::::EN::::::N       N:::::::N2::::::2222222:::::2")
+      r.say(target, "     GGG::::::GGG:::GE::::::::::::::::::::EN::::::N        N::::::N2::::::::::::::::::2")
+      r.say(target, "        GGGGGG   GGGGEEEEEEEEEEEEEEEEEEEEEENNNNNNNN         NNNNNNN22222222222222222222")
+    }
+
 
 
 

@@ -9,7 +9,7 @@ import ircbot.{BotCommand, BotModule}
 class LmaoAyy extends BotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
-    if(m.server == "rizon"){
+    if(m.config.networkName == "Rizon"){
       if(m.command == MessageCommands.JOIN){
         if(m.trailing == "#LmaoAyy"){
           val thread = new Thread(new Runnable {

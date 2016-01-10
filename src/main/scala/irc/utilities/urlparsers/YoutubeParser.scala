@@ -94,7 +94,9 @@ object YoutubeParser {
         likebar += ratingchar
       }
       likebar += ""
-      s"1,0You0,4Tube ${title} | Uploaded by ${uploader} on ${uploaded} | Duration: ${duration} | ${views} views 3 $likes↑4 $dislikes↓ "
+      s"\u0002\u00031,0You\u00030,4Tube\u0003\u0002 \u0002${title}\u0002 | Uploaded by \u000311\u0002${uploader}\u0002\u0003 " +
+        s"on \u0002${uploaded}\u0002 | Duration: \u0002${duration}\u0002 | \u0002${views}\u0002 views" +
+        s"\u00033 $likes↑\u00034 $dislikes↓\u0003 "
     } catch {
       case e: IOException =>
         e.printStackTrace()

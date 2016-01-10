@@ -37,7 +37,7 @@ class Intros extends BotModule {
   }
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
-    if(m.server != "rizon") return
+    if(m.config.networkName != "Rizon") return
     val target: String = if (!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
     if (m.params.first.startsWith("#") && m.command == MessageCommands.PRIVMSG) {
       if (b.command == "intros" || b.command == "intro") {

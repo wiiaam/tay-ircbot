@@ -103,7 +103,13 @@ class TitleReporting extends BotModule{
                   var title = URLParser.find(messageSplit(i))
                   if (title != null) {
                     title = title.replace("http://", "").replace("https://", "")
-                    r.say(target, title)
+                    if(title.matches("^.*[\u1100-\u11FF].*") || title.matches("^.*[\u3130-\u318F].*") || title.matches("^.*[\uAC00-\uD7AF].*")){
+                      r.kick(target,m.sender.nickname, "Fuck off koreaboo faggot")
+                    }
+                    else if(title.toLowerCase.contains("asmr")){
+                      r.kick(target,m.sender.nickname, "asmr is shit go fuck yourself")
+                    }
+                    else r.say(target, title)
                   }
                 }
               }).start()

@@ -10,7 +10,7 @@ class Xcel extends BotModule{
   var timeout = System.currentTimeMillis()
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
-    if(m.server == "rizon" && m.sender.isRegistered && m.sender.nickname.toLowerCase == "pr0wolf29" && m.command == MessageCommands.PRIVMSG && timeout <= System.currentTimeMillis()){
+    if(m.config.networkName == "Rizon" && m.sender.isRegistered && m.sender.nickname.toLowerCase == "pr0wolf29" && m.command == MessageCommands.PRIVMSG && timeout <= System.currentTimeMillis()){
       val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
 
       if(m.trailing.startsWith("<xcel> ") || m.trailing.startsWith("[xcel] ")){

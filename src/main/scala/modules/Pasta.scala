@@ -37,7 +37,7 @@ class Pasta extends BotModule{
 
     val bAsDot = new BotCommand(m, ".")
     val bAsTilde = new BotCommand(m,"~")
-    if(m.server == "rizon") {
+    if(m.config.networkName == "Rizon") {
 
       if(m.params.first == "#pasta"){
         if(m.command == MessageCommands.MODE && m.sender.nickname == m.config.getNickname){
@@ -82,6 +82,10 @@ class Pasta extends BotModule{
         // fun stuff
         if(m.command == MessageCommands.PRIVMSG && m.trailing.trim == "^") r.say("#pasta","can confirm")
 
+        if(m.sender.nickname == "Pr0Wolf29" && (m.trailing.contains("meow") || m.trailing.startsWith("!neko"))){
+          r.say(target, "cram it Pr0Wolf29")
+        }
+
         if(m.trailing.startsWith("\u0001ACTION")){
           val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","").trim
 
@@ -94,7 +98,10 @@ class Pasta extends BotModule{
             }
           }
           if(!highlight){
-            if(action.startsWith("is ")){
+            if(action.trim.equals("whips")){
+              r.action(target, "nae naes")
+            }
+            else if(action.startsWith("is ")){
               r.action(target, "is also" + action.substring(2))
             }
             else if(action.split("\\s+")(0).toLowerCase.endsWith("s")){
@@ -107,10 +114,16 @@ class Pasta extends BotModule{
           r.action(target, s"kills ${m.sender.nickname}")
         }
 
-        if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kick")){
+        if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kickban")){
           var name = m.trailing.split("\\s+")(0)
           name = name.substring(1,name.length-1).trim
-
+          if(name == m.config.getNickname) return
+          r.pm("ChanServ",s"BAN ${m.params.first} $name" )
+        }
+        else if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kick")){
+          var name = m.trailing.split("\\s+")(0)
+          name = name.substring(1,name.length-1).trim
+          if(name == m.config.getNickname) return
           r.pm("ChanServ",s"KICK ${m.params.first} $name" )
         }
 
