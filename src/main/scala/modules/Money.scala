@@ -183,7 +183,7 @@ class Money extends BotModule {
       r.say(target, "[_[___________4#")
     }
     if (b.command == "give") {
-      if (m.sender.isRegistered) {
+      if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
         return
       }
