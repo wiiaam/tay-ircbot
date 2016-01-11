@@ -14,6 +14,7 @@ class CTCPRequests extends BotModule{
 
   var pingRequests: Set[(String,String)] = Set()
 
+  var timeRequests: Set[(String,String)] = Set()
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
@@ -35,6 +36,15 @@ class CTCPRequests extends BotModule{
       }
     }
 
+    if(b.command == "time"){
+      if(b.hasParams){
+        val user = b.paramsArray(0)
+        val tup = (user, target)
+        timeRequests += tup
+        r.CTCP(user,s"TIME")
+      }
+    }
+
     if(m.trailing.startsWith("\u0001") && m.trailing.endsWith("\u0001") && m.command == MessageCommands.NOTICE){
       if(m.trailing.startsWith("\u0001VERSION")){
         for(t <- versionRequests){
@@ -51,6 +61,15 @@ class CTCPRequests extends BotModule{
             val time = m.trailing.replace("\u0001","").substring(5).toLong
             r.say(t._2,s"Ping for \u0002${t._1}\u0002: ${System.currentTimeMillis() - time} ms")
             pingRequests -= t
+          }
+        }
+      }
+      if(m.trailing.startsWith("\u0001TIME")){
+        for(t <- timeRequests){
+          if(t._1 == m.sender.nickname){
+            val time = m.trailing.replace("\u0001","").substring(5)
+            r.say(t._2,s"Time for \u0002${t._1}\u0002: $time")
+            timeRequests -= t
           }
         }
       }
