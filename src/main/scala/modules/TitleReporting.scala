@@ -92,7 +92,7 @@ class TitleReporting extends BotModule{
       }
     }
 
-    if(m.command == MessageCommands.PRIVMSG && !m.trailing.contains("Reporting in!")){
+    if(m.command == MessageCommands.PRIVMSG && !m.trailing.contains("Reporting in!") && m.sender.nickname != "topkek_2000"){
       if(checkChannel(m.params.first, m.server)) {
         if (m.trailing.contains("http://") || m.trailing.contains("https://")) {
           val messageSplit: Array[String] = m.trailing.split("\\s+")
@@ -103,11 +103,18 @@ class TitleReporting extends BotModule{
                   var title = URLParser.find(messageSplit(i))
                   if (title != null) {
                     title = title.replace("http://", "").replace("https://", "")
-                    if(title.matches("^.*[\u1100-\u11FF].*") || title.matches("^.*[\u3130-\u318F].*") || title.matches("^.*[\uAC00-\uD7AF].*")){
-                      r.kick(target,m.sender.nickname, "Fuck off koreaboo faggot")
-                    }
-                    else if(title.toLowerCase.contains("asmr")){
-                      r.kick(target,m.sender.nickname, "asmr is shit go fuck yourself")
+                    if(m.params.first == "#pasta") {
+                      if (title.matches("^.*[\u1100-\u11FF].*") || title.matches("^.*[\u3130-\u318F].*") || title.matches("^.*[\uAC00-\uD7AF].*")) {
+                        r.kick(target, m.sender.nickname, "Fuck off koreaboo faggot")
+                      }
+                      else if (title.toLowerCase.contains("asmr")) {
+                        r.kick(target, m.sender.nickname, "asmr is shit go fuck yourself")
+                      }
+                      else if (title.toLowerCase.contains("filthyfrank") ||
+                        (title.toLowerCase.contains("filthy") && title.toLowerCase.contains("frank"))) {
+                        r.kick(target, m.sender.nickname, "filthy frank is worse than autism")
+                      }
+                      else r.say(target, title)
                     }
                     else r.say(target, title)
                   }

@@ -15,7 +15,16 @@ object YoutubeParser {
 
   def find(s: String): String = {
     var videoid = "none"
-    videoid = if (s.contains("youtu.be")) s.split("youtu.be/")(1).split("\\?")(0) else s.split(".*v=")(1).split("\\&")(0)
+    videoid = if (s.contains("youtu.be")) s.split("youtu.be/")(1).split("\\?")(0)
+    else {
+      if(s.contains("?v=")){
+        s.split(".*\\?v=")(1).split("&")(0)
+      }
+      else if(s.contains("&v=")){
+        s.split(".*&v=")(1).split("&")(0)
+      }
+      else throw new ParserException
+    }
     findById(videoid)
   }
 
