@@ -40,7 +40,10 @@ class Money extends BotModule {
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
     var target = m.params.first
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
+
     checkJail()
+
+
     if (b.command == "jailstatus") {
       if (!jail.containsKey(m.sender.nickname)) {
         r.say(target, "ur not in jail u helmet")
@@ -51,6 +54,7 @@ class Money extends BotModule {
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
       }
     }
+
 
     if (b.command == "bene") {
       if (!m.sender.isRegistered) {
@@ -81,9 +85,10 @@ class Money extends BotModule {
       lastpaid.put(m.sender.nickname, System.currentTimeMillis())
       write(m.sender.nickname, userbalance)
     }
+
+
     if (b.command == "money" || b.command == "wallet" ||
-      b.command == "bank" ||
-      b.command == "balance") {
+      b.command == "bank" || b.command == "balance") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
         return
@@ -93,6 +98,8 @@ class Money extends BotModule {
           "bene to get some cash")
       } else r.say(target, s"You currently have3 $$${"%.0f".format(java.lang.Double.parseDouble(bank.getProperty(m.sender.nickname)))} in the bnz")
     }
+
+
     if (b.command == "pokies" || b.command == "bet") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
@@ -131,6 +138,8 @@ class Money extends BotModule {
         }
       }
     }
+
+
     if (b.command == "mug") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
@@ -172,6 +181,8 @@ class Money extends BotModule {
         }
       }
     }
+
+
     if (b.command == "durry") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
@@ -192,6 +203,8 @@ class Money extends BotModule {
       r.say(target, " _ ___________ )")
       r.say(target, "[_[___________4#")
     }
+
+
     if (b.command == "give") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
@@ -226,6 +239,7 @@ class Money extends BotModule {
     }
   }
 
+  
   private def write(nick: String, amount: Double) {
     bank.setProperty(nick, String.valueOf(amount))
     try {
