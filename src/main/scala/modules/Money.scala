@@ -53,6 +53,10 @@ class Money extends BotModule {
     }
 
     if (b.command == "bene") {
+      if (!m.sender.isRegistered) {
+        r.say(target, "pls login m9")
+        return
+      }
       var lastPaid: Long = 0l
       lastPaid = if (!lastpaid.containsKey(m.sender.nickname)) 0 else lastpaid.get(m.sender.nickname)
       if (lastPaid > System.currentTimeMillis() - (3600 * 1000)) {
@@ -169,7 +173,7 @@ class Money extends BotModule {
       }
     }
     if (b.command == "durry") {
-      if (m.sender.isRegistered) {
+      if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
         return
       }
