@@ -51,12 +51,7 @@ class Money extends BotModule {
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
       }
     }
-    if (jail.containsKey(m.sender.nickname)){
-      val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
-        1000).toInt
-      r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
-      return
-    }
+
     if (b.command == "bene") {
       var lastPaid: Long = 0l
       lastPaid = if (!lastpaid.containsKey(m.sender.nickname)) 0 else lastpaid.get(m.sender.nickname)
@@ -135,6 +130,12 @@ class Money extends BotModule {
     if (b.command == "mug") {
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
+        return
+      }
+      if (jail.containsKey(m.sender.nickname)){
+        val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
+          1000).toInt
+        r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
         return
       }
       if (b.hasParams) {
