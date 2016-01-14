@@ -158,7 +158,7 @@ class Money extends BotModule {
         }
         if (Math.random() > 0.1 || pros.contains(tomug)) {
           jail.put(m.sender.nickname, System.currentTimeMillis())
-          r.say(target, "\u00034█\u00032█\u00030,1POLICE\u000F\u00034█\u00032█\u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
+          r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
         } else {
           val targetmoney = get(tomug)
           val tosteal = Math.floor(Math.random() * (targetmoney / 3))
