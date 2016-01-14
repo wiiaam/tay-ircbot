@@ -9,3 +9,5 @@ unmanagedJars in Compile ++= Seq(file( "lib/org.json-20130603.jar"), file("lib/c
 javacOptions ++= Seq("-encoding", "UTF-8")
 
 scalacOptions ++= Seq("-encoding", "UTF-8")
+
+javaOptions += "-Dfile.encoding=UTF-8 -Xmx256M"
