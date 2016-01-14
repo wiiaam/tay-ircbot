@@ -40,6 +40,7 @@ class Money extends BotModule {
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
     var target = m.params.first
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
+    checkJail()
     if (b.command == "jailstatus") {
       if (!jail.containsKey(m.sender.nickname)) {
         r.say(target, "ur not in jail u helmet")
@@ -50,8 +51,12 @@ class Money extends BotModule {
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
       }
     }
-    checkJail()
-    if (jail.containsKey(m.sender.nickname)) return
+    if (jail.containsKey(m.sender.nickname)){
+      val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
+        1000).toInt
+      r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
+      return
+    }
     if (b.command == "bene") {
       var lastPaid: Long = 0l
       lastPaid = if (!lastpaid.containsKey(m.sender.nickname)) 0 else lastpaid.get(m.sender.nickname)
@@ -193,10 +198,9 @@ class Money extends BotModule {
         try {
           togive = java.lang.Integer.parseInt(b.paramsArray(1))
         } catch {
-          case e: NumberFormatException => {
+          case e: NumberFormatException =>
             r.say(target, "cmon man help a brother out")
             return
-          }
         }
         if (togive < 1) {
           r.say(target, "dont be a cheap cunt")
@@ -232,8 +236,8 @@ class Money extends BotModule {
   }
 
   private def checkJail() {
-    for (s <- jail.keySet if System.currentTimeMillis() > (jail.get(s) + (60 * 5 * 1000))) {
-      jail.remove(s)
+    for (s <- jail.keySet){
+      if(System.currentTimeMillis() >= (jail.get(s) + 300000)) jail.remove(s)
     }
   }
 }
