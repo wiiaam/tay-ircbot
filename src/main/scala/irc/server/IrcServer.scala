@@ -111,7 +111,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   }
 
   def listenOnSocket(): Unit = {
-    new Thread(new Runnable {
+    val thread = new Thread(new Runnable {
       override def run(): Unit = {
         while (connected) {
           in.foreach(stream => {
@@ -123,12 +123,14 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
           Thread.sleep(10)
         }
       }
-    }).start()
+    })
+    thread.setName(s"Listening on $serverName")
+    thread.start()
   }
 
   private def sendQueueToSocket(): Unit = {
     var spammed = 0
-    new Thread(new Runnable {
+    val thread = new Thread(new Runnable {
       override def run(): Unit = {
         while (true) {
           Thread.sleep(20)
@@ -149,7 +151,9 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
           else if (spammed != 0) spammed = 0
         }
       }
-    }).start()
+    })
+    thread.setName(s"Sending queue to socket on $serverName")
+    thread.start()
   }
 
   def send(message: String) {

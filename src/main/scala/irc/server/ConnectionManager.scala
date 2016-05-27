@@ -30,11 +30,13 @@ object ConnectionManager {
     Out.println(s"Found servers: $servernames")
 
     for((k,v) <- servers){
-      new Thread(new Runnable {
+      val thread = new Thread(new Runnable {
         override def run(): Unit = {
           connectToServer(k)
         }
-      }).start()
+      })
+      thread.setName(s"Connection to $k")
+      thread.start()
 
     }
   }
@@ -58,18 +60,16 @@ object ConnectionManager {
       override def onMessage(m: Message, b: BotCommand, r: ServerResponder): Unit =
       Modules.parseToAllModules(m,b,r)
     })
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        server.listenOnSocket()
-      }
-    }).start()
+
+    server.listenOnSocket()
+
     if(Configs.get(server.fileName).get.useNickServ) Thread.sleep(1000)
     joinChannels(server.fileName)
     checkPing(server.fileName)
   }
 
   def joinChannels(name: String): Unit ={
-    new Thread(new Runnable {
+    val thread = new Thread(new Runnable {
       override def run(): Unit = {
         val server: IrcServer = servers.get(name)
         val config = Configs.get(name).get
@@ -77,7 +77,9 @@ object ConnectionManager {
           server.send("JOIN " + channel)
         }
       }
-    }).start()
+    })
+    thread.setName(s"Joining channels on $name")
+    thread.start()
   }
 
   def checkPing(name: String): Unit ={

@@ -3,11 +3,13 @@ package modules
 import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
+
 import irc.config.Configs
 import irc.server.ServerResponder
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 import org.json.{JSONArray, JSONObject}
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
+
 import scala.collection.JavaConversions._
 
 class Intros extends BotModule {
@@ -22,7 +24,7 @@ class Intros extends BotModule {
     "%pintros list will list all intros set"))
 
   try {
-    jsonfile = new File(this.getClass.getResource("files/intros.json").toURI)
+    jsonfile = ModuleFiles.getFile("intros.json")
     var scan = new Scanner(new FileInputStream(jsonfile))
     var jsonstring = ""
     while (scan.hasNext) {

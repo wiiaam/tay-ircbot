@@ -7,9 +7,10 @@ import java.io.IOException
 import java.net.URISyntaxException
 import java.util
 import java.util.Properties
+
 import irc.config.Configs
 import irc.server.ServerResponder
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 import irc.message.Message
 //remove if not needed
 import scala.collection.JavaConversions._
@@ -31,7 +32,7 @@ class Money extends BotModule {
 
 
   try {
-    bank.load(new FileInputStream(new File(this.getClass.getResource("files/money.properties").toURI)))
+    bank.load(new FileInputStream(ModuleFiles.getFile("money.properties")))
   } catch {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
   }
@@ -232,6 +233,10 @@ class Money extends BotModule {
           r.say(target, "u dont have enuf money bro")
           return
         }
+        if (!bank.containsKey(togiveto)) {
+          r.say(target, "sorry bro theyre with kiwibank")
+          return
+        }
         write(m.sender.nickname, get(m.sender.nickname) - togive)
         write(togiveto, get(togiveto) + togive)
         r.say(target, s"you gave $togiveto 3$$${"%.0f".format(togive)}")
@@ -243,8 +248,7 @@ class Money extends BotModule {
   private def write(nick: String, amount: Double) {
     bank.setProperty(nick, String.valueOf(amount))
     try {
-      bank.store(new FileWriter(new File(this.getClass.getResource("files/money.properties")
-        .toURI)), "")
+      bank.store(new FileWriter(ModuleFiles.getFile("money.properties")), "")
     } catch {
       case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
     }

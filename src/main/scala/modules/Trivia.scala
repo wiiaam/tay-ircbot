@@ -1,12 +1,12 @@
 package modules
 
-import java.io.{FileInputStream, FileOutputStream, File}
+import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.Properties
 
 import irc.message.Message
 import irc.server.ServerResponder
 import irc.utilities.GoogleSearch
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 
 
 class Trivia extends BotModule{
@@ -17,7 +17,7 @@ class Trivia extends BotModule{
 
   var scootaloo: Properties = new Properties()
   var scootalooQuestion: Map[String, String] = Map()
-  val scootalooFile = new File(this.getClass.getResource("files/trivia/scootaloo.properties").toURI)
+  val scootalooFile = ModuleFiles.getFile("scootaloo.properties")
 
   var delay = 10
 

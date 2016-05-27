@@ -6,11 +6,12 @@ import java.util.Scanner
 
 import irc.config.Configs
 import irc.info.Info
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import irc.utilities.URLParser
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 import org.json.{JSONArray, JSONObject}
+
 import scala.collection.JavaConversions._
 
 
@@ -19,7 +20,7 @@ class TitleReporting extends BotModule{
     "To use: %purltitles <on/off> <channel>"))
 
   var json: JSONObject = new JSONObject()
-  val jsonfile = new File(this.getClass.getResource("files/titles.json").toURI)
+  val jsonfile = ModuleFiles.getFile("titles.json")
 
   var channels: Map[String, Set[String]] = Map()
 

@@ -4,11 +4,10 @@ import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
 
-import irc.info.{Rank, Info}
-import irc.message.{MessageCommands, Message}
-
+import irc.info.{Info, Rank}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 import org.json.JSONArray
 
 class Administration extends BotModule{
@@ -24,7 +23,7 @@ class Administration extends BotModule{
 
   var channels: Set[String] = Set()
 
-  val jsonfile = new File(this.getClass.getResource("files/administration.json").toURI)
+  val jsonfile = ModuleFiles.getFile("administration.json")
 
   var json: JSONArray = new JSONArray()
 

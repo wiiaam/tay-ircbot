@@ -1,7 +1,7 @@
 package out
 
 
-object Out extends {
+object Out {
 
   def println(string: String) {
     System.out.println(string)

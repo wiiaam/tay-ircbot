@@ -3,9 +3,9 @@ package modules
 import java.io.File
 import java.util.Scanner
 
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 
 import scala.util.Random
 
@@ -102,7 +102,7 @@ class Tayrivia extends BotModule{
   }
 
   private def loadQuestions(): Unit ={
-    val file = new File(this.getClass.getResource("files/tayrivia.txt").toURI)
+    val file = ModuleFiles.getFile("tayrivia.txt")
     val sc = new Scanner(file)
     while(sc.hasNextLine){
       val line = sc.nextLine()

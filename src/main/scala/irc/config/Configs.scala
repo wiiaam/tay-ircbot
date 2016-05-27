@@ -4,6 +4,7 @@ package irc.config
 import java.io.File
 import java.util
 
+import ircbot.Constants
 import out.Out
 
 
@@ -12,14 +13,14 @@ object Configs {
   val configs: util.Map[String, Config] = new util.HashMap[String, Config]
 
   def load(): Unit ={
-    val dir = new File(this.getClass.getResource("../../configs/").toURI)
+    val dir = new File(Constants.CONFIG_FOLDER)
     if (dir.exists()){
       Out.println("Config directory exists")
       val list = dir.list()
       for(i <- 0 until list.length){
         val filename = list(i)
         if(filename.endsWith(".json") && !filename.equals("example.json")){
-          val file = new File(this.getClass.getResource("../../configs/" + filename).toURI)
+          val file = new File(Constants.CONFIG_FOLDER + filename)
           if(filename.equals("user.json")){
             UserConfig.load(file)
           }

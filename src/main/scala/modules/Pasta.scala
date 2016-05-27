@@ -1,19 +1,19 @@
 package modules
 
-import java.io.{PrintWriter, File}
+import java.io.{File, PrintWriter}
 import java.util.Scanner
 
 import irc.config.{Configs, UserConfig}
-import irc.info.{Rank, Channel, Info}
-import irc.message.{MessageCommands, Message}
+import irc.info.{Channel, Info, Rank}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, ModuleFiles}
 import out.Out
 
 
 class Pasta extends BotModule{
 
-  val topicfile = new File(this.getClass.getResource("files/pastatopic.txt").toURI)
+  val topicfile = ModuleFiles.getFile("pastatopic.txt")
 
   val sc = new Scanner(topicfile)
   var pastatopic = ""
