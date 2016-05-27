@@ -38,15 +38,15 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
     val b = new BotCommand(m, Configs.get(fileName).get.getCommandPrefix)
     val r = new ServerResponder(this)
+    Out.println(s"$fileName/$serverName --> $message")
     for ((k, v) <- listeners) {
-      Out.println(s"$fileName/$serverName --> $message")
       v.onMessage(m, b, r)
     }
   }
 
   def connect(): Boolean = {
     try {
-      if (Configs.get(serverName).get.useSSL) {
+      if (Configs.get(fileName).get.useSSL) {
         val tm = new X509TrustManager {
           override def getAcceptedIssuers: Array[X509Certificate] = null
 
@@ -67,6 +67,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
       true
     } catch {
       case e: Exception =>
+        e.printStackTrace()
         false
     }
   }
@@ -86,7 +87,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         val message = new Message(next, fileName)
 
 
-        Out.println(s"$fileName/$serverName --> $message")
+        Out.println(s"$fileName/$serverName --> $next")
 
 
         message.command match {
