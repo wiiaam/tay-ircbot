@@ -131,13 +131,13 @@ class Pasta extends BotModule{
           r.say(target, m.trailing.trim)
         }
 
-        var manFound = false
-        m.trailing.split("\\s+").foreach(word => {
-          if(word.toLowerCase.equals("man") && !manFound){
-            r.say(target, word)
-            manFound = true
-          }
-        })
+        //var manFound = false
+        //m.trailing.split("\\s+").foreach(word => {
+        //  if(word.toLowerCase.equals("man") && !manFound){
+        //    r.say(target, word)
+        //    manFound = true
+        //  }
+        //})
       }
 
 
