@@ -57,6 +57,15 @@ class Pasta extends BotModule{
           }
         }
 
+        if(m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains("linux") &&
+          !m.trailing.toLowerCase.contains("kernel") && !m.trailing.toLowerCase.contains("steamos")){
+          r.say(target, "I'd just like to interject for a moment. What you’re referring to as Linux, " +
+            "is in fact, SteamOS/Linux, or as I’ve recently taken to calling it, SteamOS plus Linux. " +
+            "Linux is not an operating system unto itself, but rather another free component of a fully functioning " +
+            "Steam system made useful by the Valve corelibs, shell utilities and vital system components " +
+            "comprising a full OS as defined by POSIX.")
+        }
+
         /*if (m.command == MessageCommands.TOPIC ) {
           if (!m.trailing.startsWith(pastatopic + " ||")) {
             r.topic(m.params.first, pastatopic + " || " + m.trailing)
