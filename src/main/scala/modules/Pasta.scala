@@ -94,6 +94,11 @@ class Pasta extends BotModule{
         if(m.sender.nickname == "Pr0Wolf29" && (m.trailing.contains("meow") || m.trailing.startsWith("!neko"))){
           r.say(target, "cram it Pr0Wolf29")
         }
+        
+        if(m.sender.nickname == "Lexoi" && (m.trailing.contains("steal") || m.trailing.contains("stole")) ){
+          r.ban("#pasta", "@" + m.sender.host)
+          r.kick("#pasta", "Lexoi", "Stop being a nigger")
+        }
 
         if(m.trailing.startsWith("\u0001ACTION")){
           val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","").trim
