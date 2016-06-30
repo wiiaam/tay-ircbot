@@ -107,6 +107,10 @@ class Pasta extends BotModule{
           r.ban("#pasta", "@" + m.sender.host)
           r.kick("#pasta", "Lexoi", "Stop being a nigger")
         }
+        
+        if(m.sender.nickname == "ghost_bot" && m.trailing.contains("taylorswift: ")){ // see https://github.com/asmith9/ghostbot/blob/master/index.js#L85
+          r.say(target, "ghost_bot: die");
+        }
 
         if(m.trailing.startsWith("\u0001ACTION")){
           val action = m.trailing.substring("\u0001ACTION".length).replace("\u0001","").trim
