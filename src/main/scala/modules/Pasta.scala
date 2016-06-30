@@ -65,6 +65,14 @@ class Pasta extends BotModule{
             "Steam system made useful by the Valve corelibs, shell utilities and vital system components " +
             "comprising a full OS as defined by POSIX.")
         }
+        
+        if(m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains(" ssid") &&
+          !m.trailing.toLowerCase.contains("bssid") && !m.trailing.toLowerCase.contains("essid")){
+          r.say(target, "I'd just like to interject for a moment. What you’re referring to as an SSID, " +
+            "is in fact, an ESSID, or as I’ve recently taken to calling it, an Extended Service Set Identifier. " +
+            "SSID's are not an identification unto itself, but rather another component of a fully functioning " +
+            "wireless infrastructure made useful by Service Set Identification (SSID).")
+        }
 
         /*if (m.command == MessageCommands.TOPIC ) {
           if (!m.trailing.startsWith(pastatopic + " ||")) {
