@@ -37,7 +37,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     val m = new Message(message, fileName)
 
     val b = new BotCommand(m, Configs.get(fileName).get.getCommandPrefix)
-    val r = new ServerResponder(this)
+    val r = new ServerResponder(this, m.params.first)
     Out.println(s"$fileName/$serverName --> $message")
     for ((k, v) <- listeners) {
       v.onMessage(m, b, r)

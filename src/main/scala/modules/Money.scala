@@ -26,8 +26,9 @@ class Money extends BotModule {
   private val pros: util.HashSet[String] = new util.HashSet[String]()
 
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
-  "mug" -> Array("Steal money from another user"),
-  "pokies" -> Array("Give some money to the lions foundation")
+    "mug" -> Array("Steal money from another user"),
+    "pokies" -> Array("Give some money to the lions foundation"),
+    "money" -> Array("Check if you have enough money for codys")
   )
 
 
@@ -87,6 +88,30 @@ class Money extends BotModule {
       write(m.sender.nickname, userbalance)
     }
 
+    if(b.command == "gib" && m.sender.isAdmin){
+      var parsed = false
+      var value: Long = 0
+      var nick = ""
+      val gib = b.paramsString.substring(b.paramsArray(0).length + 1, b.paramsString.length)
+      nick = b.paramsArray(0)
+      try{
+        value = java.lang.Long.parseLong(gib)
+        parsed = true
+      }
+      catch{
+        case e:NumberFormatException =>
+      }
+
+      r.reply(s"gibbed $gib to $nick!")
+
+      if(parsed){
+        var userbalance = if (!bank.containsKey(m.sender.nickname)) 0 else get(m.sender.nickname)
+        userbalance += value
+        write(if(nick != "") nick else m.sender.nickname, userbalance)
+      }
+
+    }
+
 
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance") {
@@ -116,14 +141,13 @@ class Money extends BotModule {
             "bene to get some")
           return
         }
-        var bet: Long = 0l
+        var bet: Long = 0
         try {
           bet = java.lang.Long.parseLong(b.paramsArray(0))
         } catch {
-          case e: NumberFormatException => {
+          case e: NumberFormatException =>
             r.say(target, "u gotta put coins in the machine mate")
             return
-          }
         }
         if (bet < 1) {
           r.say(target, "stop being a poor cunt and put money in the machine")

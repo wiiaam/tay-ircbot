@@ -1,10 +1,16 @@
 package irc.server
 
+import irc.message.Message
 
-class ServerResponder(ircServer: IrcServer) {
+
+class ServerResponder(ircServer: IrcServer, sender: String) {
 
   def send(message: String): Unit = {
     ircServer.send(message)
+  }
+
+  def reply(message: String): Unit ={
+    pm(sender, message)
   }
 
   def pm(target: String, message: String): Unit = {
