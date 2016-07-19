@@ -90,6 +90,10 @@ class Money extends BotModule {
 
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance") {
+	if(m.sender.nickname == "oranges"){
+		r.say(target, "A G6 for free from EdenCoder")
+		return
+	}
       if (!m.sender.isRegistered) {
         r.say(target, "pls login m9")
         return

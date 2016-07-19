@@ -25,10 +25,14 @@ class Random extends BotModule{
     }
 
 
-    if(m.command == MessageCommands.MODE && m.params.first == "#xmas"){
-      if(m.params.array(1) == "+v") r.notice(m.params.array(2),"Don't forget to /cycle to get your new vhost!")
-    }
-
+	if(b.command == "waifu"){
+		val waifu = b.paramsString.toLowerCase
+		if(waifu.contains("taylor") && waifu.contains("swift")){
+			r.say(target, "top waifu")
+		}
+		else if(waifu.contains("jimin")) r.say(target, "worst waifu kys")
+		else r.say(target, "shit waifu")
+	}
 
     if(b.command == "triggergen2" && m.sender.isAdmin){
       for {
