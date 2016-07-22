@@ -106,14 +106,10 @@ class TitleReporting extends BotModule{
                     title = title.replace("http://", "").replace("https://", "")
                     if(m.params.first == "#pasta") {
                       if (title.matches("^.*[\u1100-\u11FF].*") || title.matches("^.*[\u3130-\u318F].*") || title.matches("^.*[\uAC00-\uD7AF].*")) {
-                        r.kick(target, m.sender.nickname, "Fuck off koreaboo faggot")
+                        r.reply(s"${m.sender.nickname}: Fuck off koreaboo faggot")
                       }
-                      else if (title.toLowerCase.contains("asmr")) {
-                        r.kick(target, m.sender.nickname, "asmr is shit go fuck yourself")
-                      }
-                      else if (title.toLowerCase.contains("filthyfrank") ||
-                        (title.toLowerCase.contains("filthy") && title.toLowerCase.contains("frank"))) {
-                        r.kick(target, m.sender.nickname, "filthy frank is worse than autism")
+                      else if (title.toLowerCase.contains("filthy") && title.toLowerCase.contains("frank")) {
+                        r.reply(s"${m.sender.nickname}: filthy frank is worse than autism")
                       }
                       else r.say(target, title)
                     }
