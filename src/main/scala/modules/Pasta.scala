@@ -10,11 +10,14 @@ import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 import out.Out
 
+object Pasta {
+  var spamtime = 0L
+}
+
 
 class Pasta extends BotModule{
 
   val topicfile = ModuleFiles.getFile("pastatopic.txt")
-
   val sc = new Scanner(topicfile)
   var pastatopic = ""
   var banned: Map[String, (String,String)] = Map()
@@ -57,23 +60,6 @@ class Pasta extends BotModule{
           }
         }
 
-        if(m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains("linux") &&
-          !m.trailing.toLowerCase.contains("kernel") && !m.trailing.toLowerCase.contains("steamos")){
-          r.say(target, "I'd just like to interject for a moment. What you’re referring to as Linux, " +
-            "is in fact, SteamOS/Linux, or as I’ve recently taken to calling it, SteamOS plus Linux. " +
-            "Linux is not an operating system unto itself, but rather another free component of a fully functioning " +
-            "Steam system made useful by the Valve corelibs, shell utilities and vital system components " +
-            "comprising a full OS as defined by POSIX.")
-        }
-        
-        if(m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains(" ssid") &&
-          !m.trailing.toLowerCase.contains("bssid") && !m.trailing.toLowerCase.contains("essid")){
-          r.say(target, "I'd just like to interject for a moment. What you’re referring to as an SSID, " +
-            "is in fact, an ESSID, or as I’ve recently taken to calling it, an Extended Service Set Identifier. " +
-            "SSID's are not an identification unto itself, but rather another component of a fully functioning " +
-            "wireless infrastructure made useful by Service Set Identification (SSID).")
-        }
-
         /*if (m.command == MessageCommands.TOPIC ) {
           if (!m.trailing.startsWith(pastatopic + " ||")) {
             r.topic(m.params.first, pastatopic + " || " + m.trailing)
@@ -97,6 +83,28 @@ class Pasta extends BotModule{
         }
 
         // fun stuff
+
+        if(Pasta.spamtime + 30000 < System.currentTimeMillis() ) {
+          if (m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains("linux") &&
+            !m.trailing.toLowerCase.contains("kernel") && !m.trailing.toLowerCase.contains("steamos")) {
+            r.say(target, "I'd just like to interject for a moment. What you’re referring to as Linux, " +
+              "is in fact, SteamOS/Linux, or as I’ve recently taken to calling it, SteamOS plus Linux. " +
+              "Linux is not an operating system unto itself, but rather another free component of a fully functioning " +
+              "Steam system made useful by the Valve corelibs, shell utilities and vital system components " +
+              "comprising a full OS as defined by POSIX.")
+            Pasta.spamtime = System.currentTimeMillis()
+          }
+
+          if (m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains(" ssid") &&
+            !m.trailing.toLowerCase.contains("bssid") && !m.trailing.toLowerCase.contains("essid")) {
+            r.say(target, "I'd just like to interject for a moment. What you’re referring to as an SSID, " +
+              "is in fact, an ESSID, or as I’ve recently taken to calling it, an Extended Service Set Identifier. " +
+              "SSID's are not an identification unto itself, but rather another component of a fully functioning " +
+              "wireless infrastructure made useful by Service Set Identification (SSID).")
+            Pasta.spamtime = System.currentTimeMillis()
+          }
+        }
+
         if(m.command == MessageCommands.PRIVMSG && m.trailing.trim == "^") r.say("#pasta","can confirm")
 
         if(m.sender.nickname == "Pr0Wolf29" && (m.trailing.contains("meow") || m.trailing.startsWith("!neko"))){
@@ -104,8 +112,7 @@ class Pasta extends BotModule{
         }
         
         if(m.sender.nickname == "Lexoi" && (m.trailing.contains("steal") || m.trailing.contains("stole")) ){
-          r.ban("#pasta", "@" + m.sender.host)
-          r.kick("#pasta", "Lexoi", "Stop being a nigger")
+          r.reply("Lexoi, stop being a nigger")
         }
         
         if(m.sender.nickname == "ghost_bot" && m.trailing.contains("taylorswift: ")){ // see https://github.com/asmith9/ghostbot/blob/master/index.js#L85
@@ -138,19 +145,6 @@ class Pasta extends BotModule{
 
         if(m.trailing.toLowerCase.contains("kill me")){
           r.action(target, s"kills ${m.sender.nickname}")
-        }
-
-        if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kickban")){
-          var name = m.trailing.split("\\s+")(0)
-          name = name.substring(1,name.length-1).trim
-          if(name == m.config.getNickname) return
-          r.pm("ChanServ",s"BAN ${m.params.first} $name" )
-        }
-        else if(m.sender.nickname == "topkek_2000" && m.trailing.contains("Suggested course of action: /kick")){
-          var name = m.trailing.split("\\s+")(0)
-          name = name.substring(1,name.length-1).trim
-          if(name == m.config.getNickname) return
-          r.pm("ChanServ",s"KICK ${m.params.first} $name" )
         }
 
         if(m.trailing.toLowerCase.trim.equals("no u") && m.sender.nickname != "topkek_2000"){
