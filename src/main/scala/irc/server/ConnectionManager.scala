@@ -14,7 +14,7 @@ object ConnectionManager {
 
   val servers = new util.HashMap[String, IrcServer]()
 
-  private val PING_TIMEOUT = 15
+  private val PING_TIMEOUT = 30
 
   var pings: Map[String, Boolean] = Map()
 
@@ -49,12 +49,20 @@ object ConnectionManager {
     var connected = false
     while(!connected){
       connected = server.connect()
-      if(!connected){
+      if(connected){
+        connected = server.login()
+        if(!connected) {
+          Out.println(s"$name !!! Could not login, retrying in 10 seconds")
+          server.disconnect()
+          Thread.sleep(10000)
+        }
+      }
+      else{
         Out.println(s"$name !!! Could not connect, retrying in 10 seconds")
         Thread.sleep(10000)
       }
+
     }
-    server.login()
     Out.println(s"Logged in to $name")
     server.addListener("main", new OnMessageListener {
       override def onMessage(m: Message, b: BotCommand, r: ServerResponder): Unit =
@@ -63,7 +71,7 @@ object ConnectionManager {
 
     server.listenOnSocket()
 
-    if(Configs.get(server.fileName).get.useNickServ) Thread.sleep(1000)
+    if(Configs.get(server.fileName).get.useNickServ) Thread.sleep(5000)
     joinChannels(server.fileName)
     checkPing(server.fileName)
   }
@@ -86,15 +94,21 @@ object ConnectionManager {
     Thread.sleep(5000)
     var connected = true
     while(connected){
-      servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
-      pings += (name -> false)
-      Thread.sleep(PING_TIMEOUT*1000)
-      if(!pings(name)){
-        Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
-        servers.get(name).disconnect()
-        connectToServer(name)
-        connected = false
+      try{
+        servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
+        pings += (name -> false)
+        Thread.sleep(PING_TIMEOUT*1000)
+        if(!pings(name)){
+          connected = false
+        }
+      }
+      catch {
+        case e: Exception =>
+          connected = false
       }
     }
+    Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
+    servers.get(name).disconnect()
+    connectToServer(name)
   }
 }

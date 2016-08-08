@@ -23,10 +23,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   private var toSend = new util.ArrayDeque[String]
   private var toSendLP = new util.ArrayDeque[String]
   private var connected = false
+  private var sendThread: Thread = _
   var serverName = name
   val fileName = name
 
-  sendQueueToSocket()
+  startSendQueueThread()
 
   def addListener(name: String, onMessageListener: OnMessageListener): Unit = {
     listeners += (name -> onMessageListener)
@@ -72,7 +73,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     }
   }
 
-  def login(): Unit = {
+  def login(): Boolean = {
     val config = Configs.get(fileName).getOrElse(throw new RuntimeException("No config"))
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
@@ -81,13 +82,17 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     }
     var loggedIn = false
     while (!loggedIn) {
-      if (in.getOrElse(throw new RuntimeException("Not connected")).hasNextLine) {
+      if (in.getOrElse(return false).hasNextLine) {
         val next = in.get.nextLine()
 
         val message = new Message(next, fileName)
 
 
         Out.println(s"$fileName/$serverName --> $next")
+
+        if(message.toString.toLowerCase.contains("error") || message.toString.toLowerCase.contains("closing link")){
+          return false
+        }
 
 
         message.command match {
@@ -109,6 +114,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         }
       }
     }
+    true
   }
 
   def listenOnSocket(): Unit = {
@@ -129,9 +135,9 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     thread.start()
   }
 
-  private def sendQueueToSocket(): Unit = {
+  private def startSendQueueThread(): Unit = {
     var spammed = 0
-    val thread = new Thread(new Runnable {
+    sendThread = new Thread(new Runnable {
       override def run(): Unit = {
         while (true) {
           Thread.sleep(20)
@@ -153,8 +159,8 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         }
       }
     })
-    thread.setName(s"Sending queue to socket on $serverName")
-    thread.start()
+    sendThread.setName(s"Sending queue to socket on $serverName")
+    sendThread.start()
   }
 
   def send(message: String) {
@@ -200,10 +206,16 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     connected = false
     out.foreach(_.print("QUIT :No response from server\r\n"))
     out.foreach(_.flush())
+    out.foreach(_.close())
     out = None
+    in.foreach(_.close())
     in = None
     socket.get.close()
     socket = None
+  }
+
+  def clearListener(listener: String) ={
+    listeners = listeners.filterKeys(_ == listener)
   }
 
 }

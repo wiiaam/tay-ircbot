@@ -1,12 +1,11 @@
 package irc.utilities.urlparsers
 
 import java.io.IOException
-import java.net.URL
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.util.Locale
-import java.util.Scanner
 import java.util.regex.Pattern
+
 import irc.config.UserConfig
 import irc.utilities.URLParser
 import org.json.JSONObject

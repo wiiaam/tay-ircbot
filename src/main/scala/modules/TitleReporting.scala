@@ -111,9 +111,19 @@ class TitleReporting extends BotModule{
                       else if (title.toLowerCase.contains("filthy") && title.toLowerCase.contains("frank")) {
                         r.reply(s"${m.sender.nickname}: filthy frank is worse than autism")
                       }
-                      else r.say(target, title)
+                      else {
+                        if(title.length > 50){
+                          title = title.substring(0,50) + "..."
+                        }
+                        r.say(target, title)
+                      }
                     }
-                    else r.say(target, title)
+                    else {
+                      if(title.length > 50){
+                        title = title.substring(0,50) + "..."
+                      }
+                      r.say(target, title)
+                    }
                   }
                 }
               }).start()

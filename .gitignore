@@ -5,6 +5,7 @@
 gen### Scala template
 *.class
 *.log
+out/
 
 # sbt specific
 .cache
@@ -27,6 +28,8 @@ src/main/resources/configs/*
 
 src/main/scala/configs/*
 !src/main/scala/configs/example.json
+
+src/main/scala/META-INF/
 
 #Test
 src/main/scala/Test.scala
