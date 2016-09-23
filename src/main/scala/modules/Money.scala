@@ -11,7 +11,7 @@ import java.util.Properties
 import irc.config.Configs
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
-import irc.message.Message
+import irc.message.{Message, MessageSender}
 //remove if not needed
 import scala.collection.JavaConversions._
 
