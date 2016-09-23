@@ -39,7 +39,7 @@ class Money extends BotModule {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
   }
   
-  private def isReg(sender: MessageSender){
+  private def isReg(sender: MessageSender): Boolean ={
     return (sender.isRegistered || m.server == "FishNet")
   }
 
