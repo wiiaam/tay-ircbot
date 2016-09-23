@@ -12,7 +12,7 @@ class Invite extends BotModule{
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
 
     if(m.command == MessageCommands.INVITE){
-      if(cooldown <= System.currentTimeMillis()/1000 || m.sender.isAdmin){
+      if(m.sender.isAdmin){ //cooldown <= System.currentTimeMillis()/1000
         r.join(m.trailing)
         r.say(m.trailing, s"${m.sender.nickname} has invited me here. To see my commands, use .help")
         cooldown = System.currentTimeMillis()/1000 + 30
