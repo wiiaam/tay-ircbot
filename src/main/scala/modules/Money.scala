@@ -11,7 +11,7 @@ import java.util.Properties
 import irc.config.Configs
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
-import irc.message.{Message, MessageSender}
+import irc.message.Message
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -39,8 +39,8 @@ class Money extends BotModule {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
   }
   
-  private def isReg(sender: MessageSender): Boolean ={
-    return (sender.isRegistered || m.server == "FishNet")
+  private def isReg(m: Message): Boolean ={
+    return (m.sender.isRegistered || m.server == "FishNet")
   }
 
 
@@ -64,7 +64,7 @@ class Money extends BotModule {
 
 
     if (b.command == "bene") {
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
@@ -124,7 +124,7 @@ class Money extends BotModule {
 		r.say(target, "A G6 for free from EdenCoder")
 		return
 	}
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
@@ -136,7 +136,7 @@ class Money extends BotModule {
 
 
     if (b.command == "pokies" || b.command == "bet") {
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
@@ -175,7 +175,7 @@ class Money extends BotModule {
 
 
     if (b.command == "mug") {
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
@@ -195,7 +195,7 @@ class Money extends BotModule {
           r.say(target, "they dont have any money to steal")
           return
         }
-        if (pros.contains(m.sender.nickname) && isReg(m.sender)) {
+        if (pros.contains(m.sender.nickname) && isReg(m)) {
           val targetmoney = get(tomug)
           val tosteal = Math.floor(Math.random() * (targetmoney / 2))
           r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped 3$$${"%.0f".format(tosteal)}")
@@ -218,7 +218,7 @@ class Money extends BotModule {
 
 
     if (b.command == "durry") {
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
@@ -240,7 +240,7 @@ class Money extends BotModule {
 
 
     if (b.command == "give") {
-      if (!isReg(m.sender)) {
+      if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
       }
