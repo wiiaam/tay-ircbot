@@ -40,7 +40,7 @@ class Money extends BotModule {
   }
   
   private def isReg(m: Message): Boolean ={
-    return (m.sender.isRegistered || m.server == "FishNet")
+    return (m.sender.isRegistered || m.server == "wetfish")
   }
 
 
