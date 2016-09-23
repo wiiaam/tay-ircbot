@@ -31,11 +31,16 @@ class Money extends BotModule {
     "money" -> Array("Check if you have enough money for codys")
   )
 
+  
 
   try {
     bank.load(new FileInputStream(ModuleFiles.getFile("money.properties")))
   } catch {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
+  }
+  
+  private def isReg(sender: MessageSender){
+    return (sender.isRegistered || m.server == "FishNet")
   }
 
 
@@ -59,7 +64,7 @@ class Money extends BotModule {
 
 
     if (b.command == "bene") {
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
@@ -119,7 +124,7 @@ class Money extends BotModule {
 		r.say(target, "A G6 for free from EdenCoder")
 		return
 	}
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
@@ -131,7 +136,7 @@ class Money extends BotModule {
 
 
     if (b.command == "pokies" || b.command == "bet") {
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
@@ -170,7 +175,7 @@ class Money extends BotModule {
 
 
     if (b.command == "mug") {
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
@@ -190,7 +195,7 @@ class Money extends BotModule {
           r.say(target, "they dont have any money to steal")
           return
         }
-        if (pros.contains(m.sender.nickname) && m.sender.isRegistered) {
+        if (pros.contains(m.sender.nickname) && isReg(m.sender)) {
           val targetmoney = get(tomug)
           val tosteal = Math.floor(Math.random() * (targetmoney / 2))
           r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped 3$$${"%.0f".format(tosteal)}")
@@ -213,7 +218,7 @@ class Money extends BotModule {
 
 
     if (b.command == "durry") {
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
@@ -235,7 +240,7 @@ class Money extends BotModule {
 
 
     if (b.command == "give") {
-      if (!m.sender.isRegistered) {
+      if (!isReg(m.sender)) {
         r.say(target, "pls login m9")
         return
       }
