@@ -97,7 +97,7 @@ class Pasta extends BotModule{
 
           if (m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains(" ssid") &&
             !m.trailing.toLowerCase.contains("bssid") && !m.trailing.toLowerCase.contains("essid")) {
-            r.say(target, "I'd just like to interject for a moment. What you’re referring to as an SSID, " +
+            r.say(target, "I'd just like to interject for a moment. What you’re referring to as an SSID, " +nae
               "is in fact, an ESSID, or as I’ve recently taken to calling it, an Extended Service Set Identifier. " +
               "SSID's are not an identification unto itself, but rather another component of a fully functioning " +
               "wireless infrastructure made useful by Service Set Identification (SSID).")
@@ -131,9 +131,6 @@ class Pasta extends BotModule{
             }
           }
           if(!highlight){
-            if(action.trim.equals("whips")){
-              r.action(target, "nae naes")
-            }
             else if(action.startsWith("is ")){
               r.action(target, "is also" + action.substring(2))
             }
