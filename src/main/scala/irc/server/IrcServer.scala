@@ -80,8 +80,10 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
   def login(): Boolean = {
     val config = Configs.get(fileName).getOrElse(throw new RuntimeException("No config"))
+
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
+
     if(config.getServerPassword != ""){
       send("PASS " + config.getServerPassword)
     }
@@ -98,7 +100,6 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         if(message.toString.toLowerCase.contains("error") || message.toString.toLowerCase.contains("closing link")){
           return false
         }
-
 
         message.command match {
           case MessageCommands.CONNECTED =>
@@ -150,13 +151,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
             val tosend = toSend.poll()
             Out.println(s"$fileName/$serverName <-- $tosend")
             out.foreach(_.print(tosend + "\r\n"))
-            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
           else if (!toSendLP.isEmpty) {
             out.foreach(_.print(toSendLP.poll() + "\r\n"))
-            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
@@ -191,11 +190,8 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     inThread.start()
   }
 
-  def send(message: String) {
-    send(message, Priorities.STANDARD_PRIORITY)
-  }
 
-  def send(message: String, priority: Priorities.Value) {
+  def send(message: String, priority: Priorities.Value = Priorities.STANDARD_PRIORITY) {
     val msg = message.replaceAll("\r", "").replaceAll("\n", "")
     if ((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320) {
       val split = msg.split(" ")

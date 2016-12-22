@@ -1,7 +1,6 @@
 package modules
 
 import java.io.IOException
-import java.io.InputStream
 import java.net.URL
 import java.util.Scanner
 
@@ -9,7 +8,7 @@ import irc.config.UserConfig
 import irc.message.Message
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
-import org.json.JSONObject
+import org.json.{JSONException, JSONObject}
 
 
 class Google extends BotModule {
@@ -22,15 +21,15 @@ class Google extends BotModule {
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
     if (b.command == "g" || b.command == "google") {
       if (b.paramsArray.length == 0) return
-      if (cooldown < System.currentTimeMillis()){
+      if (cooldown > System.currentTimeMillis()){
         r.notice(m.sender.nickname, s"Search is currently on cooldown. Please wait another ${((cooldown - System.currentTimeMillis())/1000).toInt} seconds")
         return
       }
-      val apiKey = UserConfig.getJson.getString("googleapi")
+      val apiKey = UserConfig.getJson.getString("googlekey")
       val searchID = UserConfig.getJson.getString("searchid")
       val query = b.paramsString.replaceAll("\\s+", "%20")
       try {
-        val url = new URL(s"https://www.googleapis.com/customsearch/v1?cx=$searchID?q=$query&key=$apiKey")
+        val url = new URL(s"https://www.googleapis.com/customsearch/v1?cx=$searchID&q=$query&key=$apiKey")
         val in = url.openStream()
         val scan = new Scanner(in)
         var jsonstring = ""
@@ -39,8 +38,7 @@ class Google extends BotModule {
         }
         scan.close()
         val json = new JSONObject(jsonstring)
-        val responseData = json.getJSONObject("responseData")
-        val result = responseData.getJSONArray("items").getJSONObject(0)
+        val result = json.getJSONArray("items").getJSONObject(0)
         var title = result.getString("title")
         if (title.length > 100) title = title.substring(0, 99).trim() + "..."
         val snippet = result.getString("snippet").replace("\\n","").replace("\n", "")
@@ -52,8 +50,8 @@ class Google extends BotModule {
 
       } catch {
         case e: IOException => e.printStackTrace()
-        case e: IndexOutOfBoundsException =>
-          val response = "No results found for " + b.paramsString
+        case e: JSONException =>
+          val response = "No results found for \u0002" + b.paramsString
           r.reply(response)
       }
     }
