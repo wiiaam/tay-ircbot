@@ -90,11 +90,10 @@ class Admin extends BotModule{
             }
           }
           val channels = Info.get(m.server).get.getChannels
-          print(channels)
           for((channelName,channel) <- channels){
+            println(channelName + " " + channel.users.size)
 
             if(channel.users.size < minUsers && channelName != "*"){
-              print(channel.users.size)
               r.part(channelName)
               cleaned = cleaned + " " + channelName
             }
