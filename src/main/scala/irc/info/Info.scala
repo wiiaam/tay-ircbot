@@ -71,6 +71,8 @@ class Info {
     }
   }
 
+  def getChannels: Map[String, Channel] = channels
+
   /**
    * Parses a map of info to a specific channel
    *

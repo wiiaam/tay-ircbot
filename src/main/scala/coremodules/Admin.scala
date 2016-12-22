@@ -1,6 +1,7 @@
 package coremodules
 
-import irc.message.{MessageCommands, Message}
+import irc.info.Info
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
 
@@ -73,6 +74,32 @@ class Admin extends BotModule{
           else{
             r.say(m.target, s"Usage: ${m.config.getCommandPrefix}admin <add/del> user")
           }
+        }
+
+        if(b.command == "clean"){
+          var cleaned = ""
+          var minUsers = 2
+          if(b.paramsArray.length > 0){
+            try{
+              minUsers = b.paramsArray(0).toInt
+              if(minUsers < 2) throw new Exception()
+            }
+            catch {
+              case e: Exception => r.reply(m.sender.nickname + ": param must be a number more than 1")
+                return
+            }
+          }
+          val channels = Info.get(m.server).get.getChannels
+          print(channels)
+          for((channelName,channel) <- channels){
+
+            if(channel.users.size < minUsers && channelName != "*"){
+              print(channel.users.size)
+              r.part(channelName)
+              cleaned = cleaned + " " + channelName
+            }
+          }
+          r.reply(m.sender.nickname + ": left channels " + cleaned)
         }
 
       }

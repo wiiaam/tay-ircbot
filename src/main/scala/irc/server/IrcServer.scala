@@ -179,7 +179,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
             val b = new BotCommand(newMessage, Configs.get(fileName).get.getCommandPrefix)
             val r = new ServerResponder(getIrcServer, newMessage.params.first)
-            Out.println(s"$fileName/$serverName --> ${newMessage.toString}")
+            if(newMessage.command != MessageCommands.WHO_OUTPUT) Out.println(s"$fileName/$serverName --> ${newMessage.toString}")
             for ((k, v) <- listeners) {
               v.onMessage(newMessage, b, r)
             }
