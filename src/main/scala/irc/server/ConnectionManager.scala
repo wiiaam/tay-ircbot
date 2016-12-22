@@ -14,7 +14,7 @@ object ConnectionManager {
 
   val servers = new util.HashMap[String, IrcServer]()
 
-  private val PING_TIMEOUT = 30
+  private val PING_TIMEOUT = 120
 
   var pings: Map[String, Boolean] = Map()
 
