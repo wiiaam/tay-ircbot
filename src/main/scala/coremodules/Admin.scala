@@ -101,6 +101,57 @@ class Admin extends BotModule{
           r.reply(m.sender.nickname + ": left channels " + cleaned)
         }
 
+        if(b.command == "channels") {
+          var list = "Current channel list:  "
+          val channels = Info.get(m.server).get.getChannels
+          if(b.paramsArray.length > 0){
+            if(b.paramsArray(0) == "verbose"){
+              for ((channelName, channel) <- channels) {
+                if(channelName != "*"){
+                  var owner = 0
+                  var sop = 0
+                  var aop = 0
+                  var hop = 0
+                  var vop = 0
+                  var currentRank = "none"
+                  for((userName, user) <- channel.users){
+                    if(user.modes.contains("~")){
+                      owner += 1
+                      if(userName == m.config.getNickname) currentRank = "owner"
+                    }
+                    if(user.modes.contains("&")){
+                      sop += 1
+                      if(userName == m.config.getNickname) currentRank = "sop"
+                    }
+                    if(user.modes.contains("@")){
+                      aop += 1
+                      if(userName == m.config.getNickname) currentRank = "aop"
+                    }
+                    if(user.modes.contains("%")){
+                      hop += 1
+                      if(userName == m.config.getNickname) currentRank = "hop"
+                    }
+                    if(user.modes.contains("+")){
+                      vop += 1
+                      if(userName == m.config.getNickname) currentRank = "vop"
+                    }
+                  }
+                  list = list + "\u0002" + channelName + s"\u0002 own:$owner sop:$sop aop:$aop hop:$hop vop:$vop myrank:$currentRank | "
+                }
+
+
+              }
+              list = list.substring(0, list.length - 2)
+              r.notice(m.sender.nickname, list)
+            }
+          }
+          else{
+            for ((channelName, channel) <- channels) {
+              if(channelName != "*") list = list + channelName + " "
+            }
+            r.notice(m.sender.nickname, list)
+          }
+        }
       }
     }
   }
