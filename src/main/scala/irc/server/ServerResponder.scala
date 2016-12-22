@@ -47,10 +47,10 @@ class ServerResponder(ircServer: IrcServer, sender: String) {
     ircServer.send(s"JOIN $channel")
   }
 
-  def part(channel: String): Unit ={
+  def part(channel: String, reason: String = "Leaving"): Unit ={
     var cnl = channel
     if(!cnl.startsWith("#")) cnl = "#" + cnl
-    ircServer.send(s"PART $cnl")
+    ircServer.send(s"PART $cnl :$reason")
   }
 
   def topic(channel: String, topic: String): Unit ={

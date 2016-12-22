@@ -94,7 +94,7 @@ class Admin extends BotModule{
             println(channelName + " " + channel.users.size)
 
             if(channel.users.size < minUsers && channelName != "*"){
-              r.part(channelName)
+              r.part(channelName, "Cleaning channel list")
               cleaned = cleaned + " " + channelName
             }
           }
@@ -108,6 +108,7 @@ class Admin extends BotModule{
             if(b.paramsArray(0) == "verbose"){
               for ((channelName, channel) <- channels) {
                 if(channelName != "*"){
+                  var users = channel.users.size
                   var owner = 0
                   var sop = 0
                   var aop = 0
@@ -136,7 +137,7 @@ class Admin extends BotModule{
                       if(userName == m.config.getNickname) currentRank = "vop"
                     }
                   }
-                  list = list + "\u0002" + channelName + s"\u0002 own:$owner sop:$sop aop:$aop hop:$hop vop:$vop myrank:$currentRank | "
+                  list = list + "\u0002" + channelName + s"\u0002 users:$users own:$owner sop:$sop aop:$aop hop:$hop vop:$vop myrank:$currentRank | "
                 }
 
 

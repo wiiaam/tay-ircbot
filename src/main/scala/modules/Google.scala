@@ -27,9 +27,9 @@ class Google extends BotModule {
       }
       val apiKey = UserConfig.getJson.getString("googlekey")
       val searchID = UserConfig.getJson.getString("searchid")
-      val query = b.paramsString.replaceAll("\\s+", "%20")
+      val query = b.paramsString
       try {
-        val url = new URL(s"https://www.googleapis.com/customsearch/v1?cx=$searchID&q=$query&key=$apiKey")
+        val url = new URL(s"https://www.googleapis.com/customsearch/v1?cx=$searchID&q=${query.replaceAll("\\s+", "%20")}&key=$apiKey")
         val in = url.openStream()
         val scan = new Scanner(in)
         var jsonstring = ""
