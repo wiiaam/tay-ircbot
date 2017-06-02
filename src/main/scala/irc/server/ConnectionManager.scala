@@ -50,6 +50,7 @@ object ConnectionManager {
     while(!connected){
       connected = server.connect()
       if(connected){
+        Out.println(s"Connected to $name")
         connected = server.login()
         if(!connected) {
           Out.println(s"$name !!! Could not login, retrying in 10 seconds")
@@ -91,24 +92,31 @@ object ConnectionManager {
   }
 
   def checkPing(name: String): Unit ={
-    Thread.sleep(5000)
-    var connected = true
-    while(connected){
-      try{
-        servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
-        pings += (name -> false)
-        Thread.sleep(PING_TIMEOUT*1000)
-        if(!pings(name)){
-          connected = false
+    val pingThread = new Thread(new Runnable {
+      override def run(): Unit = {
+        Thread.sleep(5000)
+        var connected = true
+        while(connected){
+          try{
+            servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
+            pings += (name -> false)
+            Thread.sleep(PING_TIMEOUT*1000)
+            if(!pings(name)){
+              connected = false
+            }
+          }
+          catch {
+            case e: Exception =>
+              connected = false
+          }
         }
+        Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
+        servers.get(name).disconnect()
+        connectToServer(name)
       }
-      catch {
-        case e: Exception =>
-          connected = false
-      }
-    }
-    Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
-    servers.get(name).disconnect()
-    connectToServer(name)
+    })
+    pingThread.setName(s"Ping checker $name")
+    pingThread.start()
+
   }
 }

@@ -80,7 +80,6 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
   def login(): Boolean = {
     val config = Configs.get(fileName).getOrElse(throw new RuntimeException("No config"))
-
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
 
@@ -90,18 +89,22 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     var loggedIn = false
     while (!loggedIn) {
       if (in.getOrElse(return false).hasNextLine) {
+
+
         val next = in.get.nextLine()
+        Out.println(s"$fileName/$serverName --> $next")
 
         val message = new Message(next, fileName)
 
 
-        Out.println(s"$fileName/$serverName --> $next")
 
         if(message.toString.toLowerCase.contains("error") || message.toString.toLowerCase.contains("closing link")){
           return false
         }
 
         message.command match {
+          case MessageCommands.PING =>
+            send("PONG :" + message.trailing)
           case MessageCommands.CONNECTED =>
             Out.println(s"Connected to $fileName")
             loggedIn = true
@@ -114,11 +117,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
               send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
               Thread.sleep(2000)
               send("NICK " + nick)
-              loggedIn = true
             }
           case _ =>
         }
       }
+      Thread.sleep(50)
     }
     true
   }
