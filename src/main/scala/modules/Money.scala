@@ -55,7 +55,7 @@ class Money extends BotModule {
         return
       } else {
         val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
-          1000).toInt
+          1000).toLong
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
       }
     }
@@ -71,7 +71,7 @@ class Money extends BotModule {
       if (lastPaid > System.currentTimeMillis() - (3600 * 1000)) {
         var minutesleft = 0
         var secondsleft = Math.floor((lastPaid - (System.currentTimeMillis() - (3600 * 1000))) /
-          1000).toInt
+          1000).toLong
         if (secondsleft > 60) {
           minutesleft = Math.floor(secondsleft / 60).toInt
           secondsleft = minutesleft % 60
@@ -83,11 +83,11 @@ class Money extends BotModule {
         }
         return
       }
-      var userbalance: Double = 0.0
+      var userbalance: Long = 0
       userbalance = if (!bank.containsKey(m.sender.nickname)) 0 else get(m.sender.nickname)
-      val addition = 100 + Math.random()*900
+      val addition = Math.floor(100 + Math.random()*900).toLong
       userbalance += addition
-      r.say(target, s"winz just gave u 3$$${addition}. u now have3 $$${"%.0f".format(userbalance)}")
+      r.say(target, s"winz just gave u 3$$${addition}. u now have3 $$$userbalance")
       lastpaid.put(m.sender.nickname, System.currentTimeMillis())
       write(m.sender.nickname, userbalance)
     }
@@ -126,7 +126,7 @@ class Money extends BotModule {
       if (!bank.containsKey(m.sender.nickname)) {
         r.say(target, "You don't have an account yet. Use " + b.commandPrefix +
           "bene to get some cash")
-      } else r.say(target, s"You currently have3 $$${"%.0f".format(java.lang.Double.parseDouble(bank.getProperty(m.sender.nickname)))} in the bnz")
+      } else r.say(target, s"You currently have3 $$${get(m.sender.nickname)} in the bnz")
     }
 
 
@@ -153,7 +153,7 @@ class Money extends BotModule {
           r.say(target, "stop being a poor cunt and put money in the machine")
           return
         }
-        val usercash = java.lang.Double.parseDouble(bank.getProperty(m.sender.nickname))
+        val usercash = get(m.sender.nickname)
         if (usercash < bet) {
           r.say(target, "u dont have enough money for that mate")
           return
@@ -176,7 +176,7 @@ class Money extends BotModule {
       }
       if (jail.containsKey(m.sender.nickname)){
         val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
-          1000).toInt
+          1000).toLong
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
         return
       }
@@ -192,8 +192,8 @@ class Money extends BotModule {
         }
         if (pros.contains(m.sender.nickname) && isReg(m)) {
           val targetmoney = get(tomug)
-          val tosteal = Math.floor(Math.random() * (targetmoney / 2))
-          r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped 3$$${"%.0f".format(tosteal)}")
+          val tosteal = Math.floor(Math.random() * (targetmoney / 2)).toLong
+          r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped \u00033$$${tosteal}\u0003")
           write(tomug, targetmoney - tosteal)
           write(m.sender.nickname, get(m.sender.nickname) + tosteal)
           return
@@ -203,8 +203,8 @@ class Money extends BotModule {
           r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
         } else {
           val targetmoney = get(tomug)
-          val tosteal = Math.floor(Math.random() * (targetmoney / 3))
-          r.say(target, s"u manage to steal 3$$${"%.0f".format(tosteal)} off $tomug")
+          val tosteal = Math.floor(Math.random() * (targetmoney / 3)).toLong
+          r.say(target, s"u manage to steal \u00033$$${tosteal}\u0003 off $tomug")
           write(tomug, targetmoney - tosteal)
           write(m.sender.nickname, get(m.sender.nickname) + tosteal)
         }
@@ -241,9 +241,9 @@ class Money extends BotModule {
       }
       if (b.hasParams) {
         val togiveto = b.paramsArray(0)
-        var togive: Double = 0.0
+        var togive: Long = 0
         try {
-          togive = java.lang.Integer.parseInt(b.paramsArray(1))
+          togive = b.paramsArray(1).toLong
         } catch {
           case e: NumberFormatException =>
             r.say(target, "cmon man help a brother out")
@@ -267,13 +267,14 @@ class Money extends BotModule {
         }
         write(m.sender.nickname, get(m.sender.nickname) - togive)
         write(togiveto, get(togiveto) + togive)
-        r.say(target, s"you gave $togiveto 3$$${"%.0f".format(togive)}")
+        write(togiveto, get(togiveto) + togive)
+        r.say(target, s"you gave $togiveto 3$$$togive")
       }
     }
   }
 
   
-  private def write(nick: String, amount: Double) {
+  private def write(nick: String, amount: Long) {
     bank.setProperty(nick, String.valueOf(amount))
     try {
       bank.store(new FileWriter(ModuleFiles.getFile("money.properties")), "")
@@ -282,8 +283,9 @@ class Money extends BotModule {
     }
   }
 
-  private def get(nickname: String): Double = {
-    java.lang.Double.parseDouble(bank.getProperty(nickname))
+  private def get(nickname: String): Long = {
+    java.lang.Double.parseDouble(bank.getProperty(nickname)).toLong
+
   }
 
   private def checkJail() {
