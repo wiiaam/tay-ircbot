@@ -39,9 +39,7 @@ class Money extends BotModule {
     case e @ (_: IOException | _: URISyntaxException) => e.printStackTrace()
   }
   
-  private def isReg(m: Message): Boolean ={
-    return (m.sender.isRegistered || m.config.networkName == "FishNet")
-  }
+  private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
 
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
@@ -87,8 +85,9 @@ class Money extends BotModule {
       }
       var userbalance: Double = 0.0
       userbalance = if (!bank.containsKey(m.sender.nickname)) 0 else get(m.sender.nickname)
-      userbalance += 500
-      r.say(target, s"winz just gave u 3$$500. u now have3 $$${"%.0f".format(userbalance)}")
+      val addition = 100 + Math.random()*900
+      userbalance += addition
+      r.say(target, s"winz just gave u 3$$${addition}. u now have3 $$${"%.0f".format(userbalance)}")
       lastpaid.put(m.sender.nickname, System.currentTimeMillis())
       write(m.sender.nickname, userbalance)
     }
@@ -120,10 +119,6 @@ class Money extends BotModule {
 
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance") {
-	if(m.sender.nickname == "oranges"){
-		r.say(target, "A G6 for free from EdenCoder")
-		return
-	}
       if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
@@ -137,7 +132,7 @@ class Money extends BotModule {
 
     if (b.command == "pokies" || b.command == "bet") {
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, "pls register with nickserv m9")
         return
       }
       if (b.hasParams) {

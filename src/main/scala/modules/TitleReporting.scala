@@ -104,26 +104,7 @@ class TitleReporting extends BotModule{
                   var title = URLParser.find(messageSplit(i))
                   if (title != null) {
                     title = title.replace("http://", "").replace("https://", "")
-                    if(m.params.first == "#pasta") {
-                      if (title.matches("^.*[\u1100-\u11FF].*") || title.matches("^.*[\u3130-\u318F].*") || title.matches("^.*[\uAC00-\uD7AF].*")) {
-                        r.reply(s"${m.sender.nickname}: Fuck off koreaboo faggot")
-                      }
-                      else if (title.toLowerCase.contains("filthy") && title.toLowerCase.contains("frank")) {
-                        r.reply(s"${m.sender.nickname}: filthy frank is worse than autism")
-                      }
-                      else {
-                        if(title.length > 50){
-                          title = title.substring(0,50) + "..."
-                        }
-                        r.say(target, title)
-                      }
-                    }
-                    else {
-                      if(title.length > 50){
-                        title = title.substring(0,50) + "..."
-                      }
-                      r.say(target, title)
-                    }
+                    r.say(target, title)
                   }
                 }
               }).start()
