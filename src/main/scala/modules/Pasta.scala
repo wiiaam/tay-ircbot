@@ -60,6 +60,10 @@ class Pasta extends BotModule{
           }
         }
 
+        if(m.command == MessageCommands.JOIN && m.sender.nickname.toLowerCase() == "soyeon"){
+          r.reply("soybean")
+        }
+
         /*if (m.command == MessageCommands.TOPIC ) {
           if (!m.trailing.startsWith(pastatopic + " ||")) {
             r.topic(m.params.first, pastatopic + " || " + m.trailing)

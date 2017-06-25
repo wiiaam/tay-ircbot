@@ -101,6 +101,17 @@ class Admin extends BotModule{
           r.reply(m.sender.nickname + ": left channels " + cleaned)
         }
 
+        if(b.command == "announce"){
+          val channels = Info.get(m.server).get.getChannels
+          if(b.paramsArray.length > 0) {
+            for ((channelName, channel) <- channels) {
+              if (channelName != "*") {
+                r.say(channelName, b.paramsString)
+              }
+            }
+          }
+        }
+
         if(b.command == "channels") {
           var list = "Current channel list:  "
           val channels = Info.get(m.server).get.getChannels
