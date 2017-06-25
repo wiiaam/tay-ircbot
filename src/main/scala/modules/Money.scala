@@ -23,6 +23,8 @@ class Money extends BotModule {
   private val lastpaid: util.HashMap[String, Long] = new util.HashMap[String, Long]()
   private val lastgrant: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
+  private var topcooldown = System.currentTimeMillis() - 10000
+
   private val jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
   private val pros: util.HashSet[String] = new util.HashSet[String]()
@@ -109,6 +111,15 @@ class Money extends BotModule {
         r.reply("There are currently no beneficiaries")
         return
       }
+      if(topcooldown > System.currentTimeMillis()){
+        val wait = Math.floor((topcooldown - System.currentTimeMillis())/1000).toInt
+        r.notice(m.sender.nickname, s"This command is currently on cooldown. Please wait another $wait " +
+          s"seconds before using it")
+        return
+
+      }
+      topcooldown = System.currentTimeMillis() + 10000
+
       r.reply("Top 5 beneficiaries:")
       for(i <- array.indices){
         val nick = array(i)._1
