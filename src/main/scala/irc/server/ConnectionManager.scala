@@ -19,9 +19,6 @@ object ConnectionManager {
   var pings: Map[String, Boolean] = Map()
 
   def start(): Unit ={
-    Modules.loadAll()
-    Configs.load()
-    Out.println("Configs loaded")
     var servernames = ""
     for((k,v) <- Configs.configs){
       servernames += k + " "

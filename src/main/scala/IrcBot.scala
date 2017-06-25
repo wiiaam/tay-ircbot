@@ -31,6 +31,12 @@ object IrcBot {
         FileUtil.copyFileUsingChannel(file, new File(Constants.MODULE_FILES_FOLDER + file.getName))
       }
     }
+
+    Modules.loadAll()
+    Configs.load()
+    Out.println("Configs loaded")
+
+
     ConnectionManager.start()
   }
 
