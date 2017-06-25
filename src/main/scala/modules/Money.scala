@@ -43,6 +43,8 @@ class Money extends BotModule {
       null
   }
 
+  initTable()
+
   
   private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
 
