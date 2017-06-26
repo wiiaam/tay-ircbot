@@ -406,11 +406,11 @@ class Money extends BotModule {
     val rs = connection.createStatement().executeQuery(sql)
     var array = Array[(String, Long, Boolean)]()
     var i = 0
-    while(rs.next() && i < 5){
+    while(rs.next()){
       array = array :+ (rs.getString(1), rs.getLong(2), rs.getBoolean(3))
       i += 1
     }
-    array.sortWith(_._2 > _._2)
+    array.sortWith(_._2 > _._2).take(Math.min(i, 5))
   }
 
   private def isPrivate(nickname: String): Boolean = {
