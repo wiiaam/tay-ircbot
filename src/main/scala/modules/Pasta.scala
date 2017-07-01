@@ -41,6 +41,11 @@ class Pasta extends BotModule{
     val bAsDot = new BotCommand(m, ".")
     val bAsTilde = new BotCommand(m,"~")
     if(m.config.networkName == "Rizon") {
+      
+      if(m.command == MessageCommands.JOIN && m.sender.nickname.toLowerCase() == "soyeon" &&
+        m.trailing == "#pasta"){
+          r.pm("#pasta", "soybean")
+        }
 
       if(m.params.first == "#pasta"){
         if(m.command == MessageCommands.MODE && m.sender.nickname == m.config.getNickname){
@@ -58,10 +63,6 @@ class Pasta extends BotModule{
           for (i <- 0 until rules.length()) {
             r.notice(m.sender.nickname, s"Rule $i: ${rules.getString(i)}")
           }
-        }
-
-        if(m.command == MessageCommands.JOIN && m.sender.nickname.toLowerCase() == "soyeon"){
-          r.reply("soybean")
         }
 
         /*if (m.command == MessageCommands.TOPIC ) {
