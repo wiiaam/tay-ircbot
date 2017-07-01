@@ -348,7 +348,6 @@ class Money extends BotModule {
         }
         setBalance(m.sender.nickname, getBalance(m.sender.nickname) - togive)
         setBalance(togiveto, getBalance(togiveto) + togive)
-        setBalance(togiveto, getBalance(togiveto) + togive)
         r.say(target, s"you gave $togiveto 3$$$togive")
       }
     }
