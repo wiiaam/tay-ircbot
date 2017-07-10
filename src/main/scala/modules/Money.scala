@@ -120,19 +120,12 @@ class Money extends BotModule {
       }
       topcooldown = System.currentTimeMillis() + 10000
 
-      r.reply("Top 5 beneficiaries:")
+      r.notice(m.sender.nickname, "Top 5 beneficiaries:")
       for(i <- array.indices){
         val nick = array(i)._1
         val balance = array(i)._2
-        val isPrivate = array(i)._3
-        if(isPrivate){
-          r.reply(s"${i+1}. private")
-        }
-        else{
-          r.reply(s"${i+1}. $nick with \u00033$$$balance")
-        }
+        r.notice(m.sender.nickname, s"${i+1}. $nick with \u00033$$$balance")
       }
-      r.reply("You can exclude yourself from this list by enabling privacy with .privacy")
     }
 
     if(b.command == "privacy"){
