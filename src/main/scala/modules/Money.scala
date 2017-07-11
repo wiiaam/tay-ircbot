@@ -39,7 +39,6 @@ class Money extends BotModule {
   }
 
   initTable()
-
   
   private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
 
@@ -52,7 +51,7 @@ class Money extends BotModule {
 
 
     if (b.command == "jailstatus") {
-      if (!jail.containsKey(m.sender.nickname)) {
+      if (!jail.containsKey(m.sender.nickname.toLowerCase())) {
         r.say(target, "ur not in jail u helmet")
         return
       } else {
@@ -69,7 +68,7 @@ class Money extends BotModule {
         return
       }
       var lastPaid: Long = 0l
-      lastPaid = if (!lastpaid.containsKey(m.sender.nickname)) 0 else lastpaid.get(m.sender.nickname)
+      lastPaid = if (!lastpaid.containsKey(m.sender.nickname.toLowerCase())) 0 else lastpaid.get(m.sender.nickname.toLowerCase())
       if (lastPaid > System.currentTimeMillis() - (3600 * 1000)) {
         var minutesleft = 0
         var secondsleft = Math.floor((lastPaid - (System.currentTimeMillis() - (3600 * 1000))) /
@@ -90,7 +89,7 @@ class Money extends BotModule {
       val addition = Math.floor(100 + Math.random()*900).toLong
       userbalance += addition
       r.say(target, s"winz just gave u \u00033$$${addition}\u0003. u now have\u00033 $$$userbalance")
-      lastpaid.put(m.sender.nickname, System.currentTimeMillis())
+      lastpaid.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
       setBalance(m.sender.nickname, userbalance)
     }
 
@@ -241,8 +240,8 @@ class Money extends BotModule {
         r.say(target, "pls login m9")
         return
       }
-      if (jail.containsKey(m.sender.nickname)){
-        val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
+      if (jail.containsKey(m.sender.nickname.toLowerCase())){
+        val timeleft = Math.floor((jail.get(m.sender.nickname.toLowerCase()) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
           1000).toLong
         r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
         return
@@ -257,7 +256,7 @@ class Money extends BotModule {
           r.say(target, "they dont have any money to steal")
           return
         }
-        if (pros.contains(m.sender.nickname) && isReg(m)) {
+        if (pros.contains(m.sender.nickname.toLowerCase()) && isReg(m)) {
           val targetmoney = getBalance(tomug)
           val tosteal = Math.floor(Math.random() * (targetmoney / 2)).toLong
           r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped \u00033$$${tosteal}\u0003")
@@ -266,7 +265,7 @@ class Money extends BotModule {
           return
         }
         if (Math.random() > 0.1 || pros.contains(tomug)) {
-          jail.put(m.sender.nickname, System.currentTimeMillis())
+          jail.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
           r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
         } else {
           val targetmoney = getBalance(tomug)
@@ -350,7 +349,7 @@ class Money extends BotModule {
     try{
       val pstmt = connection.prepareStatement(sql)
       pstmt.setLong(1, amount)
-      pstmt.setString(2, nick)
+      pstmt.setString(2, nick.toLowerCase())
       pstmt.executeUpdate()
     }
     catch{
@@ -369,7 +368,7 @@ class Money extends BotModule {
     try{
       val pstmt = connection.prepareStatement(sql)
       pstmt.setBoolean(1, privacy)
-      pstmt.setString(2, nick)
+      pstmt.setString(2, nick.toLowerCase())
       pstmt.executeUpdate()
     }
     catch{
@@ -381,7 +380,7 @@ class Money extends BotModule {
   private def getBalance(nickname: String): Long = {
     val sql = "SELECT nick, balance FROM money WHERE nick = ?"
     val pstmt = connection.prepareStatement(sql)
-    pstmt.setString(1, nickname)
+    pstmt.setString(1, nickname.toLowerCase())
     val rs = pstmt.executeQuery()
     rs.getLong("balance")
   }
@@ -401,7 +400,7 @@ class Money extends BotModule {
   private def isPrivate(nickname: String): Boolean = {
     val sql = "SELECT nick, private FROM money WHERE nick = ?"
     val pstmt = connection.prepareStatement(sql)
-    pstmt.setString(1, nickname)
+    pstmt.setString(1, nickname.toLowerCase())
     val rs = pstmt.executeQuery()
     rs.getBoolean("private")
   }
@@ -433,7 +432,7 @@ class Money extends BotModule {
   private def hasUser(nickname: String): Boolean = {
     val sql = "SELECT nick FROM money WHERE nick = ?"
     val pstmt = connection.prepareStatement(sql)
-    pstmt.setString(1, nickname)
+    pstmt.setString(1, nickname.toLowerCase())
     val rs = pstmt.executeQuery()
     rs.next()
     rs.getRow > 0
