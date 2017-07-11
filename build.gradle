@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
   compile 'org.scala-lang:scala-library:2.11.6'
-  // Your other deps here
+  compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 sourceSets.main.scala.srcDirs = ['.']
