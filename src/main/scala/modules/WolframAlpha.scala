@@ -1,14 +1,14 @@
 package modules
 
 import java.io.IOException
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.parsers.ParserConfigurationException
+import javax.xml.parsers.{DocumentBuilderFactory, ParserConfigurationException}
+
 import irc.config.UserConfig
+import irc.message.Message
 import irc.server.ServerResponder
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule}
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
-import irc.message.Message
 
 class WolframAlpha extends BotModule {
 

@@ -1,11 +1,9 @@
 package irc.utilities.urlparsers
 
-import java.io.IOException
-import java.net.MalformedURLException
 import java.util.Date
 
 import irc.utilities.URLParser
-import org.json.{JSONArray, JSONObject}
+import org.json.JSONArray
 
 object RedditParser {
 

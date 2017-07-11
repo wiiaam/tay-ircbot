@@ -1,7 +1,5 @@
 package irc.server
 
-import irc.message.Message
-
 
 class ServerResponder(ircServer: IrcServer, sender: String) {
 

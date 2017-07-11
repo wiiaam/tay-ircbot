@@ -1,8 +1,6 @@
 package ircbot
 
 import java.io._
-import java.nio.channels.FileChannel
-import java.nio.file.{Files, Path, Paths}
 
 
 object ModuleFiles {

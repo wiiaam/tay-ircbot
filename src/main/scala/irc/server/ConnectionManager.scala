@@ -5,8 +5,9 @@ import java.util
 import irc.config.Configs
 import irc.listeners.OnMessageListener
 import irc.message.Message
-import ircbot.{Modules, BotCommand}
+import ircbot.{BotCommand, Modules}
 import out.Out
+
 import scala.collection.JavaConversions._
 
 

@@ -4,8 +4,6 @@ import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
 
-import irc.config.Configs
-import irc.info.Info
 import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import irc.utilities.URLParser

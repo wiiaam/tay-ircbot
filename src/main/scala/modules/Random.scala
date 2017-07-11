@@ -1,12 +1,11 @@
 package modules
 
-import java.io.IOException
-import java.net.{MalformedURLException, URL}
+import java.net.URL
 import java.util.Scanner
 
 import irc.info.Info
-import irc.message.{MessageCommands, Message}
-import irc.server.{ServerResponder, Priorities}
+import irc.message.Message
+import irc.server.{Priorities, ServerResponder}
 import ircbot.{BotCommand, BotModule}
 
 

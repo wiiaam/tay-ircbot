@@ -3,7 +3,7 @@ import java.nio.file.{Files, Paths}
 
 import irc.config.Configs
 import irc.server.ConnectionManager
-import irc.utilities.{FileUtil, URLParser}
+import irc.utilities.FileUtil
 import ircbot._
 import out.Out
 

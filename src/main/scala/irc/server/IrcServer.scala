@@ -3,17 +3,16 @@ package irc.server
 import java.io.PrintStream
 import java.net.Socket
 import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util
 import java.util.Scanner
+import javax.net.ssl._
 
 import irc.config.Configs
 import irc.listeners.OnMessageListener
 import irc.message.{Message, MessageCommands}
-import out.Out
-import javax.net.ssl._
-import java.security.cert.X509Certificate
-
 import ircbot.BotCommand
+import out.Out
 
 
 class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
@@ -136,7 +135,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
             }
 
           })
-          Thread.sleep(10)
+          Thread.sleep(50)
         }
       }
     })

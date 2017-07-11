@@ -1,6 +1,7 @@
 package irc.utilities.urlparsers
 
 import java.io.IOException
+
 import irc.config.UserConfig
 import irc.utilities.URLParser
 import org.json.JSONObject

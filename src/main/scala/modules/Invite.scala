@@ -1,9 +1,8 @@
 package modules
 
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
-import out.Out
 
 class Invite extends BotModule{
 

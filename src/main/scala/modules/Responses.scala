@@ -1,8 +1,9 @@
 package modules
 
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
+
 import scala.util.Random
 
 class Responses extends BotModule{

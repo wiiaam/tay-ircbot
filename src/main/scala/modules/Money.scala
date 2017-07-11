@@ -1,18 +1,11 @@
 package modules
 
-import java.io.FileInputStream
-import java.io.FileWriter
-import java.io.IOException
-import java.net.URISyntaxException
-import java.sql.{Connection, DriverManager, ResultSet, SQLException}
+import java.sql.{DriverManager, SQLException}
 import java.util
-import java.util.Properties
 
-import irc.server.ServerResponder
-import ircbot.{BotCommand, BotModule, Constants, ModuleFiles}
 import irc.message.Message
-
-import scala.util.Sorting
+import irc.server.ServerResponder
+import ircbot.{BotCommand, BotModule, Constants}
 //remove if not needed
 import scala.collection.JavaConversions._
 

@@ -1,0 +1,14 @@
+apply plugin: 'scala'
+apply plugin: 'application'
+mainClassName = "IrcBot"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  compile 'org.scala-lang:scala-library:2.11.6'
+  // Your other deps here
+}
+
+sourceSets.main.scala.srcDirs = ['.']

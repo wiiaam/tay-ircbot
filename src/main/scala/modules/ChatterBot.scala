@@ -1,7 +1,7 @@
 package modules
 
-import com.google.code.chatterbotapi.{ChatterBotType, ChatterBotFactory}
-import irc.message.{MessageCommands, Message}
+import com.google.code.chatterbotapi.{ChatterBotFactory, ChatterBotType}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
 

@@ -1,8 +1,7 @@
 package irc.utilities.urlparsers
 
 import java.io.IOException
-import java.net.URL
-import java.net.URLConnection
+import java.net.{URL, URLConnection}
 import javax.imageio.ImageIO
 
 object FileParser {

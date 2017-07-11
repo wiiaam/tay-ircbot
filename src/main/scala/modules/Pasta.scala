@@ -1,9 +1,9 @@
 package modules
 
-import java.io.{File, PrintWriter}
+import java.io.PrintWriter
 import java.util.Scanner
 
-import irc.config.{Configs, UserConfig}
+import irc.config.UserConfig
 import irc.info.{Channel, Info, Rank}
 import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder

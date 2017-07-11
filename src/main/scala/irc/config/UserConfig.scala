@@ -1,6 +1,6 @@
 package irc.config
 
-import java.io.{FileWriter, FileReader, BufferedReader, File}
+import java.io.{BufferedReader, File, FileReader, FileWriter}
 
 import org.json.JSONObject
 

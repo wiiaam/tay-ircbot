@@ -1,11 +1,9 @@
 package coremodules
 
-import java.util.regex.Pattern
-
 import irc.config.Configs
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.{ConnectionManager, ServerResponder}
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule}
 
 
 class ConfigUpdater extends BotModule{

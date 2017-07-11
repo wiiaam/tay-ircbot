@@ -1,9 +1,9 @@
 package coremodules
 
 import irc.info.Info
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.{Priorities, ServerResponder}
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule}
 
 import scala.util.Random
 

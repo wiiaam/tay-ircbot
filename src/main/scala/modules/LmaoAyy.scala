@@ -1,7 +1,7 @@
 package modules
 
-import irc.info.{Rank, Info}
-import irc.message.{MessageCommands, Message}
+import irc.info.{Info, Rank}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
 

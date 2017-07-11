@@ -2,7 +2,7 @@ package irc.message
 
 import irc.config.Configs
 import irc.info.Info
-import out.Out
+
 import scala.collection.JavaConversions._
 
 class MessageSender(sender: String, serverName: String) {

@@ -4,13 +4,10 @@ import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
 
-import irc.config.Configs
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 import org.json.{JSONArray, JSONObject}
-import irc.message.{Message, MessageCommands}
-
-import scala.collection.JavaConversions._
 
 class Intros extends BotModule {
 

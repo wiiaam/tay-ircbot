@@ -1,13 +1,12 @@
 package irc.utilities
 
 
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.{HttpURLConnection, URLConnection, MalformedURLException, URL}
+import java.io.{BufferedReader, InputStreamReader}
+import java.net.{HttpURLConnection, URL}
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl._
+
 import irc.utilities.urlparsers._
 import org.jsoup.Jsoup
 
