@@ -20,6 +20,9 @@ class InfoParser extends BotModule{
     }
 
     if(m.command == MessageCommands.MODE){
+      r.send("WHO" + m.params.first)
+
+      /** WIP
       if(m.params.first.startsWith("#") && m.params.array.length > 2){
         var modeChange = m.params.array(1)
         if(modeChange.startsWith("+")) modeChange = modeChange.substring(1)
@@ -72,6 +75,7 @@ class InfoParser extends BotModule{
         }
 
       }
+        **/
     }
 
     if(m.command == MessageCommands.NICK){
