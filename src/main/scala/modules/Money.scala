@@ -16,6 +16,8 @@ class Money extends BotModule {
   private val lastpaid: util.HashMap[String, Long] = new util.HashMap[String, Long]()
   private val lastgrant: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
+  private val firstSeen: util.HashMap[String, Long] = new util.HashMap[String, Long]()
+
   private var topcooldown = System.currentTimeMillis() - 10000
 
   private val jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
@@ -48,6 +50,17 @@ class Money extends BotModule {
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
 
     checkJail()
+
+    if(!firstSeen.containsKey(m.sender.nickname)){
+      firstSeen.put(m.sender.nickname, System.currentTimeMillis())
+      return
+    }
+    else {
+      if(firstSeen.get(m.sender.nickname) > System.currentTimeMillis() - 10000){
+        // 10 second delay before users are able to use bene commands if they are only just being seen
+        return
+      }
+    }
 
 
     if (b.command == "jailstatus") {
@@ -439,7 +452,8 @@ class Money extends BotModule {
   }
 
   private def checkJail() {
-    for (s <- jail.keySet){
+    var jailItems = jail.keySet
+    for (s <- jailItems){
       if(System.currentTimeMillis() >= (jail.get(s) + 300000)) jail.remove(s)
     }
   }
