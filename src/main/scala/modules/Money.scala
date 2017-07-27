@@ -11,6 +11,8 @@ import scala.collection.JavaConversions._
 
 class Money extends BotModule {
 
+  private val firstSeenDelay = 10
+
   private val sqlUrl = s"jdbc:sqlite:${Constants.MODULE_FILES_FOLDER}money.db".replace("\\","/")
 
   private val lastpaid: util.HashMap[String, Long] = new util.HashMap[String, Long]()
@@ -53,14 +55,9 @@ class Money extends BotModule {
 
     if(!firstSeen.containsKey(m.sender.nickname)){
       firstSeen.put(m.sender.nickname, System.currentTimeMillis())
-      return
     }
-    else {
-      if(firstSeen.get(m.sender.nickname) > System.currentTimeMillis() - 10000){
-        // 10 second delay before users are able to use bene commands if they are only just being seen
-        return
-      }
-    }
+
+
 
 
     if (b.command == "jailstatus") {
@@ -78,6 +75,17 @@ class Money extends BotModule {
     if (b.command == "bene") {
       if (!isReg(m)) {
         r.say(target, "pls login m9")
+        return
+      }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
         return
       }
       var lastPaid: Long = 0l
@@ -214,6 +222,17 @@ class Money extends BotModule {
         r.say(target, "pls register with nickserv m9")
         return
       }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
+        return
+      }
       if (b.hasParams) {
         if (!hasUser(m.sender.nickname)) {
           r.say(target, "winz hasnt given u any money yet. Use " + b.commandPrefix +
@@ -251,6 +270,17 @@ class Money extends BotModule {
     if (b.command == "mug") {
       if (!isReg(m)) {
         r.say(target, "pls login m9")
+        return
+      }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
         return
       }
       if (jail.containsKey(m.sender.nickname.toLowerCase())){
@@ -316,6 +346,17 @@ class Money extends BotModule {
     if (b.command == "give") {
       if (!isReg(m)) {
         r.say(target, "pls login m9")
+        return
+      }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
         return
       }
       if (b.hasParams) {
@@ -457,4 +498,16 @@ class Money extends BotModule {
       if(System.currentTimeMillis() >= (jail.get(s) + 300000)) jail.remove(s)
     }
   }
+
+  private def checkFirstSeen(nick: String): CommandsAllowedCheck = {
+    if (firstSeen.get(nick) > System.currentTimeMillis() - firstSeenDelay * 1000) {
+      // 10 second delay before users are able to use bene commands if they are only just being seen
+      CommandsAllowedCheck(allowed = false, Math.ceil((firstSeen.get(nick) + firstSeenDelay * 1000 -
+        System.currentTimeMillis()) / 1000).toInt)
+    }
+    else new CommandsAllowedCheck(true, 0)
+  }
+
+  private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
+
 }

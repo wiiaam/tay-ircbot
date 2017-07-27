@@ -1,12 +1,16 @@
 package coremodules
 
+import irc.config.Configs
 import irc.info.Info
 import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
+import scala.collection.JavaConversions._
 
 
 class Admin extends BotModule{
+
+  override val commands: Map[String, Array[String]] = Map("admins" -> Array("Lists the current admins"))
 
   override val adminCommands: Map[String, Array[String]] = Map("join" -> Array("Tell the bot to join a channel", "To use: %pjoin <channels>"),
     "nick" -> Array("Change the bots nickname", "To use: %pnick <nickname>"),
@@ -19,6 +23,32 @@ class Admin extends BotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PRIVMSG || m.command == MessageCommands.NOTICE){
+
+      if (b.command == "admins"){
+        val config = Configs.get(m.server).get
+        val admins = config.getAdmins
+        var adminString = ""
+        for(admin <- admins){
+          if(!admin.startsWith("@")){
+            if(adminString.length == 0){
+              adminString = admin
+            }
+            else {
+              adminString = adminString + ", " + admin
+            }
+          }
+        }
+        if(adminString.length == 0){
+          r.reply("There are currently no admins set")
+        }
+        else if(adminString.contains(",")){
+          r.reply("Current admins are: " + adminString)
+        }
+        else{
+          r.reply("Current admin is: " + adminString)
+        }
+      }
+
       if(m.sender.isAdmin){
         if(b.command == "join"){
           for(channel <- b.paramsArray){
