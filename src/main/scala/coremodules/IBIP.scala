@@ -3,7 +3,7 @@ package coremodules
 import irc.info.Info
 import irc.message.{Message, MessageCommands}
 import irc.server.{Priorities, ServerResponder}
-import ircbot.{BotCommand, BotModule}
+import ircbot.{BotCommand, BotModule, Constants}
 
 import scala.util.Random
 
@@ -15,7 +15,7 @@ class IBIP extends BotModule {
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if((m.trailing.startsWith(".bots ") || m.trailing == ".bots") && m.command == MessageCommands.PRIVMSG){
       val target = if(m.params.first.startsWith("#")) m.params.first else m.sender.nickname
-      val desc = (for{
+      val desc = "sauce @ " + Constants.REPO/**(for{
         info <- Info.get(m.server)
         channel <- info.findChannel(m.params.first)
       } yield {
@@ -24,7 +24,7 @@ class IBIP extends BotModule {
           name = channel.users.keySet.toVector(Random.nextInt(channel.users.keySet.size))
         }
         "hey " + name
-      }).getOrElse("taylor swift is bae")
+      }).getOrElse("taylor swift is bae")**/
 
 
 
