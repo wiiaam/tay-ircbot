@@ -24,6 +24,8 @@ class Money extends BotModule {
 
   private val jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
+  private var checking = false //check for jail
+
   private val pros: util.HashSet[String] = new util.HashSet[String]()
 
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
@@ -493,10 +495,13 @@ class Money extends BotModule {
   }
 
   private def checkJail() {
-    var jailItems = jail.keySet
+    if(checking) return
+    checking = true
+    val jailItems = jail.keySet
     for (s <- jailItems){
       if(System.currentTimeMillis() >= (jail.get(s) + 300000)) jail.remove(s)
     }
+    checking = false
   }
 
   private def checkFirstSeen(nick: String): CommandsAllowedCheck = {
