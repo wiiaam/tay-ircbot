@@ -1,10 +1,23 @@
 package irc.server
 
+import irc.info.Info
+
 
 class ServerResponder(ircServer: IrcServer, sender: String) {
 
   def send(message: String): Unit = {
     ircServer.send(message)
+  }
+
+  def announce(message: String): Unit = {
+    val channels = Info.get(ircServer.fileName).get.getChannels
+    if(message.length > 0) {
+      for ((channelName, channel) <- channels) {
+        if (channelName != "*") {
+          say(channelName, message)
+        }
+      }
+    }
   }
 
   def reply(message: String): Unit ={

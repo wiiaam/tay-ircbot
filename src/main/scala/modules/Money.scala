@@ -17,12 +17,25 @@ class Money extends BotModule {
 
   private val lastpaid: util.HashMap[String, Long] = new util.HashMap[String, Long]()
   private val lastgrant: util.HashMap[String, Long] = new util.HashMap[String, Long]()
+  private val lastTripleDip: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
   private val firstSeen: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
   private var topcooldown = System.currentTimeMillis() - 10000
 
   private val jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
+
+  private var lowestBene = 100 // lowest .bene payout possible
+  private var highestBene = 900 // highest .bene payout possible
+
+  private val betChance: Double = 0.3 // chance to win for .bet
+
+  private val mugChance: Double = 0.1 // chance to mug for .mug
+
+  private val tripleDipChance: Double = 0.01 // chance to win triple dip
+  private val tripleDipCooldown = 60 //seconds
+  private val tripleDipCost: Long = 100
+  private val tripleDipWinnings: Long = 100000 // triple dip winnings
 
   private var checking = false //check for jail
 
@@ -31,7 +44,9 @@ class Money extends BotModule {
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
     "mug" -> Array("Steal money from another user"),
     "pokies" -> Array("Give some money to the lions foundation"),
-    "money" -> Array("Check if you have enough money for codys")
+    "money" -> Array("Check if you have enough money for codys"),
+    "tripledip" -> Array(s"Take a chance at getting a lot of money. Costs $$$tripleDipCost"),
+    "odds" -> Array("Check the rng odds of everything money related")
   )
 
   val connection = try{
@@ -74,6 +89,10 @@ class Money extends BotModule {
     }
 
 
+
+
+
+
     if (b.command == "bene") {
       if (!isReg(m)) {
         r.say(target, "pls login m9")
@@ -109,16 +128,73 @@ class Money extends BotModule {
       }
       var userbalance: Long = 0
       userbalance = if (!hasUser(m.sender.nickname)) 0 else getBalance(m.sender.nickname)
-      val addition = Math.floor(100 + Math.random()*900).toLong
+      val addition = Math.floor(lowestBene + Math.random()*highestBene).toLong
       userbalance += addition
       r.say(target, s"winz just gave u \u00033$$${addition}\u0003. u now have\u00033 $$$userbalance")
       lastpaid.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
       setBalance(m.sender.nickname, userbalance)
     }
 
-    if(b.command == "foodgrant"){
 
+
+
+
+    if(b.command == "odds"){
+      r.reply("Current odds:")
+      r.reply(s"bene: random between \u00033$$${lowestBene}\u0003 and \u00033$$${highestBene}\u0003. " +
+        f"Chance to mug: $mugChance%.2f. Bet chance: $betChance%.2f. Tripledip chance: $tripleDipChance%.2f")
     }
+
+
+
+
+
+    if(b.command == "tripledip"){
+      if (!isReg(m)) {
+        r.say(target, "pls register with nickserv m9")
+        return
+      }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
+        return
+      }
+      val user = m.sender.nickname
+      if(getBalance(user) > 99) {
+        val lastDip = lastTripleDip.getOrDefault(user.toLowerCase(), 0)
+        val timeLeftMillis = (lastDip + tripleDipCooldown*1000) - System.currentTimeMillis()
+        println(timeLeftMillis)
+        if(timeLeftMillis < 0){
+          if(Math.random() < tripleDipChance){
+            setBalance(user, getBalance(user) - tripleDipCost + tripleDipWinnings)
+            r.announce(s"\u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 $user just won the jackpot! " +
+              s"\u00033$$${tripleDipWinnings}\u0003 has been awarded to them. \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003")
+          }
+          else {
+            setBalance(user, getBalance(user) - tripleDipCost)
+            r.reply(s"You bought a ticket for \u00033$$${tripleDipCost}\u0003. Unfortunately you had no luck winning this time.")
+          }
+          lastTripleDip.put(user.toLowerCase(), System.currentTimeMillis())
+        }
+        else{
+          val waitRounded = Math.ceil(timeLeftMillis/1000).toInt
+          r.reply(s"Please wait another $waitRounded seconds before trying again")
+        }
+      }
+      else{
+        r.reply(s"Tickets are \u00033$$${tripleDipCost}\u0003. You don't have enough benebux for one")
+      }
+    }
+
+
+
+
 
     if(b.command == "top5"){
       val array = getTopList
@@ -142,6 +218,10 @@ class Money extends BotModule {
         r.notice(m.sender.nickname, s"${i+1}. $nick with \u00033$$$balance")
       }
     }
+
+
+
+
 
     if(b.command == "privacy"){
       if (!isReg(m)) {
@@ -168,6 +248,10 @@ class Money extends BotModule {
       }
     }
 
+
+
+
+
     if(b.command == "gib" && m.sender.isAdmin){
       var parsed = false
       var value: Long = 0
@@ -191,6 +275,9 @@ class Money extends BotModule {
       }
 
     }
+
+
+
 
 
     if (b.command == "money" || b.command == "wallet" ||
@@ -217,6 +304,9 @@ class Money extends BotModule {
           "bene to get some cash")
       } else r.say(target, s"You currently have3 $$${getBalance(m.sender.nickname)} in the bnz")
     }
+
+
+
 
 
     if (b.command == "pokies" || b.command == "bet") {
@@ -258,7 +348,7 @@ class Money extends BotModule {
           r.say(target, "u dont have enough money for that mate")
           return
         }
-        if (Math.random() > 0.7) {
+        if (Math.random() < betChance) {
           r.say(target, "bro you won! wow 3$" + bet + ", thats heaps g! drinks on u ay")
           setBalance(m.sender.nickname, usercash + bet)
         } else {
@@ -267,6 +357,8 @@ class Money extends BotModule {
         }
       }
     }
+
+
 
 
     if (b.command == "mug") {
@@ -309,7 +401,7 @@ class Money extends BotModule {
           setBalance(m.sender.nickname, getBalance(m.sender.nickname) + tosteal)
           return
         }
-        if (Math.random() > 0.1 || pros.contains(tomug)) {
+        if (Math.random() > mugChance || pros.contains(tomug)) {
           jail.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
           r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
         } else {
@@ -321,6 +413,8 @@ class Money extends BotModule {
         }
       }
     }
+
+
 
 
     if (b.command == "durry") {
@@ -411,7 +505,6 @@ class Money extends BotModule {
     catch{
       case e: SQLException => e.printStackTrace()
     }
-    printTable()
   }
 
   private def setPrivate(nick: String, privacy: Boolean) {
@@ -430,7 +523,6 @@ class Money extends BotModule {
     catch{
       case e: SQLException => e.printStackTrace()
     }
-    printTable()
   }
 
   private def getBalance(nickname: String): Long = {
