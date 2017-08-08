@@ -23,8 +23,6 @@ class Money extends BotModule {
 
   private var topcooldown = System.currentTimeMillis() - 10000
 
-  private val jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
-
   private var lowestBene = 100 // lowest .bene payout possible
   private var highestBene = 900 // highest .bene payout possible
 
@@ -38,6 +36,8 @@ class Money extends BotModule {
   private val tripleDipWinnings: Long = 100000 // triple dip winnings
 
   private var checking = false //check for jail
+
+  private var jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
   private val pros: util.HashSet[String] = new util.HashSet[String]()
 
@@ -587,13 +587,12 @@ class Money extends BotModule {
   }
 
   private def checkJail() {
-    if(checking) return
-    checking = true
-    val jailItems = jail.keySet
+    val tempjail = jail
+    val jailItems = tempjail.keySet
     for (s <- jailItems){
-      if(System.currentTimeMillis() >= (jail.get(s) + 300000)) jail.remove(s)
+      if(System.currentTimeMillis() >= (jail.get(s) + 300000)) tempjail.remove(s)
     }
-    checking = false
+    jail = tempjail
   }
 
   private def checkFirstSeen(nick: String): CommandsAllowedCheck = {
