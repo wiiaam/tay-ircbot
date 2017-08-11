@@ -28,7 +28,9 @@ class Money extends BotModule {
 
   private val betChance: Double = 0.3 // chance to win for .bet
 
-  private val mugChance: Double = 0.1 // chance to mug for .mug
+  private var mugChance: Double = normalMugChance // chance to mug for .mug
+  private val normalMugChance = 0.1
+  private val anarchyMugChance = 0.5
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
   private val tripleDipCooldown = 60 //seconds
@@ -40,6 +42,14 @@ class Money extends BotModule {
   private var jail: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
   private val pros: util.HashSet[String] = new util.HashSet[String]()
+
+  private var anarchyStarted = false
+  private var anarchy: Boolean = false
+  // all times in seconds
+  private var anarchyTimeMin = 1200
+  private var anarchyTimeMax = 3600
+  private var anarchyDelayMin = 30
+  private var anarchyDelayMax = 90
 
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
     "mug" -> Array("Steal money from another user"),
@@ -65,15 +75,16 @@ class Money extends BotModule {
 
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
+
+    if(!anarchyStarted) startAnarchyThread(m.server, r)
+
+
     var target = m.params.first
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
 
     if(!firstSeen.containsKey(m.sender.nickname)){
       firstSeen.put(m.sender.nickname, System.currentTimeMillis())
     }
-
-
-
 
     if (b.command == "jailstatus") {
       checkJail()
@@ -127,7 +138,7 @@ class Money extends BotModule {
       }
       var userbalance: Long = 0
       userbalance = if (!hasUser(m.sender.nickname)) 0 else getBalance(m.sender.nickname)
-      val addition = Math.floor(lowestBene + Math.random()*highestBene).toLong
+      val addition = Math.floor(lowestBene + Math.random()*(highestBene - lowestBene)).toLong
       userbalance += addition
       r.say(target, s"winz just gave u \u00033$$${addition}\u0003. u now have\u00033 $$$userbalance")
       lastpaid.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
@@ -605,5 +616,45 @@ class Money extends BotModule {
   }
 
   private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
+
+  private def startAnarchyThread(serverName: String, serverResponder: ServerResponder): Unit ={
+    val responses = Array("[NEWS] Metiria Turei admits to benefit fraud! Beneficiaries everywhere feel they should be " +
+      "entitled to more money and now they are taking it from other people!",
+    "[NEWS] David Seymour has just announced a flat tax rate! Beneficiaries have gone wild and are now stealing all of " +
+      "their money from the \"middle class\".",
+    "[NEWS] Uncle Winnie has just announced that all seniors have had their pension raised whilst young families are " +
+      "having their bene cut! Bene brawlers are now raiding retirement homes to steal from the old people.",
+    "[BREAKING] Steven Joyce just cut WINZ's funding! All beneficiaries that had their benez cut are now looting the beehive!",
+    "[BREAKING] Peter Dunne just legalized weed! Drugged up beneficiaries are running rampant on the streets.",
+    "[NEWS] Auckland housing prices just rose! Otara beneficiaries are raiding Epsom and Remuera in search of some extra cash.",
+    "[BREAKING] Parties in the streets of Dunedin as students and beneficiaries are burning couches with massive heads of steam. " +
+      "Some party-goers have taken to breaking into a few houses in search of some money for more codyz and billy mavs.")
+
+    if(anarchyStarted) return
+    val thread = new Thread(new Runnable {
+      override def run(): Unit = {
+        Thread.sleep(10000)
+        while(true){
+          var waittime = Math.ceil(anarchyDelayMin + Math.random() * (anarchyDelayMax - anarchyDelayMin)).toInt
+          Thread.sleep(waittime * 1000)
+
+          anarchy = true
+          mugChance = anarchyMugChance
+          waittime = Math.ceil(anarchyTimeMin + Math.random() * (anarchyTimeMax - anarchyTimeMin)).toInt
+          serverResponder.announce(responses(Math.floor(Math.random()*responses.length).toInt))
+          serverResponder.announce(s"For the next $waittime seconds, the mugging success rate will be increased!")
+
+          Thread.sleep(waittime * 1000)
+
+          serverResponder.announce("The mug rate has returned to normal.")
+          anarchy = false
+          mugChance = normalMugChance
+        }
+      }
+    })
+    thread.setName("Anarchy " + serverName)
+    thread.start()
+    anarchyStarted = true
+  }
 
 }
