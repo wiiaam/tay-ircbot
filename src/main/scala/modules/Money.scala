@@ -601,9 +601,8 @@ class Money extends BotModule {
     val tempjail = jail.clone().asInstanceOf[util.HashMap[String, Long]]
     val jailItems = tempjail.keySet
     for (s <- jailItems){
-      if(System.currentTimeMillis() >= (tempjail.get(s) + 300000)) tempjail.remove(s)
+      if(System.currentTimeMillis() >= (tempjail.get(s) + 300000)) jail.remove(s)
     }
-    jail = tempjail
   }
 
   private def checkFirstSeen(nick: String): CommandsAllowedCheck = {
