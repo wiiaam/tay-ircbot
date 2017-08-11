@@ -30,7 +30,7 @@ class Money extends BotModule {
 
   private var mugChance: Double = normalMugChance // chance to mug for .mug
   private val normalMugChance = 0.1
-  private val anarchyMugChance = 0.5
+  private val anarchyMugChance = 0.8
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
   private val tripleDipCooldown = 60 //seconds
