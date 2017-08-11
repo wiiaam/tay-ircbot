@@ -68,8 +68,6 @@ class Money extends BotModule {
     var target = m.params.first
     if (!m.params.first.startsWith("#")) target = m.sender.nickname
 
-    checkJail()
-
     if(!firstSeen.containsKey(m.sender.nickname)){
       firstSeen.put(m.sender.nickname, System.currentTimeMillis())
     }
@@ -78,6 +76,7 @@ class Money extends BotModule {
 
 
     if (b.command == "jailstatus") {
+      checkJail()
       if (!jail.containsKey(m.sender.nickname.toLowerCase())) {
         r.say(target, "ur not in jail u helmet")
         return
@@ -362,6 +361,7 @@ class Money extends BotModule {
 
 
     if (b.command == "mug") {
+      checkJail()
       if (!isReg(m)) {
         r.say(target, "pls login m9")
         return
@@ -587,10 +587,10 @@ class Money extends BotModule {
   }
 
   private def checkJail() {
-    val tempjail = jail
+    val tempjail = jail.clone().asInstanceOf[util.HashMap[String, Long]]
     val jailItems = tempjail.keySet
     for (s <- jailItems){
-      if(System.currentTimeMillis() >= (jail.get(s) + 300000)) tempjail.remove(s)
+      if(System.currentTimeMillis() >= (tempjail.get(s) + 300000)) tempjail.remove(s)
     }
     jail = tempjail
   }

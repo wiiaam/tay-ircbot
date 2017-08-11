@@ -87,14 +87,11 @@ class InfoParser extends BotModule{
     }*/
 
     if(m.command == MessageCommands.WHO_OUTPUT){
-      println(m.toString)
       val pa = m.params.array
       val info = Map("nick" -> pa(5), "user" -> pa(2), "modes" -> pa(6), "host" -> pa(3), "realname" -> m.trailing.split("\\s+")(1))
       Info.parse(m.server, info)
       if(pa(1) != "*") Info.parseToChannel(m.server, pa(1), info)
     }
-
-    println(Info.get(m.server).get.getChannels.get("#taylorswift").get.users.get("wiiaam").get.modes)
   }
 
 }
