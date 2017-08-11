@@ -20,7 +20,7 @@ class InfoParser extends BotModule{
     }
 
     if(m.command == MessageCommands.MODE){
-      r.send("WHO" + m.params.first)
+      r.send("WHO " + m.params.first)
 
       /** WIP
       if(m.params.first.startsWith("#") && m.params.array.length > 2){
