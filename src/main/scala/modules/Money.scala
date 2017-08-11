@@ -46,10 +46,10 @@ class Money extends BotModule {
   private var anarchyStarted = false
   private var anarchy: Boolean = false
   // all times in seconds
-  private var anarchyTimeMin = 1200
-  private var anarchyTimeMax = 3600
-  private var anarchyDelayMin = 30
-  private var anarchyDelayMax = 90
+  private var anarchyTimeMin = 30
+  private var anarchyTimeMax = 90
+  private var anarchyDelayMin = 1200
+  private var anarchyDelayMax = 3600
 
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
     "mug" -> Array("Steal money from another user"),
