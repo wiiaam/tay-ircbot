@@ -13,16 +13,14 @@ class Markov extends BotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PRIVMSG){
-      if(m.trailing.startsWith(m.config.getNickname + ": ") || m.trailing.startsWith(m.config.getNickname + ", ")) {
-        val msg = m.trailing.substring((m.config.getNickname + ": ").length)
-        generator.parseSentence(msg)
-      }
+      if(m.trailing.matches("^[a-zA-Z].*") && m.trailing.split("\\s+").length > 2) generator.parseSentence(m.trailing)
 
       if(m.trailing.contains(" " + m.config.getNickname + " ") ||
         m.trailing.startsWith(m.config.getNickname + " ") ||
         m.trailing.startsWith(m.config.getNickname + ",") ||
         m.trailing.startsWith(m.config.getNickname + ":") ||
-        m.trailing.endsWith(" " + m.config.getNickname)){
+        m.trailing.endsWith(" " + m.config.getNickname) ||
+        m.trailing == m.config.getNickname){
         val sentence = generator.createSentence()
         if(sentence.length > 1) r.reply(sentence)
       }
