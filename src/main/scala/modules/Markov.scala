@@ -21,7 +21,8 @@ class Markov extends BotModule{
         m.trailing.startsWith(m.config.getNickname + ":") ||
         m.trailing.endsWith(" " + m.config.getNickname) ||
         m.trailing == m.config.getNickname){
-        val sentence = generator.createSentence()
+        var sentence = generator.createSentence()
+        if(sentence.contains(". "))sentence = sentence.split("\\. ")(0)
         if(sentence.length > 1) r.reply(sentence)
       }
     }
