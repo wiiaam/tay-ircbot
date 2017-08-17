@@ -15,10 +15,16 @@ class Markov extends BotModule{
     if(m.command == MessageCommands.PRIVMSG){
       if(m.trailing.matches("^[a-zA-Z].*") && m.trailing.split("\\s+").length > 2) generator.parseSentence(m.trailing)
 
-      if(m.trailing.contains(" " + m.config.getNickname + " ") ||
+      if(m.trailing.startsWith(m.config.getNickname + ", ") ||
+        m.trailing.startsWith(m.config.getNickname + ": ")){
+        var msg = m.trailing.substring((m.config.getNickname + ": ").length)
+        var sentence = generator.createSentenceUsingWord(msg)
+        println(sentence)
+        if(sentence.contains(". "))sentence = sentence.split("\\. ")(0)
+        if(sentence.length > 1) r.reply(sentence)
+      }
+      else if(m.trailing.contains(" " + m.config.getNickname + " ") ||
         m.trailing.startsWith(m.config.getNickname + " ") ||
-        m.trailing.startsWith(m.config.getNickname + ",") ||
-        m.trailing.startsWith(m.config.getNickname + ":") ||
         m.trailing.endsWith(" " + m.config.getNickname) ||
         m.trailing == m.config.getNickname){
         var sentence = generator.createSentence()
