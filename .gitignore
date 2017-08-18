@@ -9,6 +9,8 @@ out/
 
 # gradle
 .gradle
+/project/
+/target/
 /build/
 !gradle-wrapper.jar
 .gradletasknamecache
