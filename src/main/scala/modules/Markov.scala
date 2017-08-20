@@ -18,7 +18,7 @@ class Markov extends BotModule{
       if(m.trailing.startsWith(m.config.getNickname + ", ") ||
         m.trailing.startsWith(m.config.getNickname + ": ")){
         var msg = m.trailing.substring((m.config.getNickname + ": ").length)
-        var sentence = generator.createSentenceUsingWord(msg)
+        var sentence = generator.createSentenceUsingWord(msg, true)
         println(sentence)
         if(sentence.contains(". "))sentence = sentence.split("\\. ")(0)
         if(sentence.length > 1) r.reply(sentence)
