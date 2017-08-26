@@ -89,7 +89,7 @@ class Pasta extends BotModule{
 
         // fun stuff
 
-        if(Pasta.spamtime + 30000 < System.currentTimeMillis() ) {
+        /*if(Pasta.spamtime + 30000 < System.currentTimeMillis() ) {
           if (m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains("linux") &&
             !m.trailing.toLowerCase.contains("kernel") && !m.trailing.toLowerCase.contains("steamos")) {
             r.say(target, "I'd just like to interject for a moment. What you’re referring to as Linux, " +
@@ -108,7 +108,7 @@ class Pasta extends BotModule{
               "wireless infrastructure made useful by Service Set Identification (SSID).")
             Pasta.spamtime = System.currentTimeMillis()
           }
-        }
+        }*/
 
         if(m.command == MessageCommands.PRIVMSG && m.trailing.trim == "^") r.say("#pasta","can confirm")
 
@@ -139,6 +139,7 @@ class Pasta extends BotModule{
             if(action.trim.equals("whips")){
               r.action(target, "nae naes")
             }
+            else if(Math.random() < 0.7) return
             else if(action.startsWith("is ")){
               r.action(target, "is also" + action.substring(2))
             }
