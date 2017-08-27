@@ -37,7 +37,6 @@ object FileParser {
       filesize = Math.round(yottabytes).toInt + "YB"
     }
     var `type` = "" + urlc.getContentType + ""
-    println(urlc.getContentType)
     if (megabytes < 5) {
       if (urlc.getContentType.startsWith("image")) {
         try {

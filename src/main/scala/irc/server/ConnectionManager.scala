@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 
 object ConnectionManager {
 
-  val servers = new util.HashMap[String, IrcServer]()
+  var servers: Map[String, IrcServer] = Map[String, IrcServer]()
 
   private val PING_TIMEOUT = 120
 
@@ -23,7 +23,7 @@ object ConnectionManager {
     var servernames = ""
     for((k,v) <- Configs.configs){
       servernames += k + " "
-      servers.put(k,IrcServerCreator.create(k, v.getServer, v.getPort, v.useSSL))
+      servers += (k -> IrcServerCreator.create(k, v.getServer, v.getPort, v.useSSL))
     }
     Out.println(s"Found servers: $servernames")
 
@@ -43,26 +43,26 @@ object ConnectionManager {
     if(!servers.containsKey(name)){
       Out.println(s"Cannot connect to server $name (server not loaded)")
     }
-    val server: IrcServer = servers.get(name)
+    val server: IrcServer = servers(name)
     var connected = false
     while(!connected){
+      Out.println(s"${server.fileName}/${server.serverName} !!! Attempting connection")
       connected = server.connect()
       if(connected){
-        Out.println(s"Connected to $name")
         connected = server.login()
         if(!connected) {
-          Out.println(s"$name !!! Could not login, retrying in 10 seconds")
+          Out.println(s"${server.fileName}/${server.serverName} !!! Could not login, retrying in 10 seconds")
           server.disconnect()
           Thread.sleep(10000)
         }
       }
       else{
-        Out.println(s"$name !!! Could not connect, retrying in 10 seconds")
+        Out.println(s"${server.fileName}/${server.serverName} !!! Could not connect, retrying in 10 seconds")
         Thread.sleep(10000)
       }
 
     }
-    Out.println(s"Logged in to $name")
+    Out.println(s"${server.fileName}/${server.serverName} !!! Logged in to $name")
     server.addListener("main", new OnMessageListener {
       override def onMessage(m: Message, b: BotCommand, r: ServerResponder): Unit =
       Modules.parseToAllModules(m,b,r)
@@ -78,7 +78,7 @@ object ConnectionManager {
   def joinChannels(name: String): Unit ={
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
-        val server: IrcServer = servers.get(name)
+        val server: IrcServer = servers(name)
         val config = Configs.get(name).get
         for(channel <- config.getChannels){
           server.send("JOIN " + channel)
@@ -96,7 +96,7 @@ object ConnectionManager {
         var connected = true
         while(connected){
           try{
-            servers.get(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
+            servers(name).send("PING :" + (System.currentTimeMillis()/1000).asInstanceOf[Int], Priorities.HIGH_PRIORITY)
             pings += (name -> false)
             Thread.sleep(PING_TIMEOUT*1000)
             if(!pings(name)){
@@ -108,8 +108,8 @@ object ConnectionManager {
               connected = false
           }
         }
-        Out.println(servers.get(name).fileName + "/" + servers.get(name).serverName + " !!! Ping timeout")
-        servers.get(name).disconnect()
+        Out.println(servers(name).fileName + "/" + servers(name).serverName + " !!! Ping timeout")
+        servers(name).disconnect()
         connectToServer(name)
       }
     })

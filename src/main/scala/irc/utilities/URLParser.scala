@@ -29,7 +29,6 @@ object URLParser {
       urlc.addRequestProperty("User-Agent", "Mozilla")
       urlc.connect()
       host = urlc.getURL.getHost
-      println(urlc.getContentType)
       if (!urlc.getContentType.startsWith("text/html")) {
         try {
           val title = FileParser.find(urlc)

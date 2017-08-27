@@ -35,7 +35,6 @@ object YoutubeParser {
         "&part=snippet,statistics,contentDetails&id=" +
         videoid
       val jsonstring = URLParser.readUrl(url)
-      println(jsonstring)
       val json = new JSONObject(jsonstring)
       val items = json.getJSONArray("items").getJSONObject(0)
       val snippet = items.getJSONObject("snippet")

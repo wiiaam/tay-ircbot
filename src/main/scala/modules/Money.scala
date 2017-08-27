@@ -4,8 +4,9 @@ import java.sql.{DriverManager, SQLException}
 import java.util
 
 import irc.message.Message
-import irc.server.ServerResponder
+import irc.server.{ConnectionManager, ServerResponder}
 import ircbot.{BotCommand, BotModule, Constants}
+import out.Out
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -28,8 +29,8 @@ class Money extends BotModule {
 
   private val betChance: Double = 0.3 // chance to win for .bet
 
-  private var mugChance: Double = normalMugChance // chance to mug for .mug
   private val normalMugChance = 0.1
+  private var mugChance: Double = normalMugChance // chance to mug for .mug
   private val anarchyMugChance = 0.8
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
@@ -43,13 +44,12 @@ class Money extends BotModule {
 
   private val pros: util.HashSet[String] = new util.HashSet[String]()
 
-  private var anarchyStarted = false
   private var anarchy: Boolean = false
   // all times in seconds
   private var anarchyTimeMin = 120
   private var anarchyTimeMax = 200
-  private var anarchyDelayMin = 14400
-  private var anarchyDelayMax = 36000
+  private var anarchyDelayMin = 10//14400
+  private var anarchyDelayMax = 10//36000
 
   override val commands: Map[String, Array[String]] = Map("bene" -> Array("Ask the bruddah winz for some cash"),
     "mug" -> Array("Steal money from another user"),
@@ -70,13 +70,12 @@ class Money extends BotModule {
   }
 
   initTable()
+  startAnarchyThread()
   
   private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
 
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
-
-    if(!anarchyStarted) startAnarchyThread(m.server, r)
 
 
     var target = m.params.first
@@ -179,7 +178,6 @@ class Money extends BotModule {
       if(getBalance(user) > 99) {
         val lastDip = lastTripleDip.getOrDefault(user.toLowerCase(), 0)
         val timeLeftMillis = (lastDip + tripleDipCooldown*1000) - System.currentTimeMillis()
-        println(timeLeftMillis)
         if(timeLeftMillis < 0){
           if(Math.random() < tripleDipChance){
             setBalance(user, getBalance(user) - tripleDipCost + tripleDipWinnings)
@@ -568,7 +566,7 @@ class Money extends BotModule {
     val sql = "SELECT nick, balance, private FROM money"
     val rs = connection.createStatement().executeQuery(sql)
     while (rs.next()){
-      println(rs.getString(1) + " " + rs.getLong(2) + " " + rs.getBoolean(3) )
+      Out.println(rs.getString(1) + " " + rs.getLong(2) + " " + rs.getBoolean(3) )
     }
   }
   private def initTable() = {
@@ -616,7 +614,7 @@ class Money extends BotModule {
 
   private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
 
-  private def startAnarchyThread(serverName: String, serverResponder: ServerResponder): Unit ={
+  private def startAnarchyThread(): Unit ={
     val responses = Array("[NEWS] Metiria Turei admits to benefit fraud! Beneficiaries everywhere feel they should be " +
       "entitled to more money and now they are taking it from other people!",
     "[NEWS] David Seymour has just announced a flat tax rate! Beneficiaries have gone wild and are now stealing all of " +
@@ -629,7 +627,6 @@ class Money extends BotModule {
     "[BREAKING] Parties in the streets of Dunedin as students and beneficiaries are burning couches with massive heads of steam. " +
       "Some party-goers have taken to breaking into a few houses in search of some money for more codyz and billy mavs.")
 
-    if(anarchyStarted) return
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
         Thread.sleep(10000)
@@ -640,20 +637,28 @@ class Money extends BotModule {
           anarchy = true
           mugChance = anarchyMugChance
           waittime = Math.ceil(anarchyTimeMin + Math.random() * (anarchyTimeMax - anarchyTimeMin)).toInt
-          serverResponder.announce(responses(Math.floor(Math.random()*responses.length).toInt))
-          serverResponder.announce(s"For the next $waittime seconds, the mugging success rate will be increased!")
+          for((name, server) <- ConnectionManager.servers){
+            val serverResponder = new ServerResponder(server, "")
+            serverResponder.announce(responses(Math.floor(Math.random()*responses.length).toInt))
+            serverResponder.announce(s"For the next $waittime seconds, the mugging success rate will be increased!")
+          }
+
 
           Thread.sleep(waittime * 1000)
 
-          serverResponder.announce("The mug rate has returned to normal.")
+          for((name, server) <- ConnectionManager.servers){
+            val serverResponder = new ServerResponder(server, "")
+            serverResponder.announce("The mug rate has returned to normal.")
+          }
+
+
           anarchy = false
           mugChance = normalMugChance
         }
       }
     })
-    thread.setName("Anarchy " + serverName)
+    thread.setName("Anarchy")
     thread.start()
-    anarchyStarted = true
   }
 
 }

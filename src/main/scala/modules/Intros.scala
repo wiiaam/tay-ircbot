@@ -135,7 +135,6 @@ class Intros extends BotModule {
       }
     }
     if (m.command == MessageCommands.JOIN) {
-      println(m.trailing + " " + intros.has(m.params.first))
       if (intros.has(m.trailing)) {
         if (intros.getJSONObject(m.trailing).has(m.sender.nickname)) {
           val userintros = intros.getJSONObject(m.trailing).getJSONArray(m.sender.nickname)

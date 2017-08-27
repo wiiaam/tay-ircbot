@@ -105,7 +105,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
           case MessageCommands.PING =>
             send("PONG :" + message.trailing)
           case MessageCommands.CONNECTED =>
-            Out.println(s"Connected to $fileName")
+            Out.println(s"$fileName/$serverName !!! Connected")
             loggedIn = true
           case MessageCommands.NICKINUSE =>
             val nick = config.getNickname

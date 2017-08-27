@@ -120,7 +120,6 @@ class Info {
     channels.foreach{
       case (name: String, channel: Channel) =>
         if(channel.users.contains(oldNick)){
-          Out.println("Changing nick: " + oldNick + " to " + newNick + " in " + name)
           var newChannel = channel
           var channelUsers = newChannel.users
           channelUsers += newNick -> newUser
@@ -130,8 +129,6 @@ class Info {
         }
     }
     channels = newChannels
-
-    Out.println(s"User found: $oldNick ${users.contains(oldNick)} ${channels("#pasta").users.contains(oldNick)}")
 
   }
 }

@@ -173,10 +173,8 @@ class Pasta extends BotModule{
       if (b.command == "pastatopic") {
         val pasta: Option[Channel] = Info.get(m.server).get.findChannel("#pasta")
         if (pasta.isDefined) {
-          Out.println(s"User rank: ${pasta.get.getRank(m.sender.nickname)}")
           if (pasta.get.getRank(m.sender.nickname) >= Rank.SOP) {
             if (b.hasParams) {
-              Out.println("params ." + b.paramsString + ".")
               changeTopic(b.paramsString)
               r.say(target, s"${m.sender.nickname}: Topic prefix successfully set. The new prefix will be applied next time the topic changes")
             }
@@ -205,7 +203,6 @@ class Pasta extends BotModule{
     val writer = new PrintWriter(topicfile)
     writer.println(pastatopic)
     writer.close()
-    Out.println("Changed topic prefix to " + pastatopic)
   }
 
   def removeHighlighter(host: String){

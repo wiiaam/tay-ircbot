@@ -1,7 +1,7 @@
 import java.io.File
 import java.nio.file.{Files, Paths}
 
-import irc.config.Configs
+import irc.config.{Configs, UserConfig}
 import irc.server.ConnectionManager
 import irc.utilities.FileUtil
 import ircbot._
@@ -32,8 +32,10 @@ object IrcBot {
       }
     }
 
-    Modules.loadAll()
+
     Configs.load()
+    Modules.loadAll()
+
     Out.println("Configs loaded")
 
 
