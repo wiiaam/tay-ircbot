@@ -10,10 +10,6 @@ import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 import out.Out
 
-object Pasta {
-  var spamtime = 0L
-}
-
 
 class Pasta extends BotModule{
 

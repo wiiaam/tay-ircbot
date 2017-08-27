@@ -3,7 +3,7 @@ package irc.config
 import java.io.{BufferedReader, File, FileReader, FileWriter}
 import java.lang.reflect.Type
 
-import org.json.JSONObject
+import org.json.{JSONArray, JSONObject}
 
 import scala.reflect.ClassTag
 
@@ -101,6 +101,12 @@ object UserConfig {
       case e: Exception =>
         None
     }
+  }
+
+  def setArray[T](key: String, array: Array[T]): Unit ={
+    val jsonArray = new JSONArray(array)
+    json.put(key, array)
+    write()
   }
 
   private def write(): Unit ={
