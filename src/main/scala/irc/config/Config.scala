@@ -1,9 +1,10 @@
 package irc.config
 
-import java.io.{FileWriter, BufferedReader, FileReader, File}
+import java.io.{BufferedReader, File, FileReader, FileWriter}
 import java.util
+
 import org.json.{JSONArray, JSONObject}
-import out.Out
+
 import scala.collection.JavaConversions._
 
 

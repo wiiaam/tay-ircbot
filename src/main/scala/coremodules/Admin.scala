@@ -1,11 +1,16 @@
 package coremodules
 
-import irc.message.{MessageCommands, Message}
+import irc.config.Configs
+import irc.info.Info
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule}
+import scala.collection.JavaConversions._
 
 
 class Admin extends BotModule{
+
+  override val commands: Map[String, Array[String]] = Map("admins" -> Array("Lists the current admins"))
 
   override val adminCommands: Map[String, Array[String]] = Map("join" -> Array("Tell the bot to join a channel", "To use: %pjoin <channels>"),
     "nick" -> Array("Change the bots nickname", "To use: %pnick <nickname>"),
@@ -18,6 +23,32 @@ class Admin extends BotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(m.command == MessageCommands.PRIVMSG || m.command == MessageCommands.NOTICE){
+
+      if (b.command == "admins"){
+        val config = Configs.get(m.server).get
+        val admins = config.getAdmins
+        var adminString = ""
+        for(admin <- admins){
+          if(!admin.startsWith("@")){
+            if(adminString.length == 0){
+              adminString = admin
+            }
+            else {
+              adminString = adminString + ", " + admin
+            }
+          }
+        }
+        if(adminString.length == 0){
+          r.reply("There are currently no admins set")
+        }
+        else if(adminString.contains(",")){
+          r.reply("Current admins are: " + adminString)
+        }
+        else{
+          r.reply("Current admin is: " + adminString)
+        }
+      }
+
       if(m.sender.isAdmin){
         if(b.command == "join"){
           for(channel <- b.paramsArray){
@@ -75,6 +106,94 @@ class Admin extends BotModule{
           }
         }
 
+        if(b.command == "clean"){
+          var cleaned = ""
+          var minUsers = 2
+          if(b.paramsArray.length > 0){
+            try{
+              minUsers = b.paramsArray(0).toInt
+              if(minUsers < 2) throw new Exception()
+            }
+            catch {
+              case e: Exception => r.reply(m.sender.nickname + ": param must be a number more than 1")
+                return
+            }
+          }
+          val channels = Info.get(m.server).get.getChannels
+          for((channelName,channel) <- channels){
+            println(channelName + " " + channel.users.size)
+
+            if(channel.users.size < minUsers && channelName != "*"){
+              r.part(channelName, "Cleaning channel list")
+              cleaned = cleaned + " " + channelName
+            }
+          }
+          r.reply(m.sender.nickname + ": left channels " + cleaned)
+        }
+
+        if(b.command == "announce"){
+          val channels = Info.get(m.server).get.getChannels
+          if(b.paramsArray.length > 0) {
+            for ((channelName, channel) <- channels) {
+              if (channelName != "*") {
+                r.say(channelName, b.paramsString)
+              }
+            }
+          }
+        }
+
+        if(b.command == "channels") {
+          var list = "Current channel list:  "
+          val channels = Info.get(m.server).get.getChannels
+          if(b.paramsArray.length > 0){
+            if(b.paramsArray(0) == "verbose"){
+              for ((channelName, channel) <- channels) {
+                if(channelName != "*"){
+                  var users = channel.users.size
+                  var owner = 0
+                  var sop = 0
+                  var aop = 0
+                  var hop = 0
+                  var vop = 0
+                  var currentRank = "none"
+                  for((userName, user) <- channel.users){
+                    if(user.modes.contains("~")){
+                      owner += 1
+                      if(userName == m.config.getNickname) currentRank = "owner"
+                    }
+                    if(user.modes.contains("&")){
+                      sop += 1
+                      if(userName == m.config.getNickname) currentRank = "sop"
+                    }
+                    if(user.modes.contains("@")){
+                      aop += 1
+                      if(userName == m.config.getNickname) currentRank = "aop"
+                    }
+                    if(user.modes.contains("%")){
+                      hop += 1
+                      if(userName == m.config.getNickname) currentRank = "hop"
+                    }
+                    if(user.modes.contains("+")){
+                      vop += 1
+                      if(userName == m.config.getNickname) currentRank = "vop"
+                    }
+                  }
+                  list = list + "\u0002" + channelName + s"\u0002 users:$users own:$owner sop:$sop aop:$aop hop:$hop vop:$vop myrank:$currentRank | "
+                }
+
+
+              }
+              list = list.substring(0, list.length - 2)
+              r.notice(m.sender.nickname, list)
+            }
+          }
+          else{
+            for ((channelName, channel) <- channels) {
+              if(channelName != "*") list = list + channelName + " "
+            }
+            r.notice(m.sender.nickname, list)
+          }
+        }
       }
     }
   }

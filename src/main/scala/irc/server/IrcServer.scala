@@ -3,16 +3,16 @@ package irc.server
 import java.io.PrintStream
 import java.net.Socket
 import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util
 import java.util.Scanner
+import javax.net.ssl._
+
 import irc.config.Configs
 import irc.listeners.OnMessageListener
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import ircbot.BotCommand
 import out.Out
-import javax.net.ssl._
-import java.security.cert.X509Certificate
-import java.security.cert.CertificateException
 
 
 class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
@@ -24,25 +24,29 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   private var toSendLP = new util.ArrayDeque[String]
   private var connected = false
   private var sendThread: Thread = _
+  private var inThread: Thread = _
+  private var inQueue = new util.ArrayDeque[Message]
   var serverName = name
   val fileName = name
 
+  def getIrcServer: IrcServer = this
+
   startSendQueueThread()
+  startInQueueThread()
 
   def addListener(name: String, onMessageListener: OnMessageListener): Unit = {
     listeners += (name -> onMessageListener)
   }
 
   private def onMessageReceived(message: String) = {
-
     val m = new Message(message, fileName)
-
-    val b = new BotCommand(m, Configs.get(fileName).get.getCommandPrefix)
-    val r = new ServerResponder(this, m.params.first)
-    Out.println(s"$fileName/$serverName --> $message")
-    for ((k, v) <- listeners) {
-      v.onMessage(m, b, r)
+    if(m.command == MessageCommands.PING){
+      inQueue.addFirst(m)
     }
+    else{
+      inQueue.add(m)
+    }
+
   }
 
   def connect(): Boolean = {
@@ -77,27 +81,31 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     val config = Configs.get(fileName).getOrElse(throw new RuntimeException("No config"))
     send("NICK " + config.getNickname)
     send("USER " + config.getUsername + " " + config.getUsername + " " + config.getServer + " :" + config.getRealname)
+
     if(config.getServerPassword != ""){
       send("PASS " + config.getServerPassword)
     }
     var loggedIn = false
     while (!loggedIn) {
       if (in.getOrElse(return false).hasNextLine) {
+
+
         val next = in.get.nextLine()
+        Out.println(s"$fileName/$serverName --> $next")
 
         val message = new Message(next, fileName)
 
 
-        Out.println(s"$fileName/$serverName --> $next")
 
         if(message.toString.toLowerCase.contains("error") || message.toString.toLowerCase.contains("closing link")){
           return false
         }
 
-
         message.command match {
+          case MessageCommands.PING =>
+            send("PONG :" + message.trailing)
           case MessageCommands.CONNECTED =>
-            Out.println(s"Connected to $fileName")
+            Out.println(s"$fileName/$serverName !!! Connected")
             loggedIn = true
           case MessageCommands.NICKINUSE =>
             val nick = config.getNickname
@@ -108,11 +116,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
               send("PRIVMSG NickServ :GHOST " + nick + " " + config.getPassword)
               Thread.sleep(2000)
               send("NICK " + nick)
-              loggedIn = true
             }
           case _ =>
         }
       }
+      Thread.sleep(50)
     }
     true
   }
@@ -145,13 +153,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
             val tosend = toSend.poll()
             Out.println(s"$fileName/$serverName <-- $tosend")
             out.foreach(_.print(tosend + "\r\n"))
-            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
           else if (!toSendLP.isEmpty) {
             out.foreach(_.print(toSendLP.poll() + "\r\n"))
-            out.foreach(_.flush())
             if (spammed > 4) Thread.sleep(500)
             else spammed += 1
           }
@@ -159,15 +165,35 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
         }
       }
     })
-    sendThread.setName(s"Sending queue to socket on $serverName")
+    sendThread.setName(s"Send queue $serverName")
     sendThread.start()
   }
 
-  def send(message: String) {
-    send(message, Priorities.STANDARD_PRIORITY)
+  private def startInQueueThread(): Unit = {
+    inThread = new Thread(new Runnable {
+      override def run(): Unit = {
+        while (true){
+          Thread.sleep(20)
+          if(!inQueue.isEmpty) {
+            val newMessage: Message = inQueue.poll()
+
+
+            val b = new BotCommand(newMessage, Configs.get(fileName).get.getCommandPrefix)
+            val r = new ServerResponder(getIrcServer, newMessage.params.first)
+            Out.println(s"$fileName/$serverName --> ${newMessage.toString}")
+            for ((k, v) <- listeners) {
+              v.onMessage(newMessage, b, r)
+            }
+          }
+        }
+      }
+    })
+    inThread.setName(s"Read queue $serverName")
+    inThread.start()
   }
 
-  def send(message: String, priority: Priorities.Value) {
+
+  def send(message: String, priority: Priorities.Value = Priorities.STANDARD_PRIORITY) {
     val msg = message.replaceAll("\r", "").replaceAll("\n", "")
     if ((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320) {
       val split = msg.split(" ")

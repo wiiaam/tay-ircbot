@@ -2,9 +2,7 @@ package ircbot
 
 import java.util
 
-import irc.config.Configs
 import irc.message.Message
-import out.Out
 
 
 class BotCommand(m: Message, prefix: String) {

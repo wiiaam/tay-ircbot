@@ -1,8 +1,8 @@
 package modules
 
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule}
 
 
 class CTCPRequests extends BotModule{

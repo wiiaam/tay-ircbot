@@ -1,8 +1,7 @@
 package irc.utilities.urlparsers
 
 import java.io.IOException
-import java.net.URL
-import java.net.URLConnection
+import java.net.{URL, URLConnection}
 import javax.imageio.ImageIO
 
 object FileParser {
@@ -38,7 +37,6 @@ object FileParser {
       filesize = Math.round(yottabytes).toInt + "YB"
     }
     var `type` = "" + urlc.getContentType + ""
-    println(urlc.getContentType)
     if (megabytes < 5) {
       if (urlc.getContentType.startsWith("image")) {
         try {

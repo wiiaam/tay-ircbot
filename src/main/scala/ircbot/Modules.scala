@@ -3,14 +3,13 @@ package ircbot
 import java.io.File
 import java.net.URISyntaxException
 import java.util
-import out.Out
 
-import scala.collection.JavaConversions._
 import coremodules._
 import irc.message.Message
 import irc.server.ServerResponder
+import out.Out
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
 
 object Modules {
   var coreModules = new util.ArrayList[BotModule]()

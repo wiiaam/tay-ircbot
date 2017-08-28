@@ -1,6 +1,6 @@
 package coremodules
 
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.{ConnectionManager, Priorities, ServerResponder}
 import ircbot.{BotCommand, BotModule}
 

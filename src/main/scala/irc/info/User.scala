@@ -1,7 +1,5 @@
 package irc.info
 
-import out.Out
-
 
 class User(nick: String, user: String, hostAddress: String, real: String, usermodes: String){
 

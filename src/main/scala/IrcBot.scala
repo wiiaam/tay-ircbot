@@ -1,9 +1,9 @@
 import java.io.File
 import java.nio.file.{Files, Paths}
 
-import irc.config.Configs
+import irc.config.{Configs, UserConfig}
 import irc.server.ConnectionManager
-import irc.utilities.{FileUtil, URLParser}
+import irc.utilities.FileUtil
 import ircbot._
 import out.Out
 
@@ -31,6 +31,14 @@ object IrcBot {
         FileUtil.copyFileUsingChannel(file, new File(Constants.MODULE_FILES_FOLDER + file.getName))
       }
     }
+
+
+    Configs.load()
+    Modules.loadAll()
+
+    Out.println("Configs loaded")
+
+
     ConnectionManager.start()
   }
 

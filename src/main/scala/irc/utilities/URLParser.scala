@@ -1,13 +1,12 @@
 package irc.utilities
 
 
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.{HttpURLConnection, URLConnection, MalformedURLException, URL}
+import java.io.{BufferedReader, InputStreamReader}
+import java.net.{HttpURLConnection, URL}
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl._
+
 import irc.utilities.urlparsers._
 import org.jsoup.Jsoup
 
@@ -30,7 +29,6 @@ object URLParser {
       urlc.addRequestProperty("User-Agent", "Mozilla")
       urlc.connect()
       host = urlc.getURL.getHost
-      println(urlc.getContentType)
       if (!urlc.getContentType.startsWith("text/html")) {
         try {
           val title = FileParser.find(urlc)
@@ -86,30 +84,23 @@ object URLParser {
         title = "Title not found (SSL handshake error)"
       case e: Exception =>
     }
+    if (title.length > 50) title = title.substring(0, 50) + "..."
+
     title = s"[URL] ${title.trim()} ($host)"
     title
   }
 
   def readUrl(urlString: String): String = {
     val url = new URL(urlString)
-    if (urlString.startsWith("https")) {
+
+    val urlc = if (urlString.startsWith("https")) {
       setAllowAllCerts()
       val urlc = url.openConnection().asInstanceOf[HttpsURLConnection]
       urlc.setInstanceFollowRedirects(true)
       urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
       urlc.addRequestProperty("User-Agent", "Mozilla")
       urlc.connect()
-      val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
-      val buffer = new StringBuffer()
-      val chars = new Array[Char](1024)
-      var reading = true
-      while (reading) {
-        val read = reader.read(chars)
-        if (read != -1) buffer.append(chars, 0, read)
-        else reading = false
-      }
-
-      buffer.toString
+      urlc
     }
     else {
       val urlc = url.openConnection().asInstanceOf[HttpURLConnection]
@@ -117,18 +108,18 @@ object URLParser {
       urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
       urlc.addRequestProperty("User-Agent", "Mozilla")
       urlc.connect()
-      val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
-      val buffer = new StringBuffer()
-      val chars = new Array[Char](1024)
-      var reading = true
-      while (reading) {
-        val read = reader.read(chars)
-        if (read != -1) buffer.append(chars, 0, read)
-        else reading = false
-      }
-
-      buffer.toString
+      urlc
     }
+    val reader = new BufferedReader(new InputStreamReader(urlc.getInputStream))
+    val buffer = new StringBuffer()
+    val chars = new Array[Char](1024)
+    var reading = true
+    while (reading) {
+      val read = reader.read(chars)
+      if (read != -1) buffer.append(chars, 0, read)
+      else reading = false
+    }
+    buffer.toString
   }
 
   def makeClean(htmlString: String): String = {

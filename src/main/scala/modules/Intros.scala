@@ -4,13 +4,10 @@ import java.io._
 import java.net.URISyntaxException
 import java.util.Scanner
 
-import irc.config.Configs
+import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 import org.json.{JSONArray, JSONObject}
-import irc.message.{Message, MessageCommands}
-
-import scala.collection.JavaConversions._
 
 class Intros extends BotModule {
 
@@ -138,7 +135,6 @@ class Intros extends BotModule {
       }
     }
     if (m.command == MessageCommands.JOIN) {
-      println(m.trailing + " " + intros.has(m.params.first))
       if (intros.has(m.trailing)) {
         if (intros.getJSONObject(m.trailing).has(m.sender.nickname)) {
           val userintros = intros.getJSONObject(m.trailing).getJSONArray(m.sender.nickname)

@@ -3,8 +3,6 @@ package irc.message
 import java.util
 
 import irc.config.Configs
-import irc.message.MessageCommands.MessageCommand
-import out.Out
 
 class Message(ircFormattedString: String, serverName:String) {
   val server = serverName

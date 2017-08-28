@@ -1,11 +1,10 @@
 package coremodules
 
-import java.util.regex.Pattern
-
 import irc.config.Configs
-import irc.message.{MessageCommands, Message}
+import irc.message.{Message, MessageCommands}
 import irc.server.{ConnectionManager, ServerResponder}
-import ircbot.{BotModule, BotCommand}
+import ircbot.{BotCommand, BotModule}
+import out.Out
 
 
 class ConfigUpdater extends BotModule{
@@ -26,15 +25,16 @@ class ConfigUpdater extends BotModule{
     if(m.command == MessageCommands.n005){
       m.params.array.foreach(param => {
         if(param.startsWith("NETWORK=")){
-          println(s"UPADTING NETWORK NAME: ${m.server}")
           val name = m.server
           val config = m.config
           val newName = param.split("=")(1).trim
           config.networkName = newName
           Configs.configs.put(name, config)
-          val server = ConnectionManager.servers.get(name)
+          val server = ConnectionManager.servers(name)
+
+          Out.println(s"${server.fileName}/${server.serverName} !!! Updating network name: $name -> $newName")
           server.serverName = newName
-          ConnectionManager.servers.put(name, server)
+          ConnectionManager.servers += (name -> server)
 
         }
       })

@@ -3,6 +3,7 @@ package coremodules
 import irc.message.Message
 import irc.server.ServerResponder
 import ircbot._
+
 import scala.collection.JavaConversions._
 
 

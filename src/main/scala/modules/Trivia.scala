@@ -1,11 +1,10 @@
 package modules
 
-import java.io.{File, FileInputStream, FileOutputStream}
+import java.io.{FileInputStream, FileOutputStream}
 import java.util.Properties
 
 import irc.message.Message
 import irc.server.ServerResponder
-import irc.utilities.GoogleSearch
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 
 

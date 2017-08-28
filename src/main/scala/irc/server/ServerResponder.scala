@@ -1,12 +1,23 @@
 package irc.server
 
-import irc.message.Message
+import irc.info.Info
 
 
 class ServerResponder(ircServer: IrcServer, sender: String) {
 
   def send(message: String): Unit = {
     ircServer.send(message)
+  }
+
+  def announce(message: String): Unit = {
+    val channels = Info.get(ircServer.fileName).get.getChannels
+    if(message.length > 0) {
+      for ((channelName, channel) <- channels) {
+        if (channelName != "*") {
+          say(channelName, message)
+        }
+      }
+    }
   }
 
   def reply(message: String): Unit ={
@@ -47,8 +58,10 @@ class ServerResponder(ircServer: IrcServer, sender: String) {
     ircServer.send(s"JOIN $channel")
   }
 
-  def part(channel: String): Unit ={
-    ircServer.send(s"PART $channel")
+  def part(channel: String, reason: String = "Leaving"): Unit ={
+    var cnl = channel
+    if(!cnl.startsWith("#")) cnl = "#" + cnl
+    ircServer.send(s"PART $cnl :$reason")
   }
 
   def topic(channel: String, topic: String): Unit ={

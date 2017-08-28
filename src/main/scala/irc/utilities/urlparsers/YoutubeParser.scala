@@ -40,7 +40,7 @@ object YoutubeParser {
       val snippet = items.getJSONObject("snippet")
       val contentDetails = items.getJSONObject("contentDetails")
       val statistics = items.getJSONObject("statistics")
-      val title = URLParser.makeClean(snippet.getString("title"))
+      val title = "\u0002" + URLParser.makeClean(snippet.getString("title")) + "\u0002"
       val uploader = snippet.getString("channelTitle")
       val views = NumberFormat.getNumberInstance(Locale.US).format(statistics.getInt("viewCount"))
       val likes = NumberFormat.getNumberInstance(Locale.US).format(statistics.getInt("likeCount"))
@@ -92,19 +92,32 @@ object YoutubeParser {
         ldt.getYear
       var percentlike = statistics.getDouble("likeCount") / statistics.getDouble("dislikeCount")
       val likeQuartile = Math.ceil(percentlike * 10).toInt
-      var likebar = "3"
-      var ratingchar = "↑"
+      var likebar = "\u000303,03"
+      var ratingchar = "^"
       for (i <- 0 until 10) {
         if (i == likeQuartile) {
-          likebar += "4"
-          ratingchar = "↓"
+          likebar += "\u000304,04"
+          ratingchar = "v"
         }
         likebar += ratingchar
       }
-      likebar += ""
-      s"\u0002\u00031,0You\u00030,4Tube\u0003\u0002 \u0002${title}\u0002 | Uploaded by \u000311\u0002${uploader}\u0002\u0003 " +
-        s"on \u0002${uploaded}\u0002 | Duration: \u0002${duration}\u0002 | \u0002${views}\u0002 views" +
-        s"\u00033 $likes↑\u00034 $dislikes↓\u0003 "
+      likebar += "\u0003"
+
+      val likestatus = s"\u000303$likes \u0003likes\u00034 $dislikes \u0003dislikes"
+
+      val live = snippet.getString("liveBroadcastContent") == "live"
+
+      var uploadInfo = s"\u000311\u0002${uploader}\u0002\u0003 on \u0002${uploaded}\u0002"
+      if(live){
+        uploadInfo = "Stream started by " + uploadInfo
+      }
+      else uploadInfo = "Uploaded by " + uploadInfo + s" | Duration: \u0002${duration}\u0002 | \u0002${views}\u0002 views"
+
+      val logo = "\u0002\u00031,0You\u00030,4Tube\u0003\u0002"
+
+
+
+      s"$logo $title | $uploadInfo | $likestatus"
     } catch {
       case e: IOException =>
         e.printStackTrace()

@@ -1,18 +1,14 @@
 package modules
 
-import java.io.{File, PrintWriter}
+import java.io.PrintWriter
 import java.util.Scanner
 
-import irc.config.{Configs, UserConfig}
+import irc.config.UserConfig
 import irc.info.{Channel, Info, Rank}
 import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, ModuleFiles}
 import out.Out
-
-object Pasta {
-  var spamtime = 0L
-}
 
 
 class Pasta extends BotModule{
@@ -41,6 +37,11 @@ class Pasta extends BotModule{
     val bAsDot = new BotCommand(m, ".")
     val bAsTilde = new BotCommand(m,"~")
     if(m.config.networkName == "Rizon") {
+      
+      if(m.command == MessageCommands.JOIN && m.sender.nickname.toLowerCase() == "soyeon" &&
+        m.trailing == "#pasta"){
+          r.pm("#pasta", "soybean")
+        }
 
       if(m.params.first == "#pasta"){
         if(m.command == MessageCommands.MODE && m.sender.nickname == m.config.getNickname){
@@ -84,7 +85,7 @@ class Pasta extends BotModule{
 
         // fun stuff
 
-        if(Pasta.spamtime + 30000 < System.currentTimeMillis() ) {
+        /*if(Pasta.spamtime + 30000 < System.currentTimeMillis() ) {
           if (m.command == MessageCommands.PRIVMSG && m.trailing.toLowerCase.contains("linux") &&
             !m.trailing.toLowerCase.contains("kernel") && !m.trailing.toLowerCase.contains("steamos")) {
             r.say(target, "I'd just like to interject for a moment. What you’re referring to as Linux, " +
@@ -103,7 +104,7 @@ class Pasta extends BotModule{
               "wireless infrastructure made useful by Service Set Identification (SSID).")
             Pasta.spamtime = System.currentTimeMillis()
           }
-        }
+        }*/
 
         if(m.command == MessageCommands.PRIVMSG && m.trailing.trim == "^") r.say("#pasta","can confirm")
 
@@ -134,6 +135,7 @@ class Pasta extends BotModule{
             if(action.trim.equals("whips")){
               r.action(target, "nae naes")
             }
+            else if(Math.random() < 0.7) return
             else if(action.startsWith("is ")){
               r.action(target, "is also" + action.substring(2))
             }
@@ -167,10 +169,8 @@ class Pasta extends BotModule{
       if (b.command == "pastatopic") {
         val pasta: Option[Channel] = Info.get(m.server).get.findChannel("#pasta")
         if (pasta.isDefined) {
-          Out.println(s"User rank: ${pasta.get.getRank(m.sender.nickname)}")
           if (pasta.get.getRank(m.sender.nickname) >= Rank.SOP) {
             if (b.hasParams) {
-              Out.println("params ." + b.paramsString + ".")
               changeTopic(b.paramsString)
               r.say(target, s"${m.sender.nickname}: Topic prefix successfully set. The new prefix will be applied next time the topic changes")
             }
@@ -199,7 +199,6 @@ class Pasta extends BotModule{
     val writer = new PrintWriter(topicfile)
     writer.println(pastatopic)
     writer.close()
-    Out.println("Changed topic prefix to " + pastatopic)
   }
 
   def removeHighlighter(host: String){
