@@ -87,6 +87,7 @@ object UserConfig {
   }
 
   def getArrayAsType[T: ClassTag](key: String): Option[Array[T]] ={
+    println(json.toString)
     try{
       val jsonArray = json.getJSONArray(key)
       var array = Array[T]()
@@ -99,19 +100,24 @@ object UserConfig {
     }
     catch{
       case e: Exception =>
+        e.printStackTrace()
         None
     }
   }
 
-  def setArray[T](key: String, array: Array[T]): Unit ={
-    val jsonArray = new JSONArray(array)
-    json.put(key, array)
+  def setArray(key: String, array: Array[_ <: AnyRef]): Unit ={
+    val jsonArray = new JSONArray()
+    for(i: Int <- array.indices){
+      jsonArray.put(array(i))
+    }
+    json.put(key, jsonArray)
     write()
   }
 
   private def write(): Unit ={
     val writer = new FileWriter(jsonFile,false)
-    writer.write(json.toString)
+    writer.write(json.toString(4))
+    println("writing: " + json.toString)
     writer.close()
   }
 }

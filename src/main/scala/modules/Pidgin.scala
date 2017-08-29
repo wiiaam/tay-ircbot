@@ -28,7 +28,7 @@ class Pidgin extends BotModule{
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     if(b.command == "pidgin"){
-      var channels = UserConfig.getArrayAsType[String]("pidgin").getOrElse(Array[String]())
+      var channels = UserConfig.getArrayAsType[String](configKey).getOrElse(Array[String]())
       if(!m.target.startsWith("#")) {
         r.reply("This command can only be used within a channel")
         return
@@ -52,14 +52,16 @@ class Pidgin extends BotModule{
         case "on" =>
           if(!channels.contains(key)){
             channels = channels :+ key
-            UserConfig.setArray[String](configKey, channels)
+            UserConfig.setArray(configKey, channels)
             r.reply(s"Pidgin rss is now on for this channel, to disable, use ${b.commandPrefix}pidgin off")
           }
 
         case "off" =>
-          channels = channels.filter(_ == key)
-          UserConfig.setArray[String](configKey, channels)
-          r.reply(s"Pidgin rss is now disabled for this channel, to reenable, use ${b.commandPrefix}pidgin on")
+          if(channels.contains(key)) {
+            channels = channels.filter(_ != key)
+            UserConfig.setArray(configKey, channels)
+            r.reply(s"Pidgin rss is now disabled for this channel, to reenable, use ${b.commandPrefix}pidgin on")
+          }
 
         case _ =>
           var item = 0
@@ -171,8 +173,10 @@ class Pidgin extends BotModule{
     r.say(channel, s"Brought to you by our glorious BBC. Url: ${newsItem.link}")
   }
 
+  private case class NewsItem(headline: String, desc: String, link: String)
+
+
 }
 
 
 
-private case class NewsItem(headline: String, desc: String, link: String)

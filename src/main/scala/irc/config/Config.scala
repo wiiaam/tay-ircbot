@@ -39,7 +39,7 @@ class Config(jsonFile: File)  {
 
   var networkName = ""
 
-  def getServerPassword = json.getString("serverPassword")
+  def getServerPassword: String = json.getString("serverPassword")
 
   def getServer: String = json.getString("server")
 
@@ -61,12 +61,12 @@ class Config(jsonFile: File)  {
 
   def getPassword: String = json.getString("password")
 
-  def setNickname(nick: String) = {
+  def setNickname(nick: String): Unit = {
     json.put("nickname", nick)
     write()
   }
 
-  def setCommandPrefix(prefix: String) = {
+  def setCommandPrefix(prefix: String): Unit = {
     json.put("commandprefix", prefix)
     write()
   }
@@ -140,7 +140,7 @@ class Config(jsonFile: File)  {
 
   private def write() {
     val writer = new FileWriter(jsonFile,false)
-    writer.write(json.toString)
+    writer.write(json.toString(4))
     writer.close()
     Configs.set(jsonFile.getName.split("\\.")(0), this)
   }
