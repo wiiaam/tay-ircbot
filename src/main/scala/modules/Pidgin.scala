@@ -143,9 +143,9 @@ class Pidgin extends BotModule{
             }
             newsItems = newArray
           }
-
+          Thread.sleep(100000)
         }
-        Thread.sleep(100000)
+
       }
     })
     thread.setName("Pidgin rss thread")
