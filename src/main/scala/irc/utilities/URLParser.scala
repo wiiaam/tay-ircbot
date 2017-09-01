@@ -76,7 +76,7 @@ object URLParser {
           case e: Exception =>
         }
       }
-      val doc = Jsoup.connect(s).followRedirects(true).get
+      val doc = Jsoup.parse(readUrl(s))
       val ps = doc.select("title")
       title = ps.text().replaceAll("\r", "").replaceAll("\n", "")
     } catch {
