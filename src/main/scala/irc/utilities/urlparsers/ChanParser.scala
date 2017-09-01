@@ -1,7 +1,8 @@
 package irc.utilities.urlparsers
 
 
-import java.util.Date
+import java.text.{DateFormat, SimpleDateFormat}
+import java.util.{Date, TimeZone}
 
 import irc.utilities.URLParser
 import org.json.JSONObject
@@ -31,7 +32,10 @@ object ChanParser {
       if (subject.length > 50) {
         subject = subject.substring(0, 49).trim() + "..."
       }
-      val created = new Date(op.getLong("time") * 1000).toGMTString()
+      val date = new Date(op.getLong("time") * 1000)
+      val df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z")
+      df.setTimeZone(TimeZone.getTimeZone("GMT"))
+      val created = df.format(date)
       title = s"/$board/ - $subject | Thread no $no | Created $created | $replies replies"
     } catch {
       case e: Exception => {

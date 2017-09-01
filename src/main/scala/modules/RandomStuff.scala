@@ -9,7 +9,7 @@ import irc.server.{Priorities, ServerResponder}
 import ircbot.{BotCommand, BotModule}
 
 
-class Random extends BotModule{
+class RandomStuff extends BotModule{
   override val commands: Map[String, Array[String]] = Map("slap" -> Array("Slap some sense into a user"))
 
   override val adminCommands: Map[String, Array[String]] = Map("triggergen2" -> Array("Trigger installgen2"),

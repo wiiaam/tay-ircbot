@@ -1,6 +1,7 @@
 package irc.utilities.urlparsers
 
-import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.{Date, TimeZone}
 
 import irc.utilities.URLParser
 import org.json.JSONArray
@@ -20,7 +21,12 @@ object RedditParser {
       val info = children.getJSONObject(0)
       val infodata = info.getJSONObject("data")
       val numComments = infodata.getInt("num_comments")
-      val created = new Date(infodata.getLong("created_utc") * 1000).toGMTString
+
+      val date = new Date(infodata.getLong("created_utc") * 1000)
+      val df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z")
+      df.setTimeZone(TimeZone.getTimeZone("GMT"))
+      val created = df.format(date)
+
       val subreddit = infodata.getString("subreddit")
       val postTitle = URLParser.makeClean(infodata.getString("title"))
       var link = ""
