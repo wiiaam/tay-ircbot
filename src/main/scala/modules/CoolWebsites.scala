@@ -34,6 +34,7 @@ class CoolWebsites extends BotModule{
             }
             val title = filename.substring(0,filename.length-1)
             filename = title + ".html"
+            filename = filename.replace("/","")
             val file = new File(System.getProperty("user.home") + s"${File.separator}ircsites${File.separator}$filename")
             if(!file.exists())file.createNewFile()
             val writer = new PrintWriter(new FileWriter(file))
