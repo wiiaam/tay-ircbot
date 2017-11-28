@@ -34,7 +34,7 @@ class Money extends BotModule {
   private val anarchyMugChance = 0.8
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
-  private val tripleDipCooldown = 60 //seconds
+  private val tripleDipCooldown = 3600 //seconds
   private val tripleDipCost: Long = 100
   private val tripleDipWinnings: Long = 100000 // triple dip winnings
 
@@ -191,8 +191,17 @@ class Money extends BotModule {
           lastTripleDip.put(user.toLowerCase(), System.currentTimeMillis())
         }
         else{
-          val waitRounded = Math.ceil(timeLeftMillis/1000).toInt
-          r.reply(s"Please wait another $waitRounded seconds before trying again")
+          var minutesleft = 0
+          var secondsleft = Math.floor(timeLeftMillis / 1000).toInt
+          if (secondsleft > 60) {
+            minutesleft = Math.floor(secondsleft / 60).toInt
+            secondsleft = minutesleft % 60
+          }
+          if (minutesleft == 0) {
+            r.say(target, s"Please wait another $secondsleft seconds before trying again")
+          } else {
+            r.say(target, s"Please wait another $minutesleft minutes before trying again")
+          }
         }
       }
       else{
