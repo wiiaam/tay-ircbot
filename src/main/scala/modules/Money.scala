@@ -421,7 +421,7 @@ class Money extends BotModule {
         }
         if (Math.random() > mugChance || pros.contains(tomug)) {
           jail.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
-          r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes the big house for you!")
+          r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes in the big house for you!")
         } else {
           val targetmoney = getBalance(tomug)
           val tosteal = Math.floor(Math.random() * (targetmoney / 3)).toLong
