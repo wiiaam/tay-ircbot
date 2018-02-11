@@ -624,17 +624,15 @@ class Money extends BotModule {
   private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
 
   private def startAnarchyThread(): Unit ={
-    val responses = Array("[NEWS] Metiria Turei admits to benefit fraud! Beneficiaries everywhere feel they should be " +
-      "entitled to more money and now they are taking it from other people!",
-    "[NEWS] David Seymour has just announced a flat tax rate! Beneficiaries have gone wild and are now stealing all of " +
-      "their money from the \"middle class\".",
-    "[NEWS] Uncle Winnie has just announced that all seniors have had their pension raised whilst young families are " +
-      "having their bene cut! Bene brawlers are now raiding retirement homes to steal from the old people.",
-    "[BREAKING] Steven Joyce just cut WINZ's funding! All beneficiaries that had their benez cut are now looting the beehive!",
-    "[BREAKING] Peter Dunne just legalized weed! Drugged up beneficiaries are running rampant on the streets.",
+    val responses = Array("[NEWS] ",
+    "[NEWS] Pottery World is offering the best pot deal in town! ",
+    "[NEWS] Pranksters just covered The Beehive in actual honey! Bees are everywhere, MSD can't get to work and beneficiaries arent getting paid!",
+    "[BREAKING] Some ponyfag is stealing everyones benez!",
+    "[BREAKING] Jacinda Ardern is taking a 9 month maternity leave, leaving Winston Peters as acting PM. Supergold has gone up and benez have gone down, leaving beneficiaries pissed!",
     "[NEWS] Auckland housing prices just rose! Otara beneficiaries are raiding Epsom and Remuera in search of some extra cash.",
     "[BREAKING] Parties in the streets of Dunedin as students and beneficiaries are burning couches with massive heads of steam. " +
-      "Some party-goers have taken to breaking into a few houses in search of some money for more codyz and billy mavs.")
+      "Some party-goers have taken to breaking into a few houses in search of some money for more codyz and billy mavs.",
+    "[NEWS] The refugee quota just increased! As more Syrian terr.. uhh refugees enter the country, payments are being cut for beneficiaries!")
 
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
