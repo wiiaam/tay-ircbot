@@ -80,37 +80,31 @@ class Config(jsonFile: File)  {
   def addAdmin(admin: String): Unit = {
     adminset.add(admin)
     onAdminChange()
-    write()
   }
 
   def addIgnore(ignore: String): Unit = {
     ignoreset.add(ignore)
     onIgnoreChange()
-    write()
   }
 
   def addChannel(channel: String): Unit = {
     channelset.add(channel)
     onChannelsChange()
-    write()
   }
 
   def removeAdmin(admin: String): Unit = {
     adminset.remove(admin)
     onAdminChange()
-    write()
   }
 
   def removeIgnore(ignore: String): Unit = {
     ignoreset.remove(ignore)
     onIgnoreChange()
-    write()
   }
 
   def removeChannel(channel: String): Unit = {
     channelset.remove(channel)
     onChannelsChange()
-    write()
   }
 
 
@@ -120,6 +114,7 @@ class Config(jsonFile: File)  {
       admins.put(admin)
     }
     json.put("admins", admins)
+    write()
   }
 
   private def onIgnoreChange() {
@@ -128,6 +123,7 @@ class Config(jsonFile: File)  {
       ignores.put(ignore)
     }
     json.put("ignores", ignores)
+    write()
   }
 
   private def onChannelsChange() {
@@ -136,6 +132,7 @@ class Config(jsonFile: File)  {
       channels.put(channel)
     }
     json.put("channels", channels)
+    write()
   }
 
   private def write() {
