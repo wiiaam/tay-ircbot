@@ -10,7 +10,7 @@ import out.Out
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class Money extends BotModule {
+class Bene extends BotModule {
 
   private val firstSeenDelay = 10
 
@@ -624,7 +624,7 @@ class Money extends BotModule {
   private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
 
   private def startAnarchyThread(): Unit ={
-    val responses = Array("[NEWS] ",
+    val responses = Array(
     "[NEWS] Pottery World is offering the best pot deal in town! ",
     "[NEWS] Pranksters just covered The Beehive in actual honey! Bees are everywhere, MSD can't get to work and beneficiaries arent getting paid!",
     "[BREAKING] Some ponyfag is stealing everyones benez!",

@@ -61,21 +61,6 @@ class RandomStuff extends BotModule{
       r.say(target, "<installgen2> how can I be aware of my sexual preferences until I am a bit older? for all I know I could easily be bi")
     }
 
-    if(m.trailing.toLowerCase().contains("what day is it")){
-      try {
-        val url = new URL("http://api.ddate.cc/v1/today.txt")
-        val urlc = url.openConnection()
-        urlc.addRequestProperty("Accept-Language", "en-US,en;q=0.8")
-        urlc.addRequestProperty("User-Agent", "Mozilla")
-        urlc.connect()
-        val scan = new Scanner(urlc.getInputStream)
-        r.say(target, scan.nextLine)
-        scan.close()
-
-      } catch {
-        case e: Exception =>
-      }
-    }
 
     if(b.command == "banall" && m.sender.isAdmin){
       for {
