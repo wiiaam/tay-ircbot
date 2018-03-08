@@ -16,7 +16,7 @@ class ConfigUpdater extends BotModule{
     }
     if(m.command == MessageCommands.KICK){
       val config = m.config
-      if(m.params.array(1) == config.getNickname) config.removeChannel(m.trailing)
+      if(m.params.array(1) == config.getNickname) config.removeChannel(m.params.array(0))
     }
     if(m.command == MessageCommands.PART && m.sender.nickname == m.config.getNickname){
       val config = m.config
