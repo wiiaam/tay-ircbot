@@ -135,7 +135,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
             }
 
           })
-          Thread.sleep(10)
+          Thread.sleep(5)
         }
       }
     })

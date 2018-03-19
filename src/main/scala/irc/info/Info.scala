@@ -111,10 +111,15 @@ class Info {
   }
 
   def changeNick(oldNick: String, newNick: String): Unit ={
+    println(users)
     var newUser = users(oldNick)
     newUser.nickname = newNick
-    users += newNick -> newUser
-    users = users.filterKeys(_ == oldNick)
+    newUser.modes = newUser.modes.replace("r","")
+    users = users ++ Map(newNick -> newUser)
+    println("test")
+    users = users.filterKeys(_ != oldNick)
+    println("test2")
+    println(users)
 
     var newChannels = channels
     channels.foreach{
@@ -122,10 +127,13 @@ class Info {
         if(channel.users.contains(oldNick)){
           var newChannel = channel
           var channelUsers = newChannel.users
-          channelUsers += newNick -> newUser
-          channelUsers = channelUsers.filterKeys(_ == oldNick)
+          newUser = channelUsers(oldNick)
+          newUser.nickname = newNick
+          newUser.modes = newUser.modes.replace("r","")
+          channelUsers = channelUsers ++ Map(newNick -> newUser)
+          channelUsers = channelUsers.filterKeys(_ != oldNick)
           newChannel.users = channelUsers
-          newChannels += name -> newChannel
+          newChannels = newChannels ++ Map(name -> newChannel)
         }
     }
     channels = newChannels

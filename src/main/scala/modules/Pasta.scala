@@ -164,7 +164,7 @@ class Pasta extends BotModule{
 
 
 
-      if(m.command == MessageCommands.PRIVMSG && m.params.first != "#pasta") checkHighlights(m, r)
+      //if(m.command == MessageCommands.PRIVMSG && m.params.first != "#pasta") checkHighlights(m, r)
 
       if (b.command == "pastatopic") {
         val pasta: Option[Channel] = Info.get(m.server).get.findChannel("#pasta")

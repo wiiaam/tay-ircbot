@@ -78,6 +78,43 @@ class Admin extends BotModule{
           }
         }
 
+        if(b.command == "info"){
+          if(b.hasParams){
+            if(b.paramsArray.length > 1){
+              val user = b.paramsArray(0)
+              val channel = b.paramsArray(1)
+              val info = Info.get(m.server).get
+              val userinfoOption = info.findInChannel(user, channel)
+              userinfoOption match {
+                case None =>
+                  r.reply("Could not find user: " + user)
+
+                case _ =>
+                  val userinfo = userinfoOption.get
+                  r.reply("Info for user: " + user)
+                  r.reply("Modes: " + userinfo.modes)
+
+              }
+            }
+            else {
+              val user = b.paramsArray(0)
+              val info = Info.get(m.server).get
+              val userinfoOption = info.findUser(user)
+              userinfoOption match {
+                case None =>
+                  r.reply("Could not find user: " + user)
+
+                case _ =>
+                  val userinfo = userinfoOption.get
+                  r.reply("Info for user: " + user)
+                  r.reply("Channels: " + userinfo.modes)
+
+              }
+            }
+
+          }
+        }
+
         if(b.command == "pm"){
           if(b.paramsArray.length > 1)r.pm(b.paramsArray(0), b.paramsString.substring(b.paramsArray(0).length + 1))
         }

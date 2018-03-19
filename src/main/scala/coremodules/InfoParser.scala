@@ -79,12 +79,8 @@ class InfoParser extends BotModule{
     }
 
     if(m.command == MessageCommands.NICK){
-
-    }
-
-    /*if(m.command == MessageCommands.NICK){
       Info.changeNick(m.server, m.sender.nickname, m.trailing)
-    }*/
+    }
 
     if(m.command == MessageCommands.WHO_OUTPUT){
       val pa = m.params.array
