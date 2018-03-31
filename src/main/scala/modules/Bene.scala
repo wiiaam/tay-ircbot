@@ -31,7 +31,7 @@ class Bene extends BotModule {
 
   private val normalMugChance = 0.1
   private var mugChance: Double = normalMugChance // chance to mug for .mug
-  private val anarchyMugChance = 0.8
+  private val anarchyMugChance = 0.5
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
   private val tripleDipCooldown = 3600 //seconds
