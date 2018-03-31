@@ -240,7 +240,7 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     socket = None
   }
 
-  def clearListener(listener: String) ={
+  def clearListener(listener: String): Unit ={
     listeners = listeners.filterKeys(_ == listener)
   }
 
