@@ -26,8 +26,9 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   private var sendThread: Thread = _
   private var inThread: Thread = _
   private var inQueue = new util.ArrayDeque[Message]
-  var serverName = name
-  val fileName = name
+  var ignores: Array[String] = Array[String]()
+  var serverName: String = name
+  val fileName: String = name
 
   def getIrcServer: IrcServer = this
 
@@ -180,10 +181,15 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
             val b = new BotCommand(newMessage, Configs.get(fileName).get.getCommandPrefix)
             val r = new ServerResponder(getIrcServer, newMessage.params.first)
-            Out.println(s"$fileName/$serverName --> ${newMessage.toString}")
-            for ((k, v) <- listeners) {
-              v.onMessage(newMessage, b, r)
+            if(ignores.contains(newMessage.sender.nickname) && !newMessage.sender.isAdmin){
+              Out.println(s"$fileName/$serverName --> (IGNORED) ${newMessage.toString}")
+            } else {
+              Out.println(s"$fileName/$serverName --> ${newMessage.toString}")
+              for ((k, v) <- listeners) {
+                v.onMessage(newMessage, b, r)
+              }
             }
+
           }
         }
       }

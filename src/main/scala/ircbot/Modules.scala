@@ -24,6 +24,7 @@ object Modules {
     modules += new Admin
     modules += new ConfigUpdater
     modules += new NickServ
+    modules += new Ignore
   }
 
 
