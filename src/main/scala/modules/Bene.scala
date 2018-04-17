@@ -1,6 +1,6 @@
 package modules
 
-import java.sql.{DriverManager, SQLException}
+import java.sql.{Connection, DriverManager, SQLException}
 import java.util
 
 import irc.message.Message
@@ -59,9 +59,8 @@ class Bene extends BotModule {
     "odds" -> Array("Check the rng odds of everything money related")
   )
 
-  val connection = try{
+  val connection: Connection = try{
     DriverManager.getConnection(sqlUrl)
-
   }
   catch {
     case e: SQLException =>

@@ -61,6 +61,8 @@ class Config(jsonFile: File)  {
 
   def getPassword: String = json.getString("password")
 
+  def isInviteable: Boolean = json.getBoolean("inviteable")
+
   def setNickname(nick: String): Unit = {
     json.put("nickname", nick)
     write()
@@ -141,4 +143,6 @@ class Config(jsonFile: File)  {
     writer.close()
     Configs.set(jsonFile.getName.split("\\.")(0), this)
   }
+
+
 }

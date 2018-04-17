@@ -22,7 +22,7 @@ class Invite extends BotModule{
         r.say(m.trailing, s"${m.sender.nickname} has invited me here. To see my commands, use .help")
         return
       }
-      if(cooldown <= System.currentTimeMillis()/1000){
+      if(cooldown <= System.currentTimeMillis()/1000 && m.config.isInviteable){
         r.join(m.trailing)
         r.say(m.trailing, s"${m.sender.nickname} has invited me here. A minimum of $minUsers users are required " +
           s"for me to stay in the channel. To see my commands, use .help")

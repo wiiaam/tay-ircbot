@@ -13,5 +13,6 @@
   "commandprefix":".",
   "admins":[],
   "ignores":[],
-  "channels":[]
+  "channels":[],
+  "inviteable":true
 }
