@@ -64,9 +64,9 @@ class Invite extends BotModule{
         }
 
       }
-      else{
+      else if(m.config.isInviteable){
         val timeleft = Math.ceil(cooldown - (System.currentTimeMillis()/1000)).asInstanceOf[Int]
-        r.notice(m.sender.nickname, "I am currently on invite cooldown. Please wait another $timeleft seconds and invite me again")
+        r.notice(m.sender.nickname, s"I am currently on invite cooldown. Please wait another $timeleft seconds and invite me again")
       }
     }
   }
