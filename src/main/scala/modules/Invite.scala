@@ -12,7 +12,7 @@ class Invite extends BotModule{
 
   private var cooldown: Long = System.currentTimeMillis()/1000
 
-  private val minUsers = 15
+  private val minUsers = 30
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
 
