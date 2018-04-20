@@ -281,13 +281,15 @@ class Bene extends BotModule {
       catch{
         case e:NumberFormatException =>
       }
+      
+      if(nick == "") nick = m.sender.nickname
 
       r.reply(s"gibbed $gib to $nick!")
 
       if(parsed){
-        var userbalance = if (!hasUser(m.sender.nickname)) 0 else getBalance(m.sender.nickname)
+        var userbalance = if (!hasUser(nick)) 0 else getBalance(nick)
         userbalance += value
-        setBalance(if(nick != "") nick else m.sender.nickname, userbalance)
+        setBalance(nick, userbalance)
       }
 
     }
