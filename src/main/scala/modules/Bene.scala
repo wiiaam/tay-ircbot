@@ -412,21 +412,31 @@ class Bene extends BotModule {
         }
         if (pros.contains(m.sender.nickname.toLowerCase()) && isReg(m)) {
           val targetmoney = getBalance(tomug)
-          val tosteal = Math.floor(Math.random() * (targetmoney / 2)).toLong
-          r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped \u00033$$${tosteal}\u0003")
-          setBalance(tomug, targetmoney - tosteal)
-          setBalance(m.sender.nickname, getBalance(m.sender.nickname) + tosteal)
+          val toSteal = Math.floor(Math.random() * (targetmoney / 2)).toLong
+          r.say(target, s"oh shit, its the notorious ${m.sender.nickname}! $tomug ran off at the sight of them, but accidentally dropped \u00033$$${toSteal}\u0003")
+          setBalance(tomug, targetmoney - toSteal)
+          setBalance(m.sender.nickname, getBalance(m.sender.nickname) + toSteal)
           return
         }
         if (Math.random() > mugChance || pros.contains(tomug)) {
           jail.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
           r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes in the big house for you!")
         } else {
-          val targetmoney = getBalance(tomug)
-          val tosteal = Math.floor(Math.random() * (targetmoney / 3)).toLong
-          r.say(target, s"u manage to steal \u00033$$${tosteal}\u0003 off $tomug")
-          setBalance(tomug, targetmoney - tosteal)
-          setBalance(m.sender.nickname, getBalance(m.sender.nickname) + tosteal)
+          val targetMoney = getBalance(tomug)
+
+          val stealRatio = {
+            var balancedTargetMoney: Double = targetMoney
+            if(targetMoney > 50000) balancedTargetMoney = 50000
+            else if(targetMoney < 1000) balancedTargetMoney = 1000
+            println(balancedTargetMoney)
+
+            0.3 - (((balancedTargetMoney - 1000) / 49000) * 0.2)
+          }
+
+          val toSteal = Math.floor(Math.random() * (targetMoney * stealRatio)).toLong
+          r.say(target, s"u manage to steal \u00033$$${toSteal}\u0003 off $tomug")
+          setBalance(tomug, targetMoney - toSteal)
+          setBalance(m.sender.nickname, getBalance(m.sender.nickname) + toSteal)
         }
       }
     }
@@ -614,8 +624,8 @@ class Bene extends BotModule {
   private def checkFirstSeen(nick: String): CommandsAllowedCheck = {
     if (firstSeen.get(nick) > System.currentTimeMillis() - firstSeenDelay * 1000) {
       // 10 second delay before users are able to use bene commands if they are only just being seen
-      CommandsAllowedCheck(allowed = false, Math.ceil((firstSeen.get(nick) + firstSeenDelay * 1000 -
-        System.currentTimeMillis()) / 1000).toInt)
+      CommandsAllowedCheck(allowed = false, Math.floor((firstSeen.get(nick) + firstSeenDelay * 1000 -
+        System.currentTimeMillis()) / 1000).toInt + 1)
     }
     else new CommandsAllowedCheck(true, 0)
   }
