@@ -343,9 +343,15 @@ class Bene extends BotModule {
         setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
         return
       }
+      if(!m.params.first.startsWith("#")){
+        r.reply("Shoutouts cannot be made via PM")
+        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
+        return
+      }
       if(b.hasParams){
         r.notice(m.sender.nickname, "You have been charged \u000303$5000\u0003 for the shoutout")
-        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname}: " + "\"" + b.paramsString + "\"\u0001")
+        val location = m.params.first
+        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\"\u0001")
       }
     }
 
