@@ -25,6 +25,8 @@ class Bene extends BotModule {
 
   private var topcooldown = System.currentTimeMillis() - 10000
 
+  private var shoutcooldown = System.currentTimeMillis() - 10000
+
   private var lowestBene = 100 // lowest .bene payout possible
   private var highestBene = 900 // highest .bene payout possible
 
@@ -314,6 +316,14 @@ class Bene extends BotModule {
         return
       }
 
+      if(shoutcooldown > System.currentTimeMillis()){
+        val wait = Math.floor((shoutcooldown - System.currentTimeMillis())/1000).toInt
+        r.notice(m.sender.nickname, s"This command is currently on cooldown. Please wait another $wait " +
+          s"seconds before using it")
+        return
+
+      }
+
       val userBalance = getBalance(m.sender.nickname)
       if(userBalance < 5000){
         r.reply("Shoutouts cost \u000303$5000\u0003, you don't have enough for that.")
@@ -352,6 +362,7 @@ class Bene extends BotModule {
         r.notice(m.sender.nickname, "You have been charged \u000303$5000\u0003 for the shoutout")
         val location = m.params.first
         r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\u000F\"\u0001")
+        shoutcooldown = System.currentTimeMillis() + 10000
       }
     }
 
