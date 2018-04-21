@@ -21,7 +21,7 @@ class ServerResponder(ircServer: IrcServer, sender: String) {
   }
 
   def reply(message: String): Unit ={
-    pm(sender, message)
+    say(sender, message)
   }
 
   def pm(target: String, message: String): Unit = {

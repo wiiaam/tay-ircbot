@@ -180,7 +180,8 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
 
             val b = new BotCommand(newMessage, Configs.get(fileName).get.getCommandPrefix)
-            val r = new ServerResponder(getIrcServer, newMessage.params.first)
+            val sender = if(newMessage.params.first.startsWith("#"))newMessage.params.first else newMessage.sender.nickname
+            val r = new ServerResponder(getIrcServer, sender)
             if(ignores.contains(newMessage.sender.nickname) && !newMessage.sender.isAdmin){
               Out.println(s"$fileName/$serverName --> (IGNORED) ${newMessage.toString}")
             } else {
