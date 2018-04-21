@@ -10,14 +10,20 @@ import scala.util.Random
 
 class IBIP extends BotModule {
 
-  override val commands: Map[String, Array[String]] = Map("bots" -> Array("Respond to IBIP. See github.com/Teknikode/IBIP for more info"))
+  private var cooldown = System.currentTimeMillis()
+
+  private val strings = Array("h-hey", "hi", "hows it going,", "whats up", "salutations,", "yoza", "h-hi", "sup",
+  "gidday", "s-sempai")
+
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
-    if((m.trailing.startsWith(".bots ") || m.trailing == ".bots") && m.command == MessageCommands.PRIVMSG){
+    if((m.trailing.startsWith(".bots ") || m.trailing == ".bots") && m.command == MessageCommands.PRIVMSG &&
+    cooldown < System.currentTimeMillis()){
       val target = if(m.params.first.startsWith("#")) m.params.first else m.sender.nickname
-      val desc = "sauce @ " + Constants.REPO
+      val desc = strings(Random.nextInt(strings.length)) + " " + m.sender.nickname
 
       r.pm(target, s"Reporting in! [Scala] $desc", Priorities.HIGH_PRIORITY)
+      cooldown = System.currentTimeMillis() + 5000
     }
   }
 

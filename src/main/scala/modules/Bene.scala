@@ -91,12 +91,12 @@ class Bene extends BotModule {
     if (b.command == "jailstatus") {
       checkJail()
       if (!jail.containsKey(m.sender.nickname.toLowerCase())) {
-        r.say(target, "ur not in jail u helmet")
+        r.say(target, m.sender.nickname + s", ur not in jail u helmet")
         return
       } else {
         val timeleft = Math.floor((jail.get(m.sender.nickname) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
           1000).toLong
-        r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
+        r.say(target, m.sender.nickname + s", ur in jail for another $timeleft seconds. dont drop the soap!")
       }
     }
 
@@ -107,7 +107,7 @@ class Bene extends BotModule {
 
     if (b.command == "bene") {
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -132,9 +132,9 @@ class Bene extends BotModule {
           secondsleft = minutesleft % 60
         }
         if (minutesleft == 0) {
-          r.say(target, "bro ur next payment is in " + secondsleft + " seconds")
+          r.say(target, m.sender.nickname + ", bro ur next payment is in " + secondsleft + " seconds")
         } else {
-          r.say(target, "bro ur next payment is in " + minutesleft + " minutes")
+          r.say(target, m.sender.nickname + ", bro ur next payment is in " + minutesleft + " minutes")
         }
         return
       }
@@ -142,7 +142,7 @@ class Bene extends BotModule {
       userbalance = if (!hasUser(m.sender.nickname)) 0 else getBalance(m.sender.nickname)
       val addition = Math.floor(lowestBene + Math.random()*(highestBene - lowestBene)).toLong
       userbalance += addition
-      r.say(target, s"winz just gave u \u00033$$${addition}\u0003. u now have\u00033 $$$userbalance")
+      r.say(target, m.sender.nickname + s", winz just gave u \u00033$$${addition}\u0003. u now have\u00033 $$$userbalance")
       lastpaid.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
       setBalance(m.sender.nickname, userbalance)
     }
@@ -153,7 +153,7 @@ class Bene extends BotModule {
 
     if(b.command == "odds"){
       r.reply("Current odds:")
-      r.reply(s"bene: random between \u00033$$${lowestBene}\u0003 and \u00033$$${highestBene}\u0003. " +
+      r.reply(m.sender.nickname + s", bene: random between \u00033$$${lowestBene}\u0003 and \u00033$$${highestBene}\u0003. " +
         f"Chance to mug: $mugChance%.2f. Bet chance: $betChance%.2f. Tripledip chance: $tripleDipChance%.2f")
     }
 
@@ -163,7 +163,7 @@ class Bene extends BotModule {
 
     if(b.command == "tripledip"){
       if (!isReg(m)) {
-        r.say(target, "pls register with nickserv m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -245,7 +245,7 @@ class Bene extends BotModule {
 
     if(b.command == "privacy"){
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       if(hasUser(m.sender.nickname)) {
@@ -299,9 +299,10 @@ class Bene extends BotModule {
     }
 
 
+    /**
     if ( b.command == "shout"){
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -353,8 +354,13 @@ class Bene extends BotModule {
         setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
         return
       }
+      if(b.paramsString.contains("://")){
+        r.notice(m.sender.nickname, "Shoutouts cannot contain URLS.")
+        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
+        return
+      }
       if(!m.params.first.startsWith("#")){
-        r.reply("Shoutouts cannot be made via PM")
+        r.notice(m.sender.nickname, "Shoutouts cannot be made via PM")
         setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
         return
       }
@@ -365,7 +371,7 @@ class Bene extends BotModule {
         shoutcooldown = System.currentTimeMillis() + 10000
       }
     }
-
+    **/
 
 
 
@@ -373,24 +379,24 @@ class Bene extends BotModule {
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance" || b.command == "bal") {
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       if(b.hasParams){
         val user = b.paramsArray(0)
         if(hasUser(user)){
           if(isPrivate(user)){
-            r.reply("theyre currently hiding all their benez (try looking under their bed)")
+            r.reply(m.sender.nickname + s", theyre currently hiding all their benez (try looking under their bed)")
           }
           else{
-            r.reply(s"$user currently has \u00033$$${getBalance(user)}\u0003 in their bnz")
+            r.reply(m.sender.nickname + s", $user currently has \u00033$$${getBalance(user)}\u0003 in their bnz")
           }
         }
-        else r.reply("sorry bro theyre with kiwibank")
+        else r.reply(m.sender.nickname + s", sorry bro theyre with kiwibank")
         return
       }
       if (!hasUser(m.sender.nickname)) {
-        r.say(target, "You don't have an account yet. Use " + b.commandPrefix +
+        r.say(target, m.sender.nickname + s", You don't have an account yet. Use " + b.commandPrefix +
           "bene to get some cash")
       } else r.say(target, s"You currently have3 $$${getBalance(m.sender.nickname)} in the bnz")
     }
@@ -401,7 +407,7 @@ class Bene extends BotModule {
 
     if (b.command == "pokies" || b.command == "bet") {
       if (!isReg(m)) {
-        r.say(target, "pls register with nickserv m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -417,7 +423,7 @@ class Bene extends BotModule {
       }
       if (b.hasParams) {
         if (!hasUser(m.sender.nickname)) {
-          r.say(target, "winz hasnt given u any money yet. Use " + b.commandPrefix +
+          r.say(target, m.sender.nickname + s", winz hasnt given u any money yet. Use " + b.commandPrefix +
             "bene to get some")
           return
         }
@@ -426,23 +432,23 @@ class Bene extends BotModule {
           bet = java.lang.Long.parseLong(b.paramsArray(0))
         } catch {
           case e: NumberFormatException =>
-            r.say(target, "u gotta put coins in the machine mate")
+            r.say(target, m.sender.nickname + s", u gotta put coins in the machine mate")
             return
         }
         if (bet < 1) {
-          r.say(target, "stop being a poor cunt and put money in the machine")
+          r.say(target, m.sender.nickname + s", stop being a poor cunt and put money in the machine")
           return
         }
         val usercash = getBalance(m.sender.nickname)
         if (usercash < bet) {
-          r.say(target, "u dont have enough money for that mate")
+          r.say(target, m.sender.nickname + s", u dont have enough money for that mate")
           return
         }
         if (Math.random() < betChance) {
-          r.say(target, "bro you won! wow 3$" + bet + ", thats heaps g! drinks on u ay")
+          r.say(target, m.sender.nickname + ", bro you won! wow 3$" + bet + ", thats heaps g! drinks on u ay")
           setBalance(m.sender.nickname, usercash + bet)
         } else {
-          r.say(target, "shit man, u lost 3$" + bet + ". better not let the middy know")
+          r.say(target, m.sender.nickname + ", shit man, u lost 3$" + bet + ". better not let the middy know")
           setBalance(m.sender.nickname, usercash - bet)
         }
       }
@@ -454,7 +460,7 @@ class Bene extends BotModule {
     if (b.command == "mug") {
       checkJail()
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -471,17 +477,17 @@ class Bene extends BotModule {
       if (jail.containsKey(m.sender.nickname.toLowerCase())){
         val timeleft = Math.floor((jail.get(m.sender.nickname.toLowerCase()) - (System.currentTimeMillis() - (60 * 5 * 1000))) /
           1000).toLong
-        r.say(target, "ur in jail for another " + timeleft + " seconds. dont drop the soap!")
+        r.say(target, m.sender.nickname + ", ur in jail for another " + timeleft + " seconds. dont drop the soap!")
         return
       }
       if (b.hasParams) {
         val tomug = b.paramsArray(0)
         if (!hasUser(m.sender.nickname)) {
-          r.say(target, "u dont even have an account to put that in")
+          r.say(target, m.sender.nickname + s", u dont even have an account to put that in")
           return
         }
         if (!hasUser(tomug) || getBalance(tomug) < 1) {
-          r.say(target, "they dont have any money to steal")
+          r.say(target, m.sender.nickname + s", they dont have any money to steal")
           return
         }
         if (pros.contains(m.sender.nickname.toLowerCase()) && isReg(m)) {
@@ -494,7 +500,7 @@ class Bene extends BotModule {
         }
         if (Math.random() > mugChance || pros.contains(tomug)) {
           jail.put(m.sender.nickname.toLowerCase(), System.currentTimeMillis())
-          r.say(target, "\u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes in the big house for you!")
+          r.say(target, m.sender.nickname + s", \u00034,4 \u00032,2 \u00030,1POLICE\u000F\u00034,4 \u00032,2 \u000F Its the police! looks like u got caught. thats five minutes in the big house for you!")
         } else {
           val targetMoney = getBalance(tomug)
 
@@ -508,7 +514,7 @@ class Bene extends BotModule {
           }
 
           val toSteal = Math.floor(Math.random() * (targetMoney * stealRatio)).toLong
-          r.say(target, s"u manage to steal \u00033$$${toSteal}\u0003 off $tomug")
+          r.say(target, m.sender.nickname + s", u manage to steal \u00033$$${toSteal}\u0003 off $tomug")
           setBalance(tomug, targetMoney - toSteal)
           setBalance(m.sender.nickname, getBalance(m.sender.nickname) + toSteal)
         }
@@ -518,7 +524,7 @@ class Bene extends BotModule {
 
     if (b.command == "give") {
       if (!isReg(m)) {
-        r.say(target, "pls login m9")
+        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
       val check = checkFirstSeen(m.sender.nickname)
@@ -539,33 +545,37 @@ class Bene extends BotModule {
           togive = b.paramsArray(1).toLong
         } catch {
           case e: NumberFormatException =>
-            r.say(target, "cmon man help a brother out")
+            r.say(target, m.sender.nickname + s", cmon man help a brother out")
             return
         }
         if (togive < 1) {
-          r.say(target, "dont be a cheap cunt")
+          r.say(target, m.sender.nickname + s", dont be a cheap cunt")
           return
         }
         if (!hasUser(m.sender.nickname)) {
-          r.say(target, "u dont even have an account")
+          r.say(target, m.sender.nickname + s", u dont even have an account")
           return
         }
         if (getBalance(m.sender.nickname) < togive) {
-          r.say(target, "u dont have enuf money bro")
+          r.say(target, m.sender.nickname + s", u dont have enuf money bro")
           return
         }
         if (!hasUser(togiveto)) {
-          r.say(target, "sorry bro theyre with kiwibank")
+          r.say(target, m.sender.nickname + s", sorry bro theyre with kiwibank")
           return
         }
         setBalance(m.sender.nickname, getBalance(m.sender.nickname) - togive)
         setBalance(togiveto, getBalance(togiveto) + togive)
-        r.say(target, s"you gave $togiveto 3$$$togive")
+        r.say(target, m.sender.nickname + s", you gave $togiveto 3$$$togive")
       }
     }
   }
 
-  
+
+
+// =======================================================
+
+
   private def setBalance(nick: String, amount: Long) {
     val sql = if(hasUser(nick)){
       "UPDATE money SET balance = ? WHERE nick = ? "

@@ -19,20 +19,6 @@ class RandomStuff extends BotModule{
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
     val target = if(!m.params.first.startsWith("#")) m.sender.nickname else m.params.first
 
-    if(b.command == "slap"){
-      if(b.hasParams) r.action(target,s"slaps ${b.paramsString}")
-    }
-
-
-	if(b.command == "waifu"){
-		val waifu = b.paramsString.toLowerCase
-		if(waifu.contains("taylor") && waifu.contains("swift")){
-			r.say(target, "top waifu")
-		}
-		else if(waifu.contains("jimin")) r.say(target, "worst waifu kys")
-		else r.say(target, "shit waifu")
-	}
-
     if(b.command == "triggergen2" && m.sender.isAdmin){
       for {
         info <- Info.get(m.server)
@@ -118,72 +104,5 @@ class RandomStuff extends BotModule{
       r.say(target, "        GGGGGG   GGGGEEEEEEEEEEEEEEEEEEEEEENNNNNNNN         NNNNNNN22222222222222222222")
     }
 
-
-
-
-    if(b.command == "sata" && m.sender.isAdmin){
-r.say(target, "((((((((/,", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((/,", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((//", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((/.", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((/.", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((((*", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((((((//", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((((((((((/,", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((((((((((((((/.                               #%%%#*", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((((((/,         .(###(*          #%%%%%%%#%(.", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((((((((((((((((((((/*   .%%&&%%%%%#(/     #%%%%%&%%%%%%&%#*", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((((((((((((%%&&&&&&&&&%%%%#((#%%%%%%%&%%&&&@&&&&%%(", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((((((((((%&&%&%&&&&&&&&&%%%&&%%%%%%%%%&&&&&%&&&@@&&&%%*", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((((((((%%&%&&&&&%%&&&&&%&&&&&&&&&%%%&@@@&%&&&&&%&&&&&&&%%(", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((((((%%%&&&&&%&&%&&&&%&&&&&&&&&&&&&&@@@&%#%%&%&&&&&&&&&&&&&%#,", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((((((((((((((((/((((((((((((%%%%%&&%%%%&%&%#&&&&&&&&&%&&&%%&&@@&&(&&&&&&&&&&&&&&&&%%%#", Priorities.LOW_PRIORITY)
-r.say(target, "((((((((((((((((((((((((((((((((((((&%&&%%%%%&&&&&&&%&&&&&&&&&&%&%&&&&&%%&&&@&&&&&&&%(&&&&%%%&%&%%%#%*", Priorities.LOW_PRIORITY)
-r.say(target, "(((((((((((//((((((((/((((((((((((%%&%&&&%%&&%&&&&%%&&&&&&&&&%%%&&&&&&%%%%&&&&&&&&&&&%&@@&&&&&%&&%%&&&&%%%(.", Priorities.LOW_PRIORITY)
-r.say(target, "//((((((((((((((((((((((((((((((%&&%&&%&%&&&&%&%%#&&&&&&&&&%#%&&&&&&#%&&&&&&&&&&&%&@@&&&&&%&%#%%&@&&&&&&&&%%(##*", Priorities.LOW_PRIORITY)
-r.say(target, "  ,///((((((((((((((((((((((((%&&%&&&%&&%%%&&&&%&&&&&&&&&%&&&&&&%#%&&&&&&&&&&&%#%&&&&%&@@&&%%%&&@@&&&&&&&&&&%&&&%(", Priorities.LOW_PRIORITY)
-r.say(target, "     *//((((((((((((((((((((%&&%&&&%%%&&&&&&%#&&&&&&&&&%&&&&&&&%#%&&&&&&&&&&&%#&&&&%&&&&&&&&&%%##%%%%%&&&&&&&%(#%%%#.", Priorities.LOW_PRIORITY)
-r.say(target, "        *//(((((((((((((((#&&&&&%%&&&&&&&&&(&&&&&&&&&&(%%&&&&&%&&&&&&&&&&&&&&&&&%&&&((#%%&%#(//*./#&&&%&%%%%&&%%&&%%%(", Priorities.LOW_PRIORITY)
-r.say(target, "           *//(((((((((((%&&&%%&%%&&%%&&&&&&&&&&&&(&&&&&&&&((#&&&&&&&&&&&%#&&&&%&&&&(((##%%##///,.   (%%&%#%%&%%%&%%%%%%%#%", Priorities.LOW_PRIORITY)
-r.say(target, "              *//(((((((&&&&&&%&%&%&&&&&&&&&&&&&&&(&&&&&&&&(&&&&&&&&&&&&&&&&&&%&&%(((##%%#((/**    ,*/((#%%&%&&%%%%%%%%(#%%#/", Priorities.LOW_PRIORITY)
-r.say(target, "                 *///((&&&&&&&&&&&&&%/&&&&&&&&&&%&&&&&%%&&&&&&&&&&&&&&&&%&#((##%%##(//*    ,*/((#((%%%%%&%%%%%%#/%%%%%%.", Priorities.LOW_PRIORITY)
-r.say(target, "                    */#&&&&&&&&&&&&%#&&&&&&&&&(&&&&&&&&(&%&&&&&&&&&&&&(%&&&&%%&((##%%##(//*.   .*/(((((#((/%%%&%%%%#(%%&&&&%%%%%/", Priorities.LOW_PRIORITY)
-r.say(target, "                      %%%%&&&&&&&&&&&&&&&&*%%&&&&&&(%%&%&&&&&&&&&&&&&&%&&((##%%##(//*.   ,*/((#(((#((//*/&%&%#(%&&&&&&%%%%%%%%%%,", Priorities.LOW_PRIORITY)
-r.say(target, "                     (####%%%&&&&&&&&&&&&&&&&&&&&&&*%%&&&&&&&&&&&&%&&&&&%%&(((##%##(//*.   .,*/(((#((((/**.  *(#&%&&@&&&&%%%%%%%&%%&%%%(", Priorities.LOW_PRIORITY)
-r.say(target, "                     *((##%%%%%&&&&&&&&&&*&&&&&&%/%%&&&&&&&&&&&&%&&&&&%%&&%(((##%##((/*.    ,*/(((((((//**.  .*/(((((&&&&&&%%&&&&&%%%%%&&%%%%,", Priorities.LOW_PRIORITY)
-r.say(target, "                      /((####&&&&&&&&&&%&@@@@@&&&&&&&&&&&&&&&%&&&&*&&&%(((##%%#((/*,    ,*/((####((//*,   */((((((((((%&&&&&&&&&&&%%%%&%%%%%%%(", Priorities.LOW_PRIORITY)
-r.say(target, "                       *//((&&&&&&&&&%@@@@@@@@@@@&&&&&&&&&&&%%&&&%&&%(((##%%##(//,    .*/((###(((//*,   */((((((((((((((((%&&&&&&&%%%%&%%&%%&%%%%%#.", Priorities.LOW_PRIORITY)
-r.say(target, "                         ./%&&&&&&&%@@@@%&%%%&@@@@&&&&&&&&%(&&&&%%&&%(((##%%##(//,.   .*/(((((#((//*,   ,//((((((((((((((((/(((#&&&&&&&%&&%%%&&%%%%%%%%#", Priorities.LOW_PRIORITY)
-r.say(target, "                           /%%&&&&&&@@@&&&&&%%%&&&&&&&&&%#&&&&%%%%%(((##%%##(//*.   .,/((##(#(((/*,   ,*//(((/(((((((((//*,.*/((((#%&&&&&&&&&&&&%%%%%%#((", Priorities.LOW_PRIORITY)
-r.say(target, "                           ./(##&&&&&&%%%&@@&%&&&&&&&&%#&&&&&&&((((#%%%#(//*.    ,*/((#(#(((/**.  .*/(((/(((((((((/(// .  .*//(((/*%%&&&&%%%%%%%%%%((((", Priorities.LOW_PRIORITY)
-r.say(target, "                            *////(#%&&&&&&&&&&&&&&&&&%&&&&&&&&&%%&%%%%%#((/*.    ,*/(((#(((//*,.  .*//((/(((((((((((//((*,   .,*//,%%%%&%&&&&&&&&%%(##(((/", Priorities.LOW_PRIORITY)
-r.say(target, "                             *//////(#%&&&&&&&&&&&&&&&&&&&&&%%&&@@@@@@@&%.   .*/(((##(((/**.   *///(((((((((((((((((/////,.***.#%&%%%%%%%%%%%%#(#&@##(((", Priorities.LOW_PRIORITY)
-r.say(target, "                              ,////////(#%&&&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@&%/*/(###((((//,.   ,/(//(((((((/(((((((((///////////(%%%%%%%%%%%%%%((&@@@%#(((/", Priorities.LOW_PRIORITY)
-r.say(target, "                               ,/(////////(#%&&&&&&&&&&&%&&&&&&@@@@&%#&@@@@@@@&%((#(((/**.   ,*/(((///((((((((((((/(((//////////**,*(%%#%%%%%#(&@@@@&&%#(", Priorities.LOW_PRIORITY)
-r.say(target, "                                ,(/(#////////((%&&&&&&&&&@&%@@@@@%&&&&@&&&&&%&&(#(//**   .*//((/((//((((((/(((/(((////////////*,.  *%%%%%#(%&&&&&&&%#/", Priorities.LOW_PRIORITY)
-r.say(target, "                                 .//((((////////((%&&&&&&&&@&@@@&&&%%%&@&%&%%(%&@@%/*,    */(((((((//((//((((((((((((/////.    ,*  ,**/&&%(#&&&%%#&%%(", Priorities.LOW_PRIORITY)
-r.say(target, "                                  ,(((((((/////////((%&&%&&&&@@@@@&&&&&%#/#%%&&%&&/   ,///((((/(((((/(((((((((((((////,#%&&&&&/ ***%&&%(&@&&%%((%(.", Priorities.LOW_PRIORITY)
-r.say(target, "                                     *(((/((///////////(#%&&%&&&%&@&&%(%%*%&&&&&&%&%%%%//((((/((//((/(((((/(((((((/////(&%(#%&&&&&(%&%%(%@&%%%(%%(,", Priorities.LOW_PRIORITY)
-r.say(target, "                                        /((/(/////////////(%%&&&&&&&%&%(%&&&&%&%&%%&%##%@&((((((((/((//*..*/(((((/(////((#%%%&&&&&&&%(%&&&%%#((((", Priorities.LOW_PRIORITY)
-r.say(target, "                                           (((//////////////((%&&&%%&%(&&&&&&&%&%%%#(#%&&@@@(((((//,.    ,*/((((////**(%&&&&&&&&(&@###&((", Priorities.LOW_PRIORITY)
-r.say(target, "                                              ,(/(////(/////////(#%&&&&&&&%&%%%%%#(#%%&&&&%%&&&%#(////*    .,***/////**.  ,%&&&&&%(&@&%##((#(", Priorities.LOW_PRIORITY)
-r.say(target, "                                                 /((/////(////////((#%&&%&&%%%%%(##%&&@&&&&&&&&%#%////* .,*/ (%%*,**   ,**%&&%(%@@%##((((.", Priorities.LOW_PRIORITY)
-r.say(target, "                                                    /(//////(////////((#&&&%%%#(#%&&&&&&&&&&&&&&&&&&@*//*/./%&&&@ .*/*#&&#&@&%%##&(/", Priorities.LOW_PRIORITY)
-r.say(target, "                                                       ((//////(////////((#%%(#%&&&&&&&%%&&&&&&&&&&%&&&&,.#%%%%%%&&&%*(%&&%#&@&%##((((", Priorities.LOW_PRIORITY)
-r.say(target, "                                                          /((/////#////////((%&&&&&&&%%%&&&&&&&&&&&&&&&%%&&&&%%%%%%%#%%&&&%(&@&%#%(%%(", Priorities.LOW_PRIORITY)
-r.say(target, "                                                             (((/////#////(/((#%&&&@&&%&&&&&&&&&&&&&&&&&&&%%%%%%%%##%%%%#(%@@&%%#(#(", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                #(/////(%////((#&&&&&@@&%&&&&&%&&&&&&&&&&&&&&%%%%#%%%%%#(&&%%(((.", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                   #(/////##////%&%%%&&&&@&&%%&&&&&&&&&&&&&&&&%%%%%#(&@&%%%(%%,", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                      #((((//(%(/%(#%%&&&&&&@@&%&&&&&&&&&&&&&&&%%%##(&@&%%%#((/", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                         #(((///(%%///%&&&&&&&&@@&&&&&&&&&&&&&&%%#(%&&&%%##&(", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                           .#(((((##/////%&&&&&&&&&@&&&&&&&&&&&&(#&&&%%#((#", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                               ((((#&%(/(((/#%&&&&&&&&&&&&&&&%#((%&%%%(#(", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                 .((#%   ((#(//#&&&&&&&&&&&%##((((%%##&", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                            (/////#&&&&&&&&%%%#(((#((.", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                              .(/////#%&&%%%%#(((((/", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                                 .(/////#####((((/", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                                    ,(///(##((((", Priorities.LOW_PRIORITY)
-r.say(target, "                                                                                                       *(/((((", Priorities.LOW_PRIORITY)
-    }
   }
 }
