@@ -3,6 +3,7 @@ package modules
 import java.sql.{Connection, DriverManager, SQLException}
 import java.util
 
+import irc.info.Info
 import irc.message.Message
 import irc.server.{ConnectionManager, ServerResponder}
 import ircbot.{BotCommand, BotModule, Constants}
@@ -56,7 +57,8 @@ class Bene extends BotModule {
     "pokies" -> Array("Give some money to the lions foundation"),
     "money" -> Array("Check if you have enough money for codys"),
     "tripledip" -> Array(s"Take a chance at getting a lot of money. Costs $$$tripleDipCost"),
-    "odds" -> Array("Check the rng odds of everything money related")
+    "odds" -> Array("Check the rng odds of everything money related"),
+    "shout" -> Array("Shoutout a message to every channel the bot is in")
   )
 
   val connection: Connection = try{
@@ -293,6 +295,59 @@ class Bene extends BotModule {
     }
 
 
+    if ( b.command == "shout"){
+      if (!isReg(m)) {
+        r.say(target, "pls login m9")
+        return
+      }
+      val check = checkFirstSeen(m.sender.nickname)
+      if(!check.allowed){
+        if(check.timeLeft == 10){
+          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
+            s"before using this command")
+        }
+        else {
+          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
+        }
+        return
+      }
+
+      val userBalance = getBalance(m.sender.nickname)
+      if(userBalance < 5000){
+        r.reply("Shoutouts cost \u000303$5000\u0003, you don't have enough for that.")
+        return
+      }
+
+      setBalance(m.sender.nickname, userBalance - 5000)
+
+      var massHighlight = false
+      var highlights = 0
+      for{
+        info <- Info.get(m.server)
+      } yield {
+        for(channel <- info.getChannels.values){
+          for((username,user) <- channel.users) {
+            if (!massHighlight) {
+              if (m.trailing.contains(username)) {
+                highlights += 1
+                if (highlights > 5) massHighlight = true
+              }
+            }
+          }
+        }
+      }
+      if(massHighlight){
+        r.reply("Your shoutout contains a lot of user nicks. Try something else.")
+        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
+        return
+      }
+      if(b.hasParams){
+        r.notice(m.sender.nickname, "You have been charged \u000303$5000\u0003 for the shoutout")
+        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname}: " + "\"" + b.paramsString + "\"\u0001")
+      }
+    }
+
+
 
 
 
@@ -439,30 +494,6 @@ class Bene extends BotModule {
           setBalance(m.sender.nickname, getBalance(m.sender.nickname) + toSteal)
         }
       }
-    }
-
-
-
-
-    if (b.command == "durry") {
-      if (!isReg(m)) {
-        r.say(target, "pls login m9")
-        return
-      }
-      if (!hasUser(m.sender.nickname)) {
-        r.say(target, "winz hasnt given u any money yet")
-        return
-      }
-      val usercash = getBalance(m.sender.nickname)
-      if (usercash < 10) {
-        r.say(target, "u dont have enough money for that mate")
-        return
-      }
-      r.notice(m.sender.nickname, "uve bought a durry for 3$10")
-      r.say(target, "               )")
-      r.say(target, "              (")
-      r.say(target, " _ ___________ )")
-      r.say(target, "[_[___________4#")
     }
 
 
