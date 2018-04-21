@@ -301,6 +301,7 @@ class Bene extends BotModule {
 
     /**
     if ( b.command == "shout"){
+      val price = 10000
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -326,12 +327,12 @@ class Bene extends BotModule {
       }
 
       val userBalance = getBalance(m.sender.nickname)
-      if(userBalance < 5000){
-        r.reply("Shoutouts cost \u000303$5000\u0003, you don't have enough for that.")
+      if(userBalance < price){
+        r.reply("Shoutouts cost \u000303$" + price + "\u0003, you don't have enough for that.")
         return
       }
 
-      setBalance(m.sender.nickname, userBalance - 5000)
+      setBalance(m.sender.nickname, userBalance - price)
 
       var massHighlight = false
       var highlights = 0
@@ -351,7 +352,7 @@ class Bene extends BotModule {
       }
       if(massHighlight){
         r.reply("Your shoutout contains a lot of user nicks. Try something else.")
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
+        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + price)
         return
       }
       if(b.paramsString.contains("://")){
@@ -361,11 +362,11 @@ class Bene extends BotModule {
       }
       if(!m.params.first.startsWith("#")){
         r.notice(m.sender.nickname, "Shoutouts cannot be made via PM")
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
+        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + price)
         return
       }
       if(b.hasParams){
-        r.notice(m.sender.nickname, "You have been charged \u000303$5000\u0003 for the shoutout")
+        r.notice(m.sender.nickname, "You have been charged \u000303$" + price + "\u0003 for the shoutout")
         val location = m.params.first
         r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\u000F\"\u0001")
         shoutcooldown = System.currentTimeMillis() + 10000
