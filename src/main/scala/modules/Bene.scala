@@ -351,7 +351,7 @@ class Bene extends BotModule {
       if(b.hasParams){
         r.notice(m.sender.nickname, "You have been charged \u000303$5000\u0003 for the shoutout")
         val location = m.params.first
-        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\"\u0001")
+        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\u000F\"\u0001")
       }
     }
 
