@@ -189,7 +189,7 @@ class Bene extends BotModule {
           }
           else {
             setBalance(user, getBalance(user) - tripleDipCost)
-            r.reply(s"You bought a ticket for \u00033$$${tripleDipCost}\u0003. Unfortunately you had no luck winning this time.")
+            r.reply(m.sender.nickname + s", You bought a ticket for \u00033$$${tripleDipCost}\u0003. Unfortunately you had no luck winning this time.")
           }
           lastTripleDip.put(user.toLowerCase(), System.currentTimeMillis())
         }
@@ -201,14 +201,14 @@ class Bene extends BotModule {
             secondsleft = minutesleft % 60
           }
           if (minutesleft == 0) {
-            r.say(target, s"Please wait another $secondsleft seconds before trying again")
+            r.say(target, m.sender.nickname + s", Please wait another $secondsleft seconds before trying again")
           } else {
-            r.say(target, s"Please wait another $minutesleft minutes before trying again")
+            r.say(target, m.sender.nickname + s", Please wait another $minutesleft minutes before trying again")
           }
         }
       }
       else{
-        r.reply(s"Tickets are \u00033$$${tripleDipCost}\u0003. You don't have enough benebux for one")
+        r.reply(m.sender.nickname + s", Tickets are \u00033$$${tripleDipCost}\u0003. You don't have enough benebux for one")
       }
     }
 
@@ -399,7 +399,7 @@ class Bene extends BotModule {
       if (!hasUser(m.sender.nickname)) {
         r.say(target, m.sender.nickname + s", You don't have an account yet. Use " + b.commandPrefix +
           "bene to get some cash")
-      } else r.say(target, s"You currently have3 $$${getBalance(m.sender.nickname)} in the bnz")
+      } else r.say(target, m.sender.nickname + s", You currently have3 $$${getBalance(m.sender.nickname)} in the bnz")
     }
 
 
