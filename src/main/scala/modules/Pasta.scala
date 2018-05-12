@@ -53,6 +53,10 @@ class Pasta extends BotModule{
             }
           }
         }
+        
+        val pattern = "((logan)|(jake))(\\s+)?paul".r
+        val match1 = pattern.findFirstIn(m.trailing.toLowerCase)
+        if(match1 != None) r.kick(m.params.first, m.sender.nickname, "fuck off")
 
         if (bAsDot.command == "rules" || bAsTilde.command == "rules") {
           val rules = UserConfig.getJson.getJSONArray("pastarules")
