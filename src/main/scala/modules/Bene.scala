@@ -23,6 +23,8 @@ class Bene extends BotModule {
 
   private val firstSeen: util.HashMap[String, Long] = new util.HashMap[String, Long]()
 
+  private val tiedHosts: util.HashMap[String, (String, Long)] = new util.HashMap[String, (String, Long)]()
+
   private var topcooldown = System.currentTimeMillis() - 10000
 
   private var shoutcooldown = System.currentTimeMillis() - 10000
@@ -74,8 +76,15 @@ class Bene extends BotModule {
 
   initTable()
   startAnarchyThread()
-  
+
   private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
+
+  private def checkNickIsValid(hostname: String, nickname: String): Boolean = {
+    if(tiedHosts.containsKey(hostname)){
+      if(tiedHosts.get(hostname)._1 == nickname) return true
+    }
+    false
+  }
 
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder) {
@@ -86,6 +95,17 @@ class Bene extends BotModule {
 
     if(!firstSeen.containsKey(m.sender.nickname)){
       firstSeen.put(m.sender.nickname, System.currentTimeMillis())
+    }
+
+    if(tiedHosts.containsKey(m.sender.host)){
+      val pair = tiedHosts.get(m.sender.host)
+      if(m.sender.nickname == pair._1){
+        tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
+      } else if(pair._2 + 60000 < System.currentTimeMillis){
+        tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
+      }
+    } else {
+      tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
     }
 
     if (b.command == "jailstatus") {
@@ -102,10 +122,8 @@ class Bene extends BotModule {
 
 
 
-
-
-
     if (b.command == "bene") {
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -162,6 +180,7 @@ class Bene extends BotModule {
 
 
     if(b.command == "tripledip"){
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -244,6 +263,7 @@ class Bene extends BotModule {
 
 
     if(b.command == "privacy"){
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -285,7 +305,7 @@ class Bene extends BotModule {
       catch{
         case e:NumberFormatException =>
       }
-      
+
       if(nick == "") nick = m.sender.nickname
 
       r.reply(s"gibbed $gib to $nick!")
@@ -379,6 +399,7 @@ class Bene extends BotModule {
 
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance" || b.command == "bal") {
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -407,6 +428,7 @@ class Bene extends BotModule {
 
 
     if (b.command == "pokies" || b.command == "bet") {
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
@@ -459,6 +481,7 @@ class Bene extends BotModule {
 
 
     if (b.command == "mug") {
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       checkJail()
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
@@ -524,6 +547,7 @@ class Bene extends BotModule {
 
 
     if (b.command == "give") {
+      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
