@@ -108,6 +108,12 @@ class Bene extends BotModule {
       tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
     }
 
+
+    if(!m.target.startsWith("#")) return
+
+
+    // bene commands -------------------------
+
     if (b.command == "jailstatus") {
       checkJail()
       if (!jail.containsKey(m.sender.nickname.toLowerCase())) {
@@ -203,7 +209,7 @@ class Bene extends BotModule {
         if(timeLeftMillis < 0){
           if(Math.random() < tripleDipChance){
             setBalance(user, getBalance(user) - tripleDipCost + tripleDipWinnings)
-            r.announce(s"\u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 $user just won the jackpot! " +
+            r.reply(s"\u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 $user just won the jackpot! " +
               s"\u00033$$${tripleDipWinnings}\u0003 has been awarded to them. \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003")
           }
           else {
@@ -344,85 +350,6 @@ class Bene extends BotModule {
 
     }
 
-
-    /**
-    if ( b.command == "shout"){
-      val price = 10000
-      if (!isReg(m)) {
-        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
-        return
-      }
-      val check = checkFirstSeen(m.sender.nickname)
-      if(!check.allowed){
-        if(check.timeLeft == 10){
-          r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
-            s"before using this command")
-        }
-        else {
-          r.notice(m.sender.nickname, s"Please wait another ${check.timeLeft} seconds before using this command")
-        }
-        return
-      }
-
-      if(shoutcooldown > System.currentTimeMillis()){
-        val wait = Math.floor((shoutcooldown - System.currentTimeMillis())/1000).toInt
-        r.notice(m.sender.nickname, s"This command is currently on cooldown. Please wait another $wait " +
-          s"seconds before using it")
-        return
-
-      }
-
-      val userBalance = getBalance(m.sender.nickname)
-      if(userBalance < price){
-        r.reply("Shoutouts cost \u000303$" + price + "\u0003, you don't have enough for that.")
-        return
-      }
-
-      setBalance(m.sender.nickname, userBalance - price)
-
-      var massHighlight = false
-      var highlights = 0
-      for{
-        info <- Info.get(m.server)
-      } yield {
-        for(channel <- info.getChannels.values){
-          for((username,user) <- channel.users) {
-            if (!massHighlight) {
-              if (m.trailing.contains(username)) {
-                highlights += 1
-                if (highlights > 5) massHighlight = true
-              }
-            }
-          }
-        }
-      }
-      if(massHighlight){
-        r.reply("Your shoutout contains a lot of user nicks. Try something else.")
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + price)
-        return
-      }
-      if(b.paramsString.contains("://")){
-        r.notice(m.sender.nickname, "Shoutouts cannot contain URLS.")
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + 5000)
-        return
-      }
-      if(!m.params.first.startsWith("#")){
-        r.notice(m.sender.nickname, "Shoutouts cannot be made via PM")
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) + price)
-        return
-      }
-      if(b.hasParams){
-        r.notice(m.sender.nickname, "You have been charged \u000303$" + price + "\u0003 for the shoutout")
-        val location = m.params.first
-        r.announce(s"\u0001ACTION has a SHOUTOUT from ${m.sender.nickname} in $location: " + "\"" + b.paramsString + "\u000F\"\u0001")
-        shoutcooldown = System.currentTimeMillis() + 10000
-      }
-    }
-    **/
-
-
-
-
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance" || b.command == "bal") {
       if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
@@ -558,8 +485,6 @@ class Bene extends BotModule {
             var balancedTargetMoney: Double = targetMoney
             if(targetMoney > 50000) balancedTargetMoney = 50000
             else if(targetMoney < 1000) balancedTargetMoney = 1000
-            println(balancedTargetMoney)
-
             0.3 - (((balancedTargetMoney - 1000) / 49000) * 0.2)
           }
 
