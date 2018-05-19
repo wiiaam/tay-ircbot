@@ -8,6 +8,8 @@ import irc.message.Message
 import irc.server.{ConnectionManager, ServerResponder}
 import ircbot.{BotCommand, BotModule, Constants}
 import out.Out
+
+import scala.util.Random
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -109,10 +111,58 @@ class Bene extends BotModule {
     }
 
 
-    if(!m.target.startsWith("#")) return
+    if(b.command == "gib" && m.sender.isAdmin){
+      var parsed = false
+      var value: Long = 0
+      var nick = ""
+      val gib = b.paramsString.substring(b.paramsArray(0).length + 1, b.paramsString.length)
+      nick = b.paramsArray(0)
+      try{
+        value = java.lang.Long.parseLong(gib)
+        parsed = true
+      }
+      catch{
+        case e:NumberFormatException =>
+      }
+
+      if(nick == "") nick = m.sender.nickname
+
+      r.reply(s"gibbed $gib to $nick!")
+
+      if(parsed){
+        var userbalance = if (!hasUser(nick)) 0 else getBalance(nick)
+        userbalance += value
+        setBalance(nick, userbalance)
+      }
+
+    }
+
+
+    if(b.command == "nuke" && m.sender.isAdmin){
+      if(b.hasParams){
+        var nick = b.paramsArray(0).toLowerCase
+        var userbalance = if (!hasUser(nick)) 0 else getBalance(nick)
+        r.announce("\u0002\u000304!! WARNING NUKE INCOMING !!\u0003 \u0002One users benes will soon be completely wiped to zero!")
+        Thread.sleep(10000)
+        setBalance(nick, 0)
+        r.announce(s"$nick has been nuked! They lost \u000303$$${userbalance}\u0003! ")
+      } else {
+        val userList = getUserList.filter(_._2 > 0)
+        if(userList.length > 0) {
+          val randomUser = userList(Random.nextInt(userList.length))
+          r.announce("\u0002\u000304!! WARNING NUKE INCOMING !!\u0003 \u0002One users benes will soon be completely wiped to zero!")
+          Thread.sleep(10000)
+          setBalance(randomUser._1, 0)
+          r.announce(s"${randomUser._1} has been nuked! They lost \u000303$$${randomUser._2}\u0003! ")
+        }
+      }
+    }
+
 
 
     // bene commands -------------------------
+
+    if(!m.target.startsWith("#")) return
 
     if (b.command == "jailstatus") {
       checkJail()
@@ -294,13 +344,13 @@ class Bene extends BotModule {
 
 
 
-    if(b.command == "privacy"){
-      if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
+    if(b.command == "privacy") {
+      if (!checkNickIsValid(m.sender.host, m.sender.nickname)) return
       if (!isReg(m)) {
         r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
         return
       }
-      if(hasUser(m.sender.nickname)) {
+      if (hasUser(m.sender.nickname)) {
         if (b.hasParams) {
           if (b.paramsArray(0) == "enable") {
             setPrivate(m.sender.nickname, privacy = true)
@@ -318,36 +368,6 @@ class Bene extends BotModule {
       else {
         r.reply(s"${m.sender.nickname}: you dont even have any benes to hide")
       }
-    }
-
-
-
-
-
-    if(b.command == "gib" && m.sender.isAdmin){
-      var parsed = false
-      var value: Long = 0
-      var nick = ""
-      val gib = b.paramsString.substring(b.paramsArray(0).length + 1, b.paramsString.length)
-      nick = b.paramsArray(0)
-      try{
-        value = java.lang.Long.parseLong(gib)
-        parsed = true
-      }
-      catch{
-        case e:NumberFormatException =>
-      }
-
-      if(nick == "") nick = m.sender.nickname
-
-      r.reply(s"gibbed $gib to $nick!")
-
-      if(parsed){
-        var userbalance = if (!hasUser(nick)) 0 else getBalance(nick)
-        userbalance += value
-        setBalance(nick, userbalance)
-      }
-
     }
 
     if (b.command == "money" || b.command == "wallet" ||
