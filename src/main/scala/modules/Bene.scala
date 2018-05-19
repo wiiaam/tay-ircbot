@@ -101,7 +101,7 @@ class Bene extends BotModule {
       val pair = tiedHosts.get(m.sender.host)
       if(m.sender.nickname == pair._1){
         tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
-      } else if(pair._2 + 60000 < System.currentTimeMillis){
+      } else if(pair._2 + 300000 < System.currentTimeMillis){
         tiedHosts.put(m.sender.host, (m.sender.nickname, System.currentTimeMillis))
       }
     } else {
@@ -255,6 +255,32 @@ class Bene extends BotModule {
         val nick = array(i)._1
         val balance = array(i)._2
         r.notice(m.sender.nickname, s"${i+1}. $nick with \u00033$$$balance")
+      }
+    }
+
+    if(b.command == "rank"){
+      val toFind = if(b.hasParams){
+        b.paramsArray(0).toLowerCase
+      } else m.sender.nickname.toLowerCase
+      val array = getUserList.filter(_._2 > 0)
+      var found = false
+      for(i <- array.indices){
+        if(array(i)._1 == toFind){
+          found = true
+          val rank = i + 1 match{
+            case 1 => "1st"
+            case 2 => "2nd"
+            case 3 => "3rd"
+            case _ => s"${i+1}th"
+          }
+          val percent = Math.ceil((i.toDouble + 1) / array.length.toDouble * 100).toInt
+          if(b.hasParams) r.reply(s"${m.sender.nickname}, ${b.paramsArray(0)}'s rank: $rank out of ${array.length} users. Top $percent%")
+          else r.reply(s"${m.sender.nickname}, Your rank: $rank out of ${array.length} users. Top $percent%")
+        }
+      }
+      if(!found){
+        if(b.hasParams) r.reply(s"${m.sender.nickname}, Their rank could not be found")
+        else r.reply(s"${m.sender.nickname}, Your rank could not be found")
       }
     }
 
@@ -655,6 +681,18 @@ class Bene extends BotModule {
       i += 1
     }
     array.sortWith(_._2 > _._2).take(Math.min(i, 5))
+  }
+
+  private def getUserList: Array[(String, Long, Boolean)] = { //sorted top to bottom
+    val sql = "SELECT nick, balance, private FROM money"
+    val rs = connection.createStatement().executeQuery(sql)
+    var array = Array[(String, Long, Boolean)]()
+    var i = 0
+    while(rs.next()){
+      array = array :+ (rs.getString(1), rs.getLong(2), rs.getBoolean(3))
+      i += 1
+    }
+    array.sortWith(_._2 > _._2)
   }
 
   private def isPrivate(nickname: String): Boolean = {
