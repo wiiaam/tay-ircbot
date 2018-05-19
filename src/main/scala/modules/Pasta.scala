@@ -37,6 +37,16 @@ class Pasta extends BotModule{
     val bAsDot = new BotCommand(m, ".")
     val bAsTilde = new BotCommand(m,"~")
     if(m.config.networkName == "Rizon") {
+
+      if(m.command == MessageCommands.JOIN){
+        r.send("WHOIS " + m.sender.nickname)
+      }
+
+      if(m.command == MessageCommands.n319){
+        if(m.trailing.contains("#k00l")){
+          r.kick("#pasta", m.params.array(1), "fuck off")
+        }
+      }
       
       if(m.command == MessageCommands.JOIN && m.sender.nickname.toLowerCase() == "soyeon" &&
         m.trailing == "#pasta"){
