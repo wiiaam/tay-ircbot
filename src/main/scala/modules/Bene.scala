@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 
 class Bene extends BotModule {
 
-  private val firstSeenDelay = 10
+  private val firstSeenDelay = 30
 
   private val sqlUrl = s"jdbc:sqlite:${Constants.MODULE_FILES_FOLDER}money.db".replace("\\","/")
 
@@ -34,7 +34,7 @@ class Bene extends BotModule {
   private var lowestBene = 100 // lowest .bene payout possible
   private var highestBene = 900 // highest .bene payout possible
 
-  private val betChance: Double = 0.3 // chance to win for .bet
+  private val betChance: Double = 0.49 // chance to win for .bet
 
   private val normalMugChance = 0.1
   private var mugChance: Double = normalMugChance // chance to mug for .mug
@@ -42,8 +42,9 @@ class Bene extends BotModule {
 
   private val tripleDipChance: Double = 0.01 // chance to win triple dip
   private val tripleDipCooldown = 3600 //seconds
-  private val tripleDipCost: Long = 100
-  private val tripleDipWinnings: Long = 100000 // triple dip winnings
+  private val tripleDipCost: Long = 1000
+  private val minTripleDipWinnings: Long = 50000 // triple dip winnings min
+  private val maxTripleDipWinnings: Long = 150000 // triple dip winnings max
 
   private var checking = false //check for jail
 
@@ -64,7 +65,8 @@ class Bene extends BotModule {
     "money" -> Array("Check if you have enough money for codys"),
     "tripledip" -> Array(s"Take a chance at getting a lot of money. Costs $$$tripleDipCost"),
     "odds" -> Array("Check the rng odds of everything money related"),
-    "shout" -> Array("Shoutout a message to every channel the bot is in")
+    "rank" -> Array("Shows your bene rank"),
+    "top5" -> Array("Shows the top 5 beneficiaries")
   )
 
   val connection: Connection = try{
@@ -186,7 +188,7 @@ class Bene extends BotModule {
       }
       val check = checkFirstSeen(m.sender.nickname)
       if(!check.allowed){
-        if(check.timeLeft == 10){
+        if(check.timeLeft == firstSeenDelay){
           r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
             s"before using this command")
         }
@@ -243,7 +245,7 @@ class Bene extends BotModule {
       }
       val check = checkFirstSeen(m.sender.nickname)
       if(!check.allowed){
-        if(check.timeLeft == 10){
+        if(check.timeLeft == firstSeenDelay){
           r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
             s"before using this command")
         }
@@ -253,11 +255,12 @@ class Bene extends BotModule {
         return
       }
       val user = m.sender.nickname
-      if(getBalance(user) > 99) {
+      if(getBalance(user) > tripleDipCost) {
         val lastDip = lastTripleDip.getOrDefault(user.toLowerCase(), 0)
         val timeLeftMillis = (lastDip + tripleDipCooldown*1000) - System.currentTimeMillis()
         if(timeLeftMillis < 0){
           if(Math.random() < tripleDipChance){
+            val tripleDipWinnings = minTripleDipWinnings + Random.nextInt((maxTripleDipWinnings - minTripleDipWinnings).toInt)
             setBalance(user, getBalance(user) - tripleDipCost + tripleDipWinnings)
             r.reply(s"\u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 $user just won the jackpot! " +
               s"\u00033$$${tripleDipWinnings}\u0003 has been awarded to them. \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003 \u00038,4!WINNER!\u0003")
@@ -408,7 +411,7 @@ class Bene extends BotModule {
       }
       val check = checkFirstSeen(m.sender.nickname)
       if(!check.allowed){
-        if(check.timeLeft == 10){
+        if(check.timeLeft == firstSeenDelay){
           r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
             s"before using this command")
         }
@@ -462,7 +465,7 @@ class Bene extends BotModule {
       }
       val check = checkFirstSeen(m.sender.nickname)
       if(!check.allowed){
-        if(check.timeLeft == 10){
+        if(check.timeLeft == firstSeenDelay){
           r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
             s"before using this command")
         }
@@ -525,7 +528,7 @@ class Bene extends BotModule {
       }
       val check = checkFirstSeen(m.sender.nickname)
       if(!check.allowed){
-        if(check.timeLeft == 10){
+        if(check.timeLeft == firstSeenDelay){
           r.notice(m.sender.nickname, s"This is my first time seeing your nick. Please wait ${check.timeLeft} seconds " +
             s"before using this command")
         }
