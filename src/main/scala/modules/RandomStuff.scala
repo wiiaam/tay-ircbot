@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.Scanner
 
 import irc.info.Info
-import irc.message.Message
+import irc.message.{Message, MessageCommands}
 import irc.server.{Priorities, ServerResponder}
 import ircbot.{BotCommand, BotModule}
 
@@ -41,6 +41,11 @@ class RandomStuff extends BotModule{
           }
         })
       }
+    }
+
+    if(m.command == MessageCommands.KICK && m.params.array(1) == m.config.getNickname && m.trailing.contains("Stop repeating yourself!")) {
+      Thread.sleep(5000)
+      r.join(m.params.first)
     }
 
     if(b.command == "gen2"){

@@ -82,7 +82,9 @@ object URLParser {
     } catch {
       case e: SSLHandshakeException =>
         title = "Title not found (SSL handshake error)"
-      case e: Exception =>
+      case e: SSLException =>
+        title = "Title not found (SSL Error)"
+      case e: Exception => e.printStackTrace()
     }
     if (title.length > 50) title = title.substring(0, 50) + "..."
 

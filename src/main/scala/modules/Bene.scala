@@ -29,8 +29,6 @@ class Bene extends BotModule {
 
   private var topcooldown = System.currentTimeMillis() - 10000
 
-  private var shoutcooldown = System.currentTimeMillis() - 10000
-
   private var lowestBene = 100 // lowest .bene payout possible
   private var highestBene = 900 // highest .bene payout possible
 
