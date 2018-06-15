@@ -154,12 +154,12 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
             val tosend = toSend.poll()
             Out.println(s"$fileName/$serverName <-- $tosend")
             out.foreach(_.print(tosend + "\r\n"))
-            if (spammed > 4) Thread.sleep(500)
+            if (spammed > 4) Thread.sleep(760)
             else spammed += 1
           }
           else if (!toSendLP.isEmpty) {
             out.foreach(_.print(toSendLP.poll() + "\r\n"))
-            if (spammed > 4) Thread.sleep(500)
+            if (spammed > 4) Thread.sleep(760)
             else spammed += 1
           }
           else if (spammed != 0) spammed = 0
