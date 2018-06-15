@@ -20,8 +20,8 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
   private var socket: Option[Socket] = None
   private var in: Option[Scanner] = None
   private var out: Option[PrintStream] = None
-  private var toSend = new util.ArrayDeque[String]
-  private var toSendLP = new util.ArrayDeque[String]
+  private var sendQueue = new util.ArrayDeque[String]
+  private var sendQueueLP = new util.ArrayDeque[String]
   private var connected = false
   private var sendThread: Thread = _
   private var inThread: Thread = _
@@ -149,20 +149,23 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     sendThread = new Thread(new Runnable {
       override def run(): Unit = {
         while (true) {
-          Thread.sleep(20)
-          if (!toSend.isEmpty) {
-            val tosend = toSend.poll()
+          if (spammed > 4) Thread.sleep(500) else Thread.sleep(50)
+          if (!sendQueue.isEmpty) {
+            val tosend = sendQueue.poll()
             Out.println(s"$fileName/$serverName <-- $tosend")
             out.foreach(_.print(tosend + "\r\n"))
-            if (spammed > 4) Thread.sleep(760)
-            else spammed += 1
+            if (spammed <= 4) spammed += 1
           }
-          else if (!toSendLP.isEmpty) {
-            out.foreach(_.print(toSendLP.poll() + "\r\n"))
-            if (spammed > 4) Thread.sleep(760)
-            else spammed += 1
+          else if (!sendQueueLP.isEmpty) {
+            val tosend = sendQueueLP.poll()
+            Out.println(s"$fileName/$serverName <-- $tosend")
+            out.foreach(_.print(tosend + "\r\n"))
+            if (spammed <= 4) spammed += 1
           }
-          else if (spammed != 0) spammed = 0
+          else if (spammed != 0) {
+            Thread.sleep(500)
+            spammed -= 1
+          }
         }
       }
     })
@@ -202,6 +205,10 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
 
   def send(message: String, priority: Priorities.Value = Priorities.STANDARD_PRIORITY) {
     val msg = message.replaceAll("\r", "").replaceAll("\n", "")
+
+    if(sendQueue.contains(msg) || sendQueueLP.contains(msg)) return
+
+
     if ((message.startsWith("PRIVMSG") || message.startsWith("NOTICE")) && message.length > 320) {
       val split = msg.split(" ")
       var tosend = ""
@@ -209,10 +216,11 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
       while (i < split.length) {
         tosend += split(i) + " "
         if (tosend.length() > 300) {
+          tosend = tosend.substring(0, tosend.length() - 1)
           priority match {
-            case Priorities.HIGH_PRIORITY => toSend.addFirst(tosend.substring(0, tosend.length() - 1))
-            case Priorities.LOW_PRIORITY => toSendLP.add(tosend.substring(0, tosend.length() - 1))
-            case Priorities.STANDARD_PRIORITY => toSend.add(tosend.substring(0, tosend.length() - 1))
+            case Priorities.HIGH_PRIORITY => sendQueue.addFirst(tosend.substring(0, tosend.length() - 1))
+            case Priorities.LOW_PRIORITY => sendQueueLP.add(tosend.substring(0, tosend.length() - 1))
+            case Priorities.STANDARD_PRIORITY => sendQueue.add(tosend.substring(0, tosend.length() - 1))
 
           }
           var next = split(0) + " " + split(1) + " :"
@@ -227,10 +235,9 @@ class IrcServer(name: String, address: String, port: Int, useSSL: Boolean) {
     }
     else {
       priority match {
-        case Priorities.HIGH_PRIORITY => toSend.addFirst(msg)
-        case Priorities.LOW_PRIORITY => toSendLP.add(msg)
-        case Priorities.STANDARD_PRIORITY => toSend.add(msg)
-
+        case Priorities.HIGH_PRIORITY => sendQueue.addFirst(msg)
+        case Priorities.LOW_PRIORITY => sendQueueLP.add(msg)
+        case Priorities.STANDARD_PRIORITY => sendQueue.add(msg)
       }
     }
   }
