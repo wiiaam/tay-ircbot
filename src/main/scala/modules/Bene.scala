@@ -68,6 +68,7 @@ class Bene extends BotModule {
   )
 
   val connection: Connection = try{
+    // TODO add sqlite configs
     DriverManager.getConnection(sqlUrl)
   }
   catch {
@@ -344,33 +345,6 @@ class Bene extends BotModule {
 
 
 
-
-    if(b.command == "privacy") {
-      if (!checkNickIsValid(m.sender.host, m.sender.nickname)) return
-      if (!isReg(m)) {
-        r.say(target, m.sender.nickname + ", You need to be identified with nickserv to use this command")
-        return
-      }
-      if (hasUser(m.sender.nickname)) {
-        if (b.hasParams) {
-          if (b.paramsArray(0) == "enable") {
-            setPrivate(m.sender.nickname, privacy = true)
-            r.reply(s"${m.sender.nickname}: Privacy has been enabled")
-            return
-          }
-          if (b.paramsArray(0) == "disable") {
-            setPrivate(m.sender.nickname, privacy = false)
-            r.reply(s"${m.sender.nickname}: Privacy has been disabled")
-            return
-          }
-        }
-        r.reply(s"${m.sender.nickname}: Usage: .privacy [enable|disable]")
-      }
-      else {
-        r.reply(s"${m.sender.nickname}: you dont even have any benes to hide")
-      }
-    }
-
     if (b.command == "money" || b.command == "wallet" ||
       b.command == "bank" || b.command == "balance" || b.command == "bal") {
       if(!checkNickIsValid(m.sender.host, m.sender.nickname)) return
@@ -381,12 +355,7 @@ class Bene extends BotModule {
       if(b.hasParams){
         val user = b.paramsArray(0)
         if(hasUser(user)){
-          if(isPrivate(user)){
-            r.reply(m.sender.nickname + s", theyre currently hiding all their benez (try looking under their bed)")
-          }
-          else{
-            r.reply(m.sender.nickname + s", $user currently has \u00033$$${getBalance(user)}\u0003 in their bnz")
-          }
+          r.reply(m.sender.nickname + s", $user currently has \u00033$$${getBalance(user)}\u0003 in their bnz")
         }
         else r.reply(m.sender.nickname + s", sorry bro theyre with kiwibank")
         return
@@ -591,24 +560,6 @@ class Bene extends BotModule {
     }
   }
 
-  private def setPrivate(nick: String, privacy: Boolean) {
-    val sql = if(hasUser(nick)){
-      "UPDATE money SET private = ? WHERE nick = ? "
-    }
-    else{
-      "INSERT INTO money(private, nick) VALUES(?,?)"
-    }
-    try{
-      val pstmt = connection.prepareStatement(sql)
-      pstmt.setBoolean(1, privacy)
-      pstmt.setString(2, nick.toLowerCase())
-      pstmt.executeUpdate()
-    }
-    catch{
-      case e: SQLException => e.printStackTrace()
-    }
-  }
-
   private def getBalance(nickname: String): Long = {
     val sql = "SELECT nick, balance FROM money WHERE nick = ?"
     val pstmt = connection.prepareStatement(sql)
@@ -617,51 +568,43 @@ class Bene extends BotModule {
     rs.getLong("balance")
   }
 
-  private def getTopList: Array[(String, Long, Boolean)] = {
-    val sql = "SELECT nick, balance, private FROM money"
+  private def getTopList: Array[(String, Long)] = {
+    val sql = "SELECT nick, balance FROM money"
     val rs = connection.createStatement().executeQuery(sql)
-    var array = Array[(String, Long, Boolean)]()
+    var array = Array[(String, Long)]()
     var i = 0
     while(rs.next()){
-      array = array :+ (rs.getString(1), rs.getLong(2), rs.getBoolean(3))
+      array = array :+ (rs.getString(1), rs.getLong(2))
       i += 1
     }
     array.sortWith(_._2 > _._2).take(Math.min(i, 5))
   }
 
-  private def getUserList: Array[(String, Long, Boolean)] = { //sorted top to bottom
-    val sql = "SELECT nick, balance, private FROM money"
+  private def getUserList: Array[(String, Long)] = { //sorted top to bottom
+    val sql = "SELECT nick, balance FROM money"
     val rs = connection.createStatement().executeQuery(sql)
-    var array = Array[(String, Long, Boolean)]()
+    var array = Array[(String, Long)]()
     var i = 0
     while(rs.next()){
-      array = array :+ (rs.getString(1), rs.getLong(2), rs.getBoolean(3))
+      array = array :+ (rs.getString(1), rs.getLong(2))
       i += 1
     }
     array.sortWith(_._2 > _._2)
   }
 
-  private def isPrivate(nickname: String): Boolean = {
-    val sql = "SELECT nick, private FROM money WHERE nick = ?"
-    val pstmt = connection.prepareStatement(sql)
-    pstmt.setString(1, nickname.toLowerCase())
-    val rs = pstmt.executeQuery()
-    rs.getBoolean("private")
-  }
 
   private def printTable() = {
-    val sql = "SELECT nick, balance, private FROM money"
+    val sql = "SELECT nick, balance FROM money"
     val rs = connection.createStatement().executeQuery(sql)
     while (rs.next()){
-      Out.println(rs.getString(1) + " " + rs.getLong(2) + " " + rs.getBoolean(3) )
+      Out.println(rs.getString(1) + " " + rs.getLong(2))
     }
   }
   private def initTable() = {
     try {
       val sql = "CREATE TABLE IF NOT EXISTS money(" +
         " nick TEXT PRIMARY KEY," +
-        " balance LONG NOT NULL DEFAULT 0," +
-        " private BOOLEAN NOT NULL DEFAULT FALSE);"
+        " balance LONG NOT NULL DEFAULT 0);"
       val conn = connection
       val stmt = conn.createStatement()
       stmt.execute(sql)
