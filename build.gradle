@@ -7,10 +7,11 @@ repositories {
 }
 
 dependencies {
-  compile 'org.scala-lang:scala-library:2.11.6'
-  compile 'org.scala-lang:scala-xml:2.11.0-M4'
-  compile 'commons-io:commons-io:2.5'
-  compile fileTree(dir: 'lib', include: '*.jar')
+    compile 'org.scala-lang:scala-library:2.11.6'
+    compile 'org.scala-lang:scala-xml:2.11.0-M4'
+    compile 'commons-io:commons-io:2.5'
+    compile 'org.xerial:sqlite-jdbc:3.25.2'
+    compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 sourceSets.main.scala.srcDirs = ['.']

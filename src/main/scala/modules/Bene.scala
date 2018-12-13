@@ -2,13 +2,12 @@ package modules
 
 import java.sql.{Connection, DriverManager, SQLException}
 import java.util
-
+import org.sqlite.SQLiteConfig
 import irc.info.Info
 import irc.message.Message
 import irc.server.{ConnectionManager, ServerResponder}
 import ircbot.{BotCommand, BotModule, Constants}
 import out.Out
-
 import scala.util.Random
 //remove if not needed
 import scala.collection.JavaConversions._
@@ -68,8 +67,11 @@ class Bene extends BotModule {
   )
 
   val connection: Connection = try{
-    // TODO add sqlite configs
-    DriverManager.getConnection(sqlUrl)
+    val config = new SQLiteConfig()
+    config.setLockingMode(SQLiteConfig.LockingMode.NORMAL)
+    config.setJournalMode(SQLiteConfig.JournalMode.WAL)
+
+    DriverManager.getConnection(sqlUrl, config.toProperties)
   }
   catch {
     case e: SQLException =>
@@ -79,6 +81,7 @@ class Bene extends BotModule {
 
   initTable()
   startAnarchyThread()
+  
 
   private def isReg(m: Message): Boolean = m.sender.isRegistered || m.config.networkName == "FishNet"
 
