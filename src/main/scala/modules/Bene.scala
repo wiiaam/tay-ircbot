@@ -404,7 +404,7 @@ class Bene extends BotModule {
             r.say(target, m.sender.nickname + s", u gotta put coins in the machine mate")
             return
         }
-        if (bet < 1) {
+        if (bet < 1 || bet > Long.MaxValue) {
           r.say(target, m.sender.nickname + s", stop being a poor cunt and put money in the machine")
           return
         }
@@ -517,25 +517,24 @@ class Bene extends BotModule {
             r.say(target, m.sender.nickname + s", cmon man help a brother out")
             return
         }
-        if (togive < 1) {
+        if (togive < 1 || togive > Long.MaxValue) {
           r.say(target, m.sender.nickname + s", dont be a cheap cunt")
-          return
         }
-        if (!hasUser(m.sender.nickname)) {
+        else if (!hasUser(m.sender.nickname)) {
           r.say(target, m.sender.nickname + s", u dont even have an account")
-          return
         }
-        if (getBalance(m.sender.nickname) < togive) {
+        else if (getBalance(m.sender.nickname) < togive) {
           r.say(target, m.sender.nickname + s", u dont have enuf money bro")
-          return
         }
-        if (!hasUser(togiveto)) {
+        else if (!hasUser(togiveto)) {
           r.say(target, m.sender.nickname + s", sorry bro theyre with kiwibank")
           return
         }
-        setBalance(m.sender.nickname, getBalance(m.sender.nickname) - togive)
-        setBalance(togiveto, getBalance(togiveto) + togive)
-        r.say(target, m.sender.nickname + s", you gave $togiveto 3$$$togive")
+        else {
+          setBalance(m.sender.nickname, getBalance(m.sender.nickname) - togive)
+          setBalance(togiveto, getBalance(togiveto) + togive)
+          r.say(target, m.sender.nickname + s", you gave $togiveto 3$$$togive")
+        }
       }
     }
   }
@@ -546,6 +545,8 @@ class Bene extends BotModule {
 
 
   private def setBalance(nick: String, amount: Long) {
+    var newAmount = amount
+    if (newAmount < 0) newAmount = 0
     val sql = if(hasUser(nick)){
       "UPDATE money SET balance = ? WHERE nick = ? "
     }
@@ -554,7 +555,7 @@ class Bene extends BotModule {
     }
     try{
       val pstmt = connection.prepareStatement(sql)
-      pstmt.setLong(1, amount)
+      pstmt.setLong(1, newAmount)
       pstmt.setString(2, nick.toLowerCase())
       pstmt.executeUpdate()
     }
@@ -568,7 +569,9 @@ class Bene extends BotModule {
     val pstmt = connection.prepareStatement(sql)
     pstmt.setString(1, nickname.toLowerCase())
     val rs = pstmt.executeQuery()
-    rs.getLong("balance")
+    var balance = rs.getLong("balance")
+    if (balance < 1) balance = 0
+    return balance
   }
 
   private def getTopList: Array[(String, Long)] = {
@@ -648,15 +651,6 @@ class Bene extends BotModule {
   private case class CommandsAllowedCheck(allowed: Boolean, timeLeft: Int)
 
   private def startAnarchyThread(): Unit ={
-    val responses = Array(
-    "[NEWS] Pottery World is offering the best pot deal in town! ",
-    "[NEWS] Pranksters just covered The Beehive in actual honey! Bees are everywhere, MSD can't get to work and beneficiaries arent getting paid!",
-    "[BREAKING] Some ponyfag is stealing everyones benez!",
-    "[BREAKING] Jacinda Ardern is taking a 9 month maternity leave, leaving Winston Peters as acting PM. Supergold has gone up and benez have gone down, leaving beneficiaries pissed!",
-    "[NEWS] Auckland housing prices just rose! Otara beneficiaries are raiding Epsom and Remuera in search of some extra cash.",
-    "[BREAKING] Parties in the streets of Dunedin as students and beneficiaries are burning couches with massive heads of steam. " +
-      "Some party-goers have taken to breaking into a few houses in search of some money for more codyz and billy mavs.",
-    "[NEWS] The refugee quota just increased! As more Syrian terr.. uhh refugees enter the country, payments are being cut for beneficiaries!")
 
     val thread = new Thread(new Runnable {
       override def run(): Unit = {
@@ -670,7 +664,6 @@ class Bene extends BotModule {
           waittime = Math.ceil(anarchyTimeMin + Math.random() * (anarchyTimeMax - anarchyTimeMin)).toInt
           for((name, server) <- ConnectionManager.servers){
             val serverResponder = new ServerResponder(server, "")
-            serverResponder.announce(responses(Math.floor(Math.random()*responses.length).toInt))
             serverResponder.announce(s"For the next $waittime seconds, the mugging success rate will be increased!")
           }
 
