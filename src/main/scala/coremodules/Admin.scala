@@ -18,7 +18,8 @@ class Admin extends BotModule{
     "part" -> Array("Tell the bot to part a specific channel", "To use: %ppart <channels>"),
     "pm" -> Array("Tell the bot to PRIVMSG a channel", "To use: %ppm <channel> <message>"),
     "raw" -> Array("Tell the bot to send a raw IRC message", "To use: %praw <message>"),
-    "admin" -> Array("Add or delete admins", "To use: %padmin <add/del> user"))
+    "admin" -> Array("Add or delete admins", "To use: %padmin <add/del> user"),
+    "ignore" -> Array("Add or delete ignores", "to use: %pignores <add/del> user"))
 
 
   override def parse(m: Message, b: BotCommand, r: ServerResponder): Unit = {
@@ -50,6 +51,25 @@ class Admin extends BotModule{
       }
 
       if(m.sender.isAdmin){
+        if(b.command == "ignores"){
+          if(b.paramsArray.length > 1){
+            b.paramsArray(0) match {
+              case "add" =>
+                for(i <- 1 until b.paramsArray.length){
+                  m.config.addIgnore(b.paramsArray(i))
+                }
+              case "del" =>
+                for(i <- 1 until b.paramsArray.length) {
+                  m.config.removeIgnore(b.paramsArray(i))
+                }
+              case _ =>
+                r.say(m.target, s"Usage: ${m.config.getCommandPrefix}ignores <add/del> user")
+            }
+          }
+          else{
+            r.say(m.target, s"Usage: ${m.config.getCommandPrefix}ignores <add/del> user")
+          }
+        }
         if(b.command == "join"){
           for(channel <- b.paramsArray){
             r.join(channel)
