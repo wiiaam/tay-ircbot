@@ -14,4 +14,4 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar')
 }
 
-sourceSets.main.scala.srcDirs = ['.']
+sourceSets.main.scala.srcDirs = ['src/main/scala']

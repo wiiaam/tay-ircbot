@@ -30,9 +30,11 @@ class TriviaAnswers extends BotModule{
 
     if(b.command == "playtrivia" && m.sender.isAdmin){
       playing = playing :+ m.params.first
+      r.reply("Now answering trivia questions in " + m.params.first)
     }
     if(b.command == "unplaytrivia" && m.sender.isAdmin){
       playing = playing.filter(_ != m.params.first)
+      r.reply("No longer answering trivia questions in " + m.params.first)
     }
     if(m.sender.nickname == "Trivia"){
       if(questionPattern.matcher(m.trailing).matches()){
