@@ -38,7 +38,10 @@ class TriviaAnswers extends BotModule{
       if(questionPattern.matcher(m.trailing).matches()){
         val question = m.trailing.split("\\.\\s", 2)(1)
         if (!questions.containsKey(question)) currentQuestion += (m.params.first -> question)
-        if(playing.contains(m.params.first) && questions.containsKey(question)) r.reply(questions.getProperty(question))
+        if(playing.contains(m.params.first) && questions.containsKey(question)) {
+          Thread.sleep(1000)
+          r.reply(questions.getProperty(question))
+        }
       }
       if(m.trailing.startsWith("Winner: ")){
         val answer = m.trailing.split(": ", 3)(2).split("; Time: ")(0)
