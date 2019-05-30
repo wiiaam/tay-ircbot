@@ -62,6 +62,9 @@ class TriviaAnswers extends BotModule{
         }
       }
       if(m.trailing.startsWith("Skipping question")) currentQuestion = currentQuestion.filter(_._1 != m.params.first )
+      if(playing.contains(m.params.first) && m.trailing.startsWith("Round of trivia complete.")){
+        r.reply(".trivia")
+      }
     }
   }
 
