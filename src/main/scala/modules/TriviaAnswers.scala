@@ -1,6 +1,7 @@
 package modules
 
 import java.io.{File, FileInputStream, FileOutputStream}
+import java.util
 import java.util.Properties
 import java.util.regex.Pattern
 
@@ -8,7 +9,11 @@ import irc.message.{Message, MessageCommands}
 import irc.server.ServerResponder
 import ircbot.{BotCommand, BotModule, Constants}
 
+import scala.collection.mutable
+
 class TriviaAnswers extends BotModule{
+
+  private var answerHistory = new mutable.Queue[Boolean]
 
   private var playing = Array[String]()
 
@@ -36,6 +41,15 @@ class TriviaAnswers extends BotModule{
       playing = playing.filter(_ != m.params.first)
       r.reply("No longer answering trivia questions in " + m.params.first)
     }
+    if(b.command == "triviastats" && m.sender.isAdmin){
+      val answered = answerHistory.filter(_ == true).length
+      val answeredRatio = answered.toDouble / answerHistory.length.toDouble
+      val percent = Math.ceil(answeredRatio*100).toInt
+      val totalLogged = questions.size()
+      val estimate = Math.ceil(totalLogged / answeredRatio).toInt
+      r.reply(s"Currently logged $totalLogged questions. Correctly answered $answered questions out of the last " +
+        s"${answerHistory.length} questions ($percent%). Estimated trivia questions: $estimate ")
+    }
     if(m.sender.nickname == "Trivia"){
       if(questionPattern.matcher(m.trailing).matches()){
         val question = m.trailing.split("\\.\\s", 2)(1)
@@ -43,6 +57,8 @@ class TriviaAnswers extends BotModule{
         if(playing.contains(m.params.first) && questions.containsKey(question)) {
           Thread.sleep(1000)
           r.reply(questions.getProperty(question))
+          answerHistory.enqueue(true)
+          if(answerHistory.length > 100) answerHistory.dequeue()
         }
       }
       if(m.trailing.startsWith("Winner: ")){
@@ -52,6 +68,10 @@ class TriviaAnswers extends BotModule{
           store()
           currentQuestion = currentQuestion.filter(_._1 != m.params.first )
         }
+        if(!m.trailing.contains(m.config.getNickname)){
+          if(playing.contains(m.params.first))answerHistory.enqueue(false)
+          if(answerHistory.length > 100) answerHistory.dequeue()
+        }
       }
       if(m.trailing.startsWith("Time's up! The answer was: ")){
         val answer = m.trailing.split("Time's up! The answer was: ")(1)
@@ -60,6 +80,8 @@ class TriviaAnswers extends BotModule{
           store()
           currentQuestion = currentQuestion.filter(_._1 != m.params.first )
         }
+        if(playing.contains(m.params.first))answerHistory.enqueue(false)
+        if(answerHistory.length > 100) answerHistory.dequeue()
       }
       if(m.trailing.startsWith("Skipping question")) currentQuestion = currentQuestion.filter(_._1 != m.params.first )
       if(playing.contains(m.params.first) && m.trailing.startsWith("Round of trivia complete.")){
