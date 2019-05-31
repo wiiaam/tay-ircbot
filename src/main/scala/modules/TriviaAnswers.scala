@@ -46,19 +46,20 @@ class TriviaAnswers extends BotModule{
       val answeredRatio = answered.toDouble / answerHistory.length.toDouble
       val percent = Math.ceil(answeredRatio*100).toInt
       val totalLogged = questions.size()
-      val estimate = Math.ceil(totalLogged / answeredRatio).toInt
+      val estimate = Math.ceil(totalLogged /  answeredRatio).toInt
       r.reply(s"Currently logged $totalLogged questions. Correctly answered $answered questions out of the last " +
         s"${answerHistory.length} questions ($percent%). Estimated trivia questions: $estimate ")
     }
     if(m.sender.nickname == "Trivia"){
       if(questionPattern.matcher(m.trailing).matches()){
         val question = m.trailing.split("\\.\\s", 2)(1)
-        if (!questions.containsKey(question)) currentQuestion += (m.params.first -> question)
+        //if (!questions.containsKey(question))
+        currentQuestion += (m.params.first -> question)
         if(playing.contains(m.params.first) && questions.containsKey(question)) {
           Thread.sleep(1000)
           r.reply(questions.getProperty(question))
           answerHistory.enqueue(true)
-          if(answerHistory.length > 100) answerHistory.dequeue()
+          if(answerHistory.length > 1000) answerHistory.dequeue()
         }
       }
       if(m.trailing.startsWith("Winner: ")){
@@ -70,7 +71,7 @@ class TriviaAnswers extends BotModule{
         }
         if(!m.trailing.contains(m.config.getNickname)){
           if(playing.contains(m.params.first))answerHistory.enqueue(false)
-          if(answerHistory.length > 100) answerHistory.dequeue()
+          if(answerHistory.length > 1000) answerHistory.dequeue()
         }
       }
       if(m.trailing.startsWith("Time's up! The answer was: ")){
@@ -81,7 +82,7 @@ class TriviaAnswers extends BotModule{
           currentQuestion = currentQuestion.filter(_._1 != m.params.first )
         }
         if(playing.contains(m.params.first))answerHistory.enqueue(false)
-        if(answerHistory.length > 100) answerHistory.dequeue()
+        if(answerHistory.length > 1000) answerHistory.dequeue()
       }
       if(m.trailing.startsWith("Skipping question")) currentQuestion = currentQuestion.filter(_._1 != m.params.first )
       if(playing.contains(m.params.first) && m.trailing.startsWith("Round of trivia complete.")){
