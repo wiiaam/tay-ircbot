@@ -32,13 +32,16 @@ class TriviaAnswers extends BotModule{
   }
 
   private def getAnswers(question: String): Array[String] ={
+    if(questions.getProperty(question).contains("}{"))
     questions.getProperty(question).split("\\}\\{")
+    else Array(questions.getProperty(question))
   }
 
   private def storeAnswer(question: String, answer: String): Unit ={
     if(questions.containsKey(question)){
-      if(!questions.getProperty(question).split("\\}\\{").contains(answer))
+      if(!questions.getProperty(question).split("\\}\\{").contains(answer)) {
         questions.setProperty(question, questions.getProperty(question) + "}{" + answer)
+      } else return
     }
     else{
       questions.setProperty(question, answer)
