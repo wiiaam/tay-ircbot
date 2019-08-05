@@ -130,8 +130,8 @@ class Pasta extends BotModule{
           r.reply("Lexoi, stop being a nigger")
         }
         
-        if(m.sender.nickname == "ghost_bot" && m.trailing.contains("taylorswift: ")){ // see https://github.com/asmith9/ghostbot/blob/master/index.js#L85
-          r.say(target, "ghost_bot: die");
+        if(m.sender.nickname == "gh05t" && m.trailing.contains("taylorswift: ")){ // see https://github.com/asmith9/ghostbot/blob/master/index.js#L85
+          r.say(target, "gh05t: die");
         }
 
         if(m.trailing.startsWith("\u0001ACTION")){
